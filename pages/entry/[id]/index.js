@@ -2,15 +2,22 @@ import {useRouter} from 'next/router'
 import Link from 'next/link'
 import caseStyle from '../../../styles/Case.module.css'
 import TextBox from '../../../components/TextBox'
+import Head from 'next/head'
 
 const entry = ({entry}) => {
 
     return (
         <>
+            <Head>
+                <title>
+                    Case {entry.id}
+                </title>
+            </Head>
             <div className={caseStyle.casesummary}>
                 <header className={caseStyle.header}>
                     <h1>Case Name</h1>
                 </header>
+                <TextBox/>
                 <TextBox/>
                 <TextBox/>
             </div>

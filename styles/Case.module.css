@@ -13,9 +13,13 @@
 }
 
 .casesummary {
-  margin: auto;
   width: 60%;
-  padding: 10px;
+}
+
+.subtopic {
+  border-left: none;
+  border-right: none;
+  border-radius: 0;
 }
 
 .header {
@@ -27,28 +31,16 @@
   background-color: darkcyan;
 }
 
-.facts {
-  margin: auto;
+.casename {
+  text-align: center;
+  padding: 10px;
 }
 
-.holding {
-  border-bottom-left-radius: 5px;
-  border-bottom-right-radius: 5px;
+.innerCaseTitle {
+  padding: 10px;
 }
 
-.collapsible {
-  width: 100%;
-  height: 40px;
-  background-color: skyblue;
-  border-color: skyblue;
-  border-bottom: 1px solid grey;
+.subTopicTitle:hover {
+  background-color: #C0C0C0;
   cursor: pointer;
-}
-
-.collapsible:hover {
-  background-color: royalblue;
-}
-
-.collapsiblecontent {
-  display: none;
 }

@@ -1,0 +1,21 @@
+.editor {
+    width: 60vw;
+    min-width: 900px;
+    margin: 60px;
+}
+
+.editorSubmitButton {
+    margin: 1em 5px 1em 1em;
+    float: right;
+}
+
+.center {
+    margin: auto;
+    width: 60vw;
+    min-width: 900px;
+}
+
+.header {
+    margin-top: 2rem;
+    margin-left: 5rem;
+}

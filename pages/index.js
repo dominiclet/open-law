@@ -14,10 +14,10 @@ export default function Home({entries}) {
 }
 
 // fetching data
-export const getStaticProps = async() =>{
-  const res = await fetch(`https://jsonplaceholder.typicode.com/posts?_limit=6`)
+const defaultEndPoint = `http://localhost:5000/cases`;
+export const getServerSideProps = async() => {
+  const res = await fetch (defaultEndPoint)
   const entries = await res.json()
-
   return {
     props: {
       entries

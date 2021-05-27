@@ -1,7 +1,7 @@
 from flask import Flask
 from flask_cors import CORS
 from flask_pymongo import PyMongo
-from bson import ObjectId
+from bson import ObjectId, json_util
 import json
 
 app = Flask(__name__)
@@ -17,7 +17,24 @@ def test():
 
 @app.route("/testmongo")
 def testmongo():
-    return JSONEncoder().encode(mongo.db.inventory.find_one())
+    return JSONEncoder().encode(mongo.db.cases.find_one())
+
+@app.route("/cases")
+def getcases():
+    data = mongo.db.cases.find()
+    case_information = []
+    for i in data:
+        case_information.append(i)
+    return JSONEncoder().encode(case_information)
+
+@app.route("/cases/<name>")
+def getcase(name):
+    data = mongo.db.cases.find({"name" : name})
+    case_information = []
+    for i in data:
+        case_information.append(i)
+    return JSONEncoder().encode(case_information[0])
+
 
 # For JSON encoding of MongoDB ObjectId field
 class JSONEncoder(json.JSONEncoder):

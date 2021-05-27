@@ -2,16 +2,17 @@ import caseStyle from '../../styles/Case.module.css';
 import InnerCase from './InnerCase';
 import Card from 'react-bootstrap/Card';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import entry from '../../pages/entry/[name]';
 
-const OuterCase = (props) => {
+const OuterCase = ({entry}) => {
     // To override min-width, make sure that case summary component is not too small
     const width = {"min-width": "1000px"};
 
     return(
         <Card className={caseStyle.casesummary} style={width}>
-            <Card.Title className={caseStyle.casename}>Case Name</Card.Title>
-            <InnerCase name="Facts" />
-            <InnerCase name="Holding" />
+            <Card.Title className={caseStyle.casename}>{entry.name}</Card.Title>
+            <InnerCase name="Facts" entry = {entry.facts}/>
+            <InnerCase name="Holding" entry = {entry.holding}/>
         </Card>
     );
 }

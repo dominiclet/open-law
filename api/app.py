@@ -1,7 +1,7 @@
 from flask import Flask
 from flask_cors import CORS
 from flask_pymongo import PyMongo
-from bson import ObjectId, json_util
+from bson import ObjectId
 import json
 
 app = Flask(__name__)

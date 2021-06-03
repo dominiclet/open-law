@@ -1,8 +1,9 @@
+import TagButton from './TagButton';
 import caseStyle from '../../styles/Case.module.css';
 import Card from 'react-bootstrap/Card';
 import Accordion from 'react-bootstrap/Accordion';
 
-const SubTopic = ({name, entry}) => {
+const SubTopic = ({name, content}) => {
     // Needed to override bootstrap css, 
     // to prevent inner Card from having rounded edges
     const cardStyle = {
@@ -16,11 +17,13 @@ const SubTopic = ({name, entry}) => {
         <Accordion defaultActiveKey="Facts">
             <Card style={cardStyle}>
                 <Accordion.Toggle className={caseStyle.subTopicTitle} as={Card.Header} eventKey={name}>
-                    Sub-Header goes here
+                    {content.title}
+                    {content.tag}
+                    <TagButton/>
                 </Accordion.Toggle>
                 <Accordion.Collapse eventKey={name}>
                     <Card.Body className="subtopic">
-                        Facts cards are expanded by default. These inner information should be passed as props.
+                        {content.content}
                     </Card.Body>
                 </Accordion.Collapse>
             </Card>

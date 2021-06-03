@@ -41,6 +41,12 @@
 }
 
 .subTopicTitle:hover {
-  background-color: #C0C0C0;
+  background-color: #c0c0c0;
   cursor: pointer;
+}
+
+.tags {
+  background-color: lightcoral;
+  text-align: center;
+  float: right;
 }

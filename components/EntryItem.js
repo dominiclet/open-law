@@ -3,7 +3,7 @@ import Link from 'next/link'
 
 const EntryItem = ({entry}) => {
     return (
-        <Link href="/entry/[name]" as={`/entry/${entry.name}`}>
+        <Link href="/entry/[caseId]" as={`/entry/${entry._id}`}>
             <a className={entryStyles.card}>
                 <h3>{entry.name} &rarr;</h3>
                 <p>{entry.tags}</p>

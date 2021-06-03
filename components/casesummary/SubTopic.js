@@ -18,7 +18,6 @@ const SubTopic = ({name, content}) => {
             <Card style={cardStyle}>
                 <Accordion.Toggle className={caseStyle.subTopicTitle} as={Card.Header} eventKey={name}>
                     {content.title}
-                    {content.tag}
                     <TagButton/>
                 </Accordion.Toggle>
                 <Accordion.Collapse eventKey={name}>

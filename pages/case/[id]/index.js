@@ -14,7 +14,7 @@ const entry = ({entry}) => {
 export const getStaticPaths = async () => {
     const res = await fetch (`http://localhost:5000/cases`)
     const entries = await res.json()
-    const paths = entries.map(entry => ({params: {caseId: entry._id.toString()}}))
+    const paths = entries.map(entry => ({params: {id: entry._id.toString()}}))
 
     return {
         paths,
@@ -23,7 +23,7 @@ export const getStaticPaths = async () => {
 }
 
 export const getStaticProps = async ({params}) => {
-    const res = await fetch (`http://localhost:5000/cases/${params.caseId}`)
+    const res = await fetch (`http://localhost:5000/cases/${params.id}`)
     const entry = await res.json()
     return {
         props: {

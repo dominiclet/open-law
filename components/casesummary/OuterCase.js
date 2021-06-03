@@ -2,7 +2,6 @@ import caseStyle from '../../styles/Case.module.css';
 import InnerCase from './InnerCase';
 import Card from 'react-bootstrap/Card';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import entry from '../../pages/entry/[caseId]';
 
 const OuterCase = ({entry}) => {
     // To override min-width, make sure that case summary component is not too small

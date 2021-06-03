@@ -4,7 +4,7 @@ body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
     Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
-  background-color: "#F6F8FA";
+  background-color: #F6F8FA;
 }
 
 a {
@@ -14,4 +14,25 @@ a {
 
 * {
   box-sizing: border-box;
+}
+
+/* For overriding Quill's CSS */
+.ql-editor {
+  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
+    Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+  min-height: 18em;
+  resize: vertical;
+  width: 100%;
+}
+
+.ql-container {
+  border-style: solid;
+  border-width: thin;
+  border-color: black;
+  border-radius: 0.3em;
+}
+
+.ql-toolbar {
+  border-top-left-radius: 0.3em;
+  border-top-right-radius: 0.3em;
 }

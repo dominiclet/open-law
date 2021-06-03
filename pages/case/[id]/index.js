@@ -7,6 +7,9 @@ const entry = ({entry}) => {
     return (
         <div>
             <OuterCase entry = {entry} />
+            <Link href={`/case/${id}/edit`}>
+                <a>Edit this case</a>
+            </Link>
             <Link href='/'>Go Back</Link>
         </div>
     )

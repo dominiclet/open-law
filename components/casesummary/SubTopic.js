@@ -8,10 +8,10 @@ const CaseFact = (props) => {
     // Needed to override bootstrap css, 
     // to prevent inner Card from having rounded edges
     const cardStyle = {
-        "border-left": "none",
-        "border-right": "none",
-        "border-bottom": "none",
-        "border-radius": "0"
+        "borderLeft": "none",
+        "borderRight": "none",
+        "borderBottom": "none",
+        "borderRadius": "0"
     };
 
     const isHolding = () => {

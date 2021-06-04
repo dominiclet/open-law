@@ -1,14 +1,15 @@
 import Head from 'next/head'
 import EntryList from '../components/EntryList'
 
-export default function Home({entries}) {
+// Props: entries (all case entries)
+export default function Home(props) {
   return (
     <div>
       <Head>
         <title>Lawmology</title>
       </Head>
 
-      <EntryList entries = {entries} />
+      <EntryList entries = {props.entries} />
     </div>
   )
 }

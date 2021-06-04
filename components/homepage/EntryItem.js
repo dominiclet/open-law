@@ -1,4 +1,4 @@
-import entryStyles from '../styles/Entry.module.css'
+import entryStyles from '../../styles/Entry.module.css'
 import Link from 'next/link'
 
 // Props: entry (case information)

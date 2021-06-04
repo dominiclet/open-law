@@ -1,11 +1,11 @@
 import Header from './Header'
 import styles from '../styles/Layout.module.css'
-import Nav from './Nav'
+import NavBar from './NavBar'
 
 const Layout = (props) => {
     return (
         <>
-            <Nav />
+            <NavBar />
             <div className = {styles.container}>
                 <main className = {styles.main}>
                     {props.children}

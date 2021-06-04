@@ -7,7 +7,10 @@ const entry = (props) => {
     return (
         <div>
             <OuterCase entry = {props.entry} />
-            <Link href={`/case/${props.entry._id}/edit`}>
+            <Link 
+                href={`/case/${props.entry._id}/edit`}
+                className="d-flex justify-content-center"
+            >
                 <a>Edit this case</a>
             </Link>
             <br/>

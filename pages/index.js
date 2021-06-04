@@ -1,5 +1,6 @@
 import Head from 'next/head'
-import EntryList from '../components/EntryList'
+import EntryList from '../components/homepage/EntryList'
+import Header from '../components/Header'
 
 // Props: entries (all case entries)
 export default function Home(props) {
@@ -8,7 +9,6 @@ export default function Home(props) {
       <Head>
         <title>Lawmology</title>
       </Head>
-
       <EntryList entries = {props.entries} />
     </div>
   )

@@ -1,7 +1,7 @@
-import TagButtons from './TagButtons';
-import caseStyle from '../../styles/Case.module.css';
-import Card from 'react-bootstrap/Card';
-import Accordion from 'react-bootstrap/Accordion';
+import TagButtons from './TagButtons'
+import caseStyle from '../../styles/Case.module.css'
+import Card from 'react-bootstrap/Card'
+import Accordion from 'react-bootstrap/Accordion'
 
 // props: name, content 
 const CaseFact = (props) => {

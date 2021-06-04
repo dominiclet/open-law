@@ -1,6 +1,6 @@
 import Card from 'react-bootstrap/Card'
-import SubTopic from './SubTopic';
-import caseStyle from '../../styles/Case.module.css';
+import SubTopic from './SubTopic'
+import caseStyle from '../../styles/Case.module.css'
 
 /*
 InnerCase expects a property "name" representing

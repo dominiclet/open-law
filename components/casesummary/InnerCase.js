@@ -1,4 +1,4 @@
-import Card from 'react-bootstrap/Card';
+import Card from 'react-bootstrap/Card'
 import SubTopic from './SubTopic';
 import caseStyle from '../../styles/Case.module.css';
 
@@ -7,7 +7,8 @@ InnerCase expects a property "name" representing
 the portion of the inner judgment we are referring to,
 either "Facts" or "Holding".
 */
-const InnerCase = ({name, content}) => {
+// Props: name, content
+const InnerCase = (props) => {
     // Needed to override bootstrap css, 
     // to prevent inner Card from having rounded edges
     const cardStyle = {
@@ -19,10 +20,10 @@ const InnerCase = ({name, content}) => {
 
     return (
         <Card style={cardStyle}>
-            <Card.Title className={caseStyle.innerCaseTitle}>{name}</Card.Title>
-            {content.map((subTopic) => ( // Maps over each sub-topic in the case content
-                <SubTopic name = {name} content = {subTopic} />
-            ))}
+            <Card.Title className={caseStyle.innerCaseTitle}>{props.name}</Card.Title>
+                {props.content.map((subTopic) => ( // Maps over each sub-topic in the case content
+                    <SubTopic name = {props.name} content = {subTopic} />
+                ))}
         </Card>
     );
 };

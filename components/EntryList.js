@@ -1,10 +1,11 @@
 import EntryItem from './EntryItem'
 import entryStyles from '../styles/Entry.module.css'
 
-const EntryList = ({entries}) => {
+// Props: entries
+const EntryList = (props) => {
     return (
         <div className={entryStyles.grid}>
-            {entries.map( (entry) => (
+            {props.entries.map( (entry) => (
                 <EntryItem entry = {entry} />
             ))}
         </div>

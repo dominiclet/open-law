@@ -3,10 +3,14 @@ import Link from 'next/link';
 import OuterCase from '../../../components/casesummary/OuterCase';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-const entry = ({entry}) => {
+const entry = (props) => {
     return (
         <div>
-            <OuterCase entry = {entry} />
+            <OuterCase entry = {props.entry} />
+            <Link href={`/case/${props.entry._id}/edit`}>
+                <a>Edit this case</a>
+            </Link>
+            <br/>
             <Link href='/'>Go Back</Link>
         </div>
     )

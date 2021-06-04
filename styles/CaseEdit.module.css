@@ -15,7 +15,34 @@
     min-width: 900px;
 }
 
+.addTopicButton {
+    display: block;
+    margin: auto;
+}
+
+.deleteTopicButton {
+    display: block;
+    float: right;
+}
+
 .header {
     margin-top: 2rem;
     margin-left: 5rem;
+}
+
+.caseName {
+    width: 100%;
+}
+
+.subTopic {
+    width: 100%;
+}
+
+.citation {
+    width: 8em;
+    margin-right: 5px;
+}
+
+.deleteCitation {
+    margin-right: 5px;
 }

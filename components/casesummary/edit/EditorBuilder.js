@@ -19,22 +19,28 @@ const EditorBuilder = (props) => {
     var editingPortion = [];
 
     // Build facts
-    editingPortion.push(<h3 className={caseEditStyle.header}>Facts</h3>);
+    editingPortion.push(<h3 className={caseEditStyle.header} key="factheader">Facts</h3>);
+    console.log(facts);
     for (let i = 0; i < facts.length; i++) {
         // Handle delete button functionality
-        const handleDeleteSubTopic = () => {
-            axios.delete(apiRoot + `/deleteTopic/${props.caseId}/facts/${i}`)
-            .then(res => {
-                console.log(res.status);
-                if (res.status == 200) {
-                    setFacts(res.data);
-                    console.log(facts);
-                }
-            });
+        const handleDeleteSubTopic = (event) => {
+            // Make sure that user does not accidentally delete an entry
+            // Also remind user to save work (since execution reloads the page)
+            let r = window.confirm(`Are you sure you want to delete ${facts[i].title}? (Any unsaved work on this page will be lost)`);
+            if (r) {
+                axios.delete(apiRoot + `/deleteTopic/${props.caseId}/facts/${i}`)
+                .then(res => {
+                    console.log(res.status);
+                    if (res.status == 200) {
+                        setFacts(res.data);
+                    }
+                });
+            }
         }
 
         // Build button to delete current sub-topic entry
         editingPortion.push(<Button 
+                key={"deleteFact" + i}
                 className={caseEditStyle.deleteTopicButton} 
                 variant="danger"
                 onClick={handleDeleteSubTopic}
@@ -42,6 +48,7 @@ const EditorBuilder = (props) => {
 
         // Build editor for this sub-topic entry
         editingPortion.push(<FactEditor 
+            key={Math.random(i)}
             caseId={props.caseId}
             index={i}
             subTopic={facts[i].title}
@@ -65,24 +72,64 @@ const EditorBuilder = (props) => {
         });
     }
     // Add button for facts
-    editingPortion.push(<Button variant="secondary" 
+    editingPortion.push(<Button key={"addFact"} variant="secondary" 
         className={caseEditStyle.addTopicButton}
         onClick={handleAddFact}>Add</Button>);
 
     // Build holding
-    editingPortion.push(<h3 className={caseEditStyle.header}>Holding</h3>)
+    editingPortion.push(<h3 key="holdingHeader" className={caseEditStyle.header}>Holding</h3>)
     for (let i = 0; i < holding.length; i++) {
+        // Handles the delete button functionality
+        const handleDeleteSubTopic = (event) => {
+            let r = window.confirm(`Are you sure you want to delete ${holding[i].title}? (Any unsaved work on this page will be lost)`);
+            if (r) {
+                axios.delete(apiRoot + `/deleteTopic/${props.caseId}/holding/${i}`)
+                .then(res => {
+                    if (res.status == 200) {
+                        setHolding(res.data);
+                    }
+                });
+            }
+        }
+
+        // Build button to delete current sub-topic entry
+        editingPortion.push(<Button
+            key={"deleteHolding"+i}
+            className={caseEditStyle.deleteTopicButton}
+            variant="danger"
+            onClick={handleDeleteSubTopic}
+        >X</Button>)
+
+        // Build actual text editor
         editingPortion.push(<HoldingEditor 
+            key={Math.random(i)}
             caseId={props.caseId}
             index={i}
             subTopic={holding[i].title}
             content={holding[i].content}
+            isRatio={holding[i].ratio}
         />);
     }
 
+    // Handler for add button
+    const handleAddHolding = () => {
+        // Button adds an empty entry to the database
+        axios.post(apiRoot + `/addNewTopic/${props.caseId}/holding`)
+        .then(res => {
+            if (res.status == 200) {
+                setHolding((() => {
+                    let newHolding = holding.concat();
+                    newHolding.push(res.data);
+                    return newHolding;
+                })());
+            }
+        });
+    }
+
     // Add button for holding
-    editingPortion.push(<Button variant="secondary" 
-        className={caseEditStyle.addTopicButton}>Add</Button>);
+    editingPortion.push(<Button key="addHolding" variant="secondary" 
+        className={caseEditStyle.addTopicButton}
+        onClick={handleAddHolding}>Add</Button>);
 
     return (
         <div className="center">

@@ -36,6 +36,9 @@ def edit_sub_topic(caseId, category, index):
     data[category][int(index)]["title"] = updated_data["data"]["topic"]
     # Update text
     data[category][int(index)]["content"] = updated_data["data"]["text"]
+    # Need to handle ratio and tags data if category is holding
+    if category == "holding":
+        data[category][int(index)]["ratio"] = updated_data["data"]["ratio"]
     mongo.db.case_summaries.replace_one(query, data, True)
     return "", 200
 

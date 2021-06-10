@@ -5,6 +5,7 @@ import ToggleButton from 'react-bootstrap/ToggleButton';
 import ButtonGroup from 'react-bootstrap/ButtonGroup';
 import { useState } from 'react';
 import caseEditStyle from '../../../styles/CaseEdit.module.css';
+import TagEditor from './TagEditor';
 import { apiRoot } from '../../../config';
 import axios from 'axios';
 
@@ -65,8 +66,8 @@ const HoldingEditor = (props) => {
             <input className={caseEditStyle.subTopic} value={subTopic} type="text" 
             onChange={handleChange} />
             <ReactQuill theme="bubble" value={content} onChange={setContent} style={styling} />
-            <Button className={caseEditStyle.editorSubmitButton} onClick={handleSubmit} variant="secondary">Save</Button>
-            <ButtonGroup toggle>
+            <TagEditor /><br/>
+            <ButtonGroup toggle style={{float: "right", display: "block"}}>
                 <ToggleButton
                     key="1"
                     type="radio"
@@ -90,8 +91,9 @@ const HoldingEditor = (props) => {
                     Obiter
                 </ToggleButton>
             </ButtonGroup>
+            <Button className={caseEditStyle.editorSubmitButton} onClick={handleSubmit} variant="secondary">Save</Button>
         </div>
     );
 }
 
-export default HoldingEditor;
+export default HoldingEditor

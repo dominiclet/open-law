@@ -1,17 +1,38 @@
 import { useState } from 'react';
 import React from 'react';
 import caseEditStyle from '../../../styles/CaseEdit.module.css';
-import Dropdown from 'react-bootstrap/Dropdown';
+import Badge from 'react-bootstrap/Badge';
 
 const TagEditor = (props) => {
+    // props.tags: Array of tags
+    // props.updateTags: Callback function to update parent state of tags
 
+    var allTags = ["Tort", "Contract", "Equity", "Evidence"];
 
     // State to store search term entered in input text box
     const [searchTag, setSearchTag] = useState("");
-    var allTags = ["Tort", "Contract", "Equity", "Evidence"];
+
+    const tagBuilder = () => {
+        if (props.tags.length == 0) {
+            return "No tags added";
+        } else {
+            return props.tags.map((tag) => (
+                <Badge pill variant="dark">{tag}<button 
+                    onClick={() => {
+                        let newSelectedTags = props.tags.concat();
+                        newSelectedTags.splice(props.tags.indexOf(tag), 1);
+                        props.updateTags(newSelectedTags);
+                    }}
+                >X</button></Badge>
+            ));
+        }
+    }
 
     return (
         <div className={caseEditStyle.dropdown}>
+            <div>
+                {tagBuilder()}
+            </div>
             <input 
                 className={caseEditStyle.tagger} 
                 type="text" 
@@ -22,7 +43,6 @@ const TagEditor = (props) => {
                     event.target.nextSibling.style.display = "block";
                     event.stopPropagation();
                     document.addEventListener('click', () => {
-                        console.log("REMOVE");
                         event.target.nextSibling.style.display = "none";
                     }, {once: true})
                 }}
@@ -30,7 +50,13 @@ const TagEditor = (props) => {
             <div className={caseEditStyle.dropdownContent}>
                 {allTags.filter((tag) => 
                     tag.toLowerCase().startsWith(searchTag.toLowerCase())
-                ).map((tag) => <a>{tag}</a>)}
+                ).map((tag) => <a onClick={() => {
+                    if (!props.tags.includes(tag)) {
+                        let newSelectedTags = props.tags.concat();
+                        newSelectedTags.push(tag);
+                        props.updateTags(newSelectedTags);
+                    }
+                }}>{tag}</a>)}
             </div>
         </div>
     );

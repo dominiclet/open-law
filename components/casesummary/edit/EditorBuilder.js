@@ -108,6 +108,7 @@ const EditorBuilder = (props) => {
             subTopic={holding[i].title}
             content={holding[i].content}
             isRatio={holding[i].ratio}
+            tags={holding[i].tag}
         />);
     }
 

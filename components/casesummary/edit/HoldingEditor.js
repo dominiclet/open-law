@@ -25,6 +25,7 @@ const HoldingEditor = (props) => {
     // props.subTopic: The sub-topic title of this entry
     // props.content: The content of this entry
     // props.isRatio: Boolean value indicating whether this entry is ratio (true) or obiter
+    // props.tags: Array of tags relevant to this subtopic holding
     
     // Width needs to be fixed otherwise text causes DOM elements to resize
     const styling = {
@@ -38,13 +39,16 @@ const HoldingEditor = (props) => {
     const [subTopic, setSubTopic] = useState(props.subTopic);
     // State stores whether this sub-topic is classified ratio/obiter (default to ratio)
     const [isRatio, setIsRatio] = useState(props.isRatio ? "1" : "0");
+    // State stores tags
+    const [tags, setTags] = useState(props.tags);
 
     // Function to handle submit button for editor
     const handleSubmit = () => {
         const data = {
             topic: subTopic,
             text: content, 
-            ratio: isRatio == "1" ? true : false 
+            ratio: isRatio == "1" ? true : false,
+            tag: tags
         };
         
         // Sends a POST request to the server
@@ -61,12 +65,17 @@ const HoldingEditor = (props) => {
         setSubTopic(event.target.value);
     }
 
+    // To allow child TagEditor to handle updating of tags state
+    const updateTags = (updated) => {
+        setTags(updated);
+    }
+
     return (
         <div className={caseEditStyle.editor}>
             <input className={caseEditStyle.subTopic} value={subTopic} type="text" 
             onChange={handleChange} />
             <ReactQuill theme="bubble" value={content} onChange={setContent} style={styling} />
-            <TagEditor /><br/>
+            <TagEditor tags={tags} updateTags={updateTags} /><br/>
             <ButtonGroup toggle style={{float: "right", display: "block"}}>
                 <ToggleButton
                     key="1"

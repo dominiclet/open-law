@@ -43,30 +43,6 @@ const caseEditPage = () => {
         // If data is not loaded yet, display "loading"
         return (<span>Loading...</span>);
     } else {
-        // Build the editing page based on caseData
-        var editingPortion = [];
-
-        // Build facts
-        editingPortion.push(<h3 className={caseEditStyle.header}>Facts</h3>);
-        for (let i = 0; i < caseData.facts.length; i++) {
-            editingPortion.push(<FactEditor 
-                caseId={caseData._id}
-                index={i}
-                subTopic={caseData.facts[i].title} 
-                content={caseData.facts[i].content}
-            />);
-        }
-
-        // Build holding
-        editingPortion.push(<h3 className={caseEditStyle.header}>Holding</h3>);
-        for (let i = 0; i < Object.keys(caseData.holding).length; i++) {
-            editingPortion.push(<HoldingEditor 
-                caseId={caseData._id}
-                index={i}
-                subTopic={caseData.holding[i].title} 
-                content={caseData.holding[i].content}
-            />);
-        }
 
         return(
         <div>

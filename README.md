@@ -1,4 +1,4 @@
-# LAWMOLOGY
+
 ## Installing all node module dependencies
 Installed axios, and the package.json file is updated. Remember to run `npm install`.
 

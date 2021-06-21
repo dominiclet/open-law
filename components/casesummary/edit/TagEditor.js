@@ -2,6 +2,7 @@ import { useState } from 'react';
 import React from 'react';
 import caseEditStyle from '../../../styles/CaseEdit.module.css';
 import Badge from 'react-bootstrap/Badge';
+import { Trash } from 'react-bootstrap-icons';
 
 const TagEditor = (props) => {
     // props.tags: Array of tags
@@ -17,13 +18,17 @@ const TagEditor = (props) => {
             return "No tags added";
         } else {
             return props.tags.map((tag) => (
-                <Badge pill variant="dark">{tag}<button 
-                    onClick={() => {
-                        let newSelectedTags = props.tags.concat();
-                        newSelectedTags.splice(props.tags.indexOf(tag), 1);
-                        props.updateTags(newSelectedTags);
-                    }}
-                >X</button></Badge>
+                <div>
+                    <Badge pill variant="dark">{tag}</Badge>
+                    <Trash 
+                        className={caseEditStyle.deleteTag}
+                        onClick={() => {
+                            let newSelectedTags = props.tags.concat();
+                            newSelectedTags.splice(props.tags.indexOf(tag), 1);
+                            props.updateTags(newSelectedTags);
+                        }}
+                    />
+                </div>
             ));
         }
     }

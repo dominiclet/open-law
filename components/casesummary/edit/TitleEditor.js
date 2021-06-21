@@ -4,6 +4,7 @@ import caseEditStyle from '../../../styles/CaseEdit.module.css';
 import { useState } from 'react';
 import { apiRoot } from '../../../config';
 import axios from 'axios';
+import { Trash, Upload, Plus } from 'react-bootstrap-icons';
 
 const TitleEditor = (props) => {
     // props.caseId: Unique ID of case
@@ -13,17 +14,12 @@ const TitleEditor = (props) => {
     // Jumotron styling (Reduce padding for Jumbotron)
     const jumboStyle = {
         "padding": "1rem 2rem",
-        "width": "60vw",
+        "width": "900px",
         "margin": "auto",
-        "minWidth": "1000px",
+        "minWidth": "900px",
         "height": "175px"
     };
 
-    // Button style
-    const buttonStyle ={
-        "float": "right"
-    };
-    
     // State stores case name
     const [caseName, setCaseName] = useState(props.caseName);
     // State stores case citation (note that this is an array)
@@ -45,10 +41,9 @@ const TitleEditor = (props) => {
         axios.post(apiRoot + `/editCaseIdentifiers/${props.caseId}`, { data })
         .then(res => {
             // Add UI function that informs user entry is updated/saved
-            console.log(res.status);
+            console.log("Add UI that informs user entry is uploaded");
         })
     }
-    console.log(citationArr);
 
     // Build edit citation 
     let citeEdit = [];
@@ -77,11 +72,10 @@ const TitleEditor = (props) => {
             })());
         }
 
-        citeEdit.push(<Button
+        citeEdit.push(<Trash
             className={caseEditStyle.deleteCitation}
-            variant="light" 
             onClick={handleDeleteCite}
-        >X</Button>)
+        />)
     }
 
     // Handle add citation
@@ -98,9 +92,11 @@ const TitleEditor = (props) => {
             /></h3>
             <p>
                 {citeEdit}
-                <Button variant="light" onClick={handleAddCitation} >Add</Button>
+                <Plus className={caseEditStyle.addButton} 
+                    size="30" onClick={handleAddCitation} 
+                />
             </p>
-            <Button variant="light" style={buttonStyle} onClick={handleSave} >Save</Button>
+            <Upload className={caseEditStyle.saveButton} size="30" onClick={handleSave} />
         </Jumbotron>
     );
 }

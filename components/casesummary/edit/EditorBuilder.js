@@ -5,6 +5,7 @@ import Button from 'react-bootstrap/Button';
 import { useState } from 'react';
 import FactEditor from './FactEditor';
 import HoldingEditor from './HoldingEditor';
+import { Trash, PlusLg } from 'react-bootstrap-icons';
 
 // Component that encapsulates the logic behind building the fact editors
 const EditorBuilder = (props) => {
@@ -20,7 +21,6 @@ const EditorBuilder = (props) => {
 
     // Build facts
     editingPortion.push(<h3 className={caseEditStyle.header} key="factheader">Facts</h3>);
-    console.log(facts);
     for (let i = 0; i < facts.length; i++) {
         // Handle delete button functionality
         const handleDeleteSubTopic = (event) => {
@@ -39,12 +39,14 @@ const EditorBuilder = (props) => {
         }
 
         // Build button to delete current sub-topic entry
-        editingPortion.push(<Button 
+       editingPortion.push(
+           <Trash 
                 key={"deleteFact" + i}
+                size="25" 
                 className={caseEditStyle.deleteTopicButton} 
-                variant="danger"
                 onClick={handleDeleteSubTopic}
-            >X</Button>);
+            />
+       );
 
         // Build editor for this sub-topic entry
         editingPortion.push(<FactEditor 
@@ -72,9 +74,13 @@ const EditorBuilder = (props) => {
         });
     }
     // Add button for facts
-    editingPortion.push(<Button key={"addFact"} variant="secondary" 
-        className={caseEditStyle.addTopicButton}
-        onClick={handleAddFact}>Add</Button>);
+    editingPortion.push(
+        <PlusLg
+            key={"addFact"} 
+            size="30"
+            className={caseEditStyle.addTopicButton}
+            onClick={handleAddFact} 
+        />);
 
     // Build holding
     editingPortion.push(<h3 key="holdingHeader" className={caseEditStyle.header}>Holding</h3>)
@@ -93,12 +99,14 @@ const EditorBuilder = (props) => {
         }
 
         // Build button to delete current sub-topic entry
-        editingPortion.push(<Button
-            key={"deleteHolding"+i}
-            className={caseEditStyle.deleteTopicButton}
-            variant="danger"
-            onClick={handleDeleteSubTopic}
-        >X</Button>)
+       editingPortion.push(
+           <Trash 
+                key={"deleteHolding" + i}
+                size="25" 
+                className={caseEditStyle.deleteTopicButton} 
+                onClick={handleDeleteSubTopic}
+            />
+       );
 
         // Build actual text editor
         editingPortion.push(<HoldingEditor 
@@ -128,9 +136,13 @@ const EditorBuilder = (props) => {
     }
 
     // Add button for holding
-    editingPortion.push(<Button key="addHolding" variant="secondary" 
-        className={caseEditStyle.addTopicButton}
-        onClick={handleAddHolding}>Add</Button>);
+    editingPortion.push(
+        <PlusLg 
+            key="addHolding" 
+            size="30"
+            className={caseEditStyle.addTopicButton}
+            onClick={handleAddHolding}
+        />);
 
     return (
         <div className="center">

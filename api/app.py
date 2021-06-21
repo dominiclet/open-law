@@ -69,7 +69,11 @@ def add_new_topic(caseId, category):
     # Query case
     query = {"_id": ObjectId(caseId)}
     data = mongo.db.case_summaries.find_one_or_404(query)
-    empty_entry = {"title": "", "content": ""}
+    # Need to add empty tag array and set ratio if category is holding
+    if category == "holding":
+        empty_entry = {"title": "", "content": "", "tag": [], "ratio": False}
+    else: 
+        empty_entry = {"title": "", "content": ""}
     data[category].append(empty_entry)
     mongo.db.case_summaries.replace_one(query, data, True)
     return empty_entry, 200

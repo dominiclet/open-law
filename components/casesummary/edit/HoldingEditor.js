@@ -8,6 +8,7 @@ import caseEditStyle from '../../../styles/CaseEdit.module.css';
 import TagEditor from './TagEditor';
 import { apiRoot } from '../../../config';
 import axios from 'axios';
+import { Upload } from 'react-bootstrap-icons';
 
 // ReactQuill is only imported at client side 
 // due to issues with next's server-side rendering
@@ -75,8 +76,8 @@ const HoldingEditor = (props) => {
             <input className={caseEditStyle.subTopic} value={subTopic} type="text" 
             onChange={handleChange} />
             <ReactQuill theme="bubble" value={content} onChange={setContent} style={styling} />
-            <TagEditor tags={tags} updateTags={updateTags} /><br/>
-            <ButtonGroup toggle style={{float: "right", display: "block"}}>
+            <TagEditor tags={tags} updateTags={updateTags} />
+            <ButtonGroup toggle className={caseEditStyle.ratioButton} >
                 <ToggleButton
                     key="1"
                     type="radio"
@@ -100,7 +101,7 @@ const HoldingEditor = (props) => {
                     Obiter
                 </ToggleButton>
             </ButtonGroup>
-            <Button className={caseEditStyle.editorSubmitButton} onClick={handleSubmit} variant="secondary">Save</Button>
+            <Upload className={caseEditStyle.editorSubmitButton} size={30} onClick={handleSubmit} />
         </div>
     );
 }

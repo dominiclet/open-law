@@ -4,6 +4,7 @@ import { useState } from 'react';
 import caseEditStyle from '../../../styles/CaseEdit.module.css';
 import { apiRoot } from '../../../config';
 import axios from 'axios';
+import { Upload } from 'react-bootstrap-icons';
 
 // ReactQuill is only imported at client side 
 // due to issues with next's server-side rendering
@@ -54,7 +55,7 @@ const FactEditor = (props) => {
             <input className={caseEditStyle.subTopic} value={subTopic} 
             type="text" onChange={handleTopicChange} />
             <ReactQuill theme="bubble" value={content} onChange={setContent} style={styling} />
-            <Button className={caseEditStyle.editorSubmitButton} onClick={handleSubmit} variant="secondary">Save</Button>
+            <Upload className={caseEditStyle.editorSubmitButton} size = {30} onClick={handleSubmit} />
         </form>
     );
 }

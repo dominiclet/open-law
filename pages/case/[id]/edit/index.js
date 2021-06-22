@@ -8,7 +8,6 @@ import axios from 'axios';
 import { apiRoot } from '../../../../config';
 import { useEffect, useState } from 'react';
 import EditorBuilder from '../../../../components/casesummary/edit/EditorBuilder';
-import Button from 'react-bootstrap/Button';
 
 const caseEditPage = () => {
     const router = useRouter();
@@ -36,7 +35,6 @@ const caseEditPage = () => {
         "padding": "1rem 2rem",
         "width": "60vw",
         "margin": "auto",
-        "minWidth": "1000px"
     };
     
     if (!dataLoaded) {
@@ -45,7 +43,7 @@ const caseEditPage = () => {
     } else {
 
         return(
-        <div>
+        <div className={caseEditStyle.editor}>
             <TitleEditor 
             caseId={caseData._id} 
             caseName={caseData.name} 

@@ -1,7 +1,6 @@
 import caseEditStyle from '../../../styles/CaseEdit.module.css';
 import axios from 'axios';
 import { apiRoot } from '../../../config';
-import Button from 'react-bootstrap/Button';
 import { useState } from 'react';
 import FactEditor from './FactEditor';
 import HoldingEditor from './HoldingEditor';

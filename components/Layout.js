@@ -1,11 +1,11 @@
 import Header from './Header'
 import styles from '../styles/Layout.module.css'
-import Nav from './Nav'
+import NavigationBar from './NavigationBar'
 
 const Layout = ({children}) => {
     return (
         <>
-            <Nav />
+            <NavigationBar />
             <div className = {styles.container}>
                 <main className = {styles.main}>
                     {children}

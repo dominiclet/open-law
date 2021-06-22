@@ -1,5 +1,4 @@
 import Jumbotron from 'react-bootstrap/Jumbotron';
-import Button from 'react-bootstrap/Button';
 import caseEditStyle from '../../../styles/CaseEdit.module.css';
 import { useState } from 'react';
 import { apiRoot } from '../../../config';
@@ -14,10 +13,10 @@ const TitleEditor = (props) => {
     // Jumotron styling (Reduce padding for Jumbotron)
     const jumboStyle = {
         "padding": "1rem 2rem",
-        "width": "900px",
+        "width": "100%",
         "margin": "auto",
-        "minWidth": "900px",
-        "height": "175px"
+        "height": "175px",
+        "maxWidth": "1000px"
     };
 
     // State stores case name

@@ -1,26 +1,22 @@
-import Head from 'next/head'
-import EntryList from '../components/EntryList'
+import Head from 'next/head';
+import EntryList from '../components/EntryList';
+import ActivityCard from '../components/home/ActivityCard';
+import RecentEditCard from '../components/home/RecentEditCard';
+import homeStyle from '../styles/Home.module.css';
 
 export default function Home({entries}) {
   return (
-    <div>
+    <div className={homeStyle.container1}>
       <Head>
-        <title>Lawmology</title>
+        <title>David</title>
       </Head>
-
-      <EntryList entries = {entries} />
+      <h4>Your recent edits</h4>
+      <RecentEditCard />
+      <br/>
+      <h4>Recent activity</h4>
+      <ActivityCard />
+      <ActivityCard />
     </div>
   )
 }
 
-// fetching data
-export const getStaticProps = async() =>{
-  const res = await fetch(`https://jsonplaceholder.typicode.com/posts?_limit=6`)
-  const entries = await res.json()
-
-  return {
-    props: {
-      entries
-    }
-  }
-}

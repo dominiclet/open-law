@@ -1,8 +1,5 @@
 import { useRouter } from 'next/router';
-import FactEditor from '../../../../components/casesummary/edit/FactEditor';
-import HoldingEditor from '../../../../components/casesummary/edit/HoldingEditor';
 import TitleEditor from '../../../../components/casesummary/edit/TitleEditor';
-import AddTopicButton from '../../../../components/casesummary/edit/EditorBuilder';
 import caseEditStyle from '../../../../styles/CaseEdit.module.css';
 import axios from 'axios';
 import { apiRoot } from '../../../../config';

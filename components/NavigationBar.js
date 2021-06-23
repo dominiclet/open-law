@@ -6,7 +6,7 @@ const NavigationBar = () => {
     return (
         <Navbar bg="dark" variant="dark">
             <Navbar.Toggle aria-controls="navbarScroll" />
-            <Navbar.Brand>Lawmology</Navbar.Brand>
+            <Navbar.Brand href="/">Lawmology</Navbar.Brand>
             <Nav className="mr-auto">
                 <Nav.Link>Categories</Nav.Link>
                 <Nav.Link>About</Nav.Link>

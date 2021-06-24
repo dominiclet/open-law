@@ -1,6 +1,7 @@
 import Head from 'next/head'
 import EntryList from '../components/homepage/EntryList'
 import Header from '../components/Header'
+import Banner from '../components/homepage/Banner'
 
 // Props: entries (all case entries)
 export default function Home(props) {
@@ -9,6 +10,7 @@ export default function Home(props) {
       <Head>
         <title>Lawmology</title>
       </Head>
+      <Banner/>
       <EntryList entries = {props.entries} />
     </div>
   )

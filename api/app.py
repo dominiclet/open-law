@@ -31,6 +31,17 @@ def getcases():
     return JSONEncoder().encode(case_information)
 
 
+@app.route("/categories")
+def getcategories():
+    data = mongo.db.case_summaries.find()
+    categories = []
+    for i in data:
+        for j in i["tags"]:
+            if j not in categories:
+                categories.append(j)
+    return JSONEncoder().encode(categories)
+
+
 @app.route("/cases/<caseId>")
 def getcase(caseId):
     data = mongo.db.case_summaries.find_one_or_404({"_id": ObjectId(caseId)})

@@ -1,13 +1,16 @@
 .grid {
   display: flex;
-  align-items: left;
+  width: 50%;
   justify-content: center;
   flex-wrap: wrap;
+  border: 1px solid #eaeaea;
+  border-radius: 10px;
+  background-color: #eee;
 }
 
 .card {
   margin: 1rem;
-  flex-basis: 80%;
+  flex-basis: 100%;
   padding: 1.5rem;
   text-align: center;
   color: inherit;

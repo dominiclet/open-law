@@ -5,6 +5,7 @@ import entryStyles from '../../styles/Entry.module.css'
 const EntryList = (props) => {
     return (
         <div className={entryStyles.grid}>
+            <h1>Recently Edited</h1>
             {props.entries.map( (entry) => (
                 <EntryItem entry = {entry} key = {entry._id}/>
             ))}

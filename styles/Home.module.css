@@ -26,6 +26,10 @@
 	padding-left: 1rem;
 }
 
+.activityCardWords {
+	margin: 0px;
+}
+
 .activityTimeStamp {
 	color: #BABCBD;
 	font-size: 0.80rem;

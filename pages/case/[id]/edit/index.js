@@ -33,14 +33,18 @@ const caseEditPage = () => {
         "width": "60vw",
         "margin": "auto",
     };
-    
+
     if (!dataLoaded) {
         // If data is not loaded yet, display "loading"
         return (<span>Loading...</span>);
     } else {
+        const date = new Date(caseData.lastEdit);
 
         return(
         <div className={caseEditStyle.editor}>
+            <p className={caseEditStyle.editTimeStamp}>
+                Last edited by [someone] at {date.toLocaleTimeString("en-SG")} on {date.toLocaleDateString("en-SG")}
+            </p>
             <TitleEditor 
             caseId={caseData._id} 
             caseName={caseData.name} 

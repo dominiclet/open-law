@@ -48,7 +48,8 @@ const HoldingEditor = (props) => {
             topic: subTopic,
             text: content, 
             ratio: isRatio == "1" ? true : false,
-            tag: tags
+            tag: tags,
+            time: new Date().toJSON()
         };
         
         // Sends a POST request to the server

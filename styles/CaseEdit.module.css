@@ -1,9 +1,15 @@
 .tagger {
     height: 30px;
-    display: inline-block;
     margin-bottom: 0px;
     margin-top: 10px;
     font-size: 1rem;
+}
+
+.editTimeStamp {
+    color: #BABCBD;
+    font-size: 0.8rem;
+    margin-bottom: 0px;
+    align-self: flex-end;
 }
 
 .editor {
@@ -11,13 +17,15 @@
     margin-bottom: 30px;
     max-width: 1000px;
     min-width: 510px;
+    display: flex;
+    flex-direction: column;
 }
 
 .editorSubmitButton {
     display: block;
     clear: both;
     margin: 1em 5px 1em 1em;
-    float: right;
+    align-self: flex-end;
     transition-duration: 0.5s;
 }
 
@@ -60,7 +68,7 @@
 }
 
 .ratioButton {
-    float: right;
+    align-self: flex-end;
     margin-top: 20px;
 }
 

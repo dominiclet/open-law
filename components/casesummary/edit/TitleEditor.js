@@ -33,7 +33,8 @@ const TitleEditor = (props) => {
     const handleSave = () => {
         const data = {
             name: caseName,
-            citation: citationArr
+            citation: citationArr,
+            time: new Date().toJSON()
         };
 
         // Send a POST request to the server with the relevant data

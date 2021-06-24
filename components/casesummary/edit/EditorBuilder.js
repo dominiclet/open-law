@@ -27,7 +27,10 @@ const EditorBuilder = (props) => {
             // Also remind user to save work (since execution reloads the page)
             let r = window.confirm(`Are you sure you want to delete ${facts[i].title}? (Any unsaved work on this page will be lost)`);
             if (r) {
-                axios.delete(apiRoot + `/deleteTopic/${props.caseId}/facts/${i}`)
+                const data = {
+                    time: new Date().toJSON()
+                };
+                axios.delete(apiRoot + `/deleteTopic/${props.caseId}/facts/${i}`, { data })
                 .then(res => {
                     console.log(res.status);
                     if (res.status == 200) {
@@ -59,8 +62,13 @@ const EditorBuilder = (props) => {
 
     // Handler for add button
     const handleAddFact = () => {
+        // Send current time over to server
+        const data = {
+            time: new Date().toJSON()
+        };
+
         // Button adds an empty entry to the database
-        axios.post(apiRoot + `/addNewTopic/${props.caseId}/facts`)
+        axios.post(apiRoot + `/addNewTopic/${props.caseId}/facts`, { data })
         .then(res => {
             console.log(res.status);
             if (res.status == 200) {
@@ -88,7 +96,11 @@ const EditorBuilder = (props) => {
         const handleDeleteSubTopic = (event) => {
             let r = window.confirm(`Are you sure you want to delete ${holding[i].title}? (Any unsaved work on this page will be lost)`);
             if (r) {
-                axios.delete(apiRoot + `/deleteTopic/${props.caseId}/holding/${i}`)
+                // send current time
+                const data = {
+                    time: new Date().toJSON()
+                };
+                axios.delete(apiRoot + `/deleteTopic/${props.caseId}/holding/${i}`, { data })
                 .then(res => {
                     if (res.status == 200) {
                         setHolding(res.data);
@@ -121,8 +133,12 @@ const EditorBuilder = (props) => {
 
     // Handler for add button
     const handleAddHolding = () => {
+        // Send current time
+        const data = {
+            time: new Date().toJSON()
+        };
         // Button adds an empty entry to the database
-        axios.post(apiRoot + `/addNewTopic/${props.caseId}/holding`)
+        axios.post(apiRoot + `/addNewTopic/${props.caseId}/holding`, { data })
         .then(res => {
             if (res.status == 200) {
                 setHolding((() => {

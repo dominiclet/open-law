@@ -33,7 +33,8 @@ const FactEditor = (props) => {
     const handleSubmit = () => {
         const data = {
             topic: subTopic,
-            text: content 
+            text: content,
+            time: new Date().toJSON()
         };
 
         // Sends a POST request to the server

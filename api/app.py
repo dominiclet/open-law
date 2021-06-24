@@ -2,6 +2,7 @@ from flask import Flask, request, Response
 from flask_cors import CORS
 from flask_pymongo import PyMongo
 from bson import ObjectId
+from queue import Queue
 import json
 
 app = Flask(__name__)
@@ -10,6 +11,10 @@ cors = CORS(app)
 # MongoDB setup
 app.config["MONGO_URI"] = "mongodb://localhost:27017/open_law"
 mongo = PyMongo(app)
+
+# Initialize recent edits queue
+# Activity is stored as {"id": , "case_name": , "action": , "subtopic": , "time": }
+recent_edits = Queue(10)
 
 @app.route("/cases/<caseId>")
 def getcase(caseId):
@@ -40,7 +45,18 @@ def edit_sub_topic(caseId, category, index):
     if category == "holding":
         data[category][int(index)]["ratio"] = updated_data["data"]["ratio"]
         data[category][int(index)]["tag"] = updated_data["data"]["tag"]
+    # Update last edited time
+    data["lastEdit"] = updated_data["data"]["time"]
     mongo.db.case_summaries.replace_one(query, data, True)
+
+    # Update recent edit queue
+    recent_edits.put({
+        "id": caseId, 
+        "case_name": data["name"], 
+        "action": "EDIT",
+        "subtopic": updated_data["data"]["topic"],
+        "time": updated_data["data"]["time"]
+    })
     return "", 200
 
 """
@@ -57,6 +73,8 @@ def edit_case_identifiers(caseId):
     data["name"] =  updated_data["data"]["name"]
     # Update citations
     data["citation"] = updated_data["data"]["citation"]
+    # Update last edited time
+    data["lastEdit"] = updated_data["data"]["time"]
     mongo.db.case_summaries.replace_one(query, data, True)
     return "", 200
 
@@ -76,6 +94,16 @@ def add_new_topic(caseId, category):
         empty_entry = {"title": "", "content": ""}
     data[category].append(empty_entry)
     mongo.db.case_summaries.replace_one(query, data, True)
+
+    # Update last edited time
+    data["lastEdit"] = json.loads(request.data)["data"]["time"]
+    # Update recent activity queue
+    recent_edits.put({
+        "id": caseId,
+        "case_name": data["name"],
+        "action": "ADD",
+        "time": data["lastEdit"]
+    })
     return empty_entry, 200
 
 """
@@ -92,8 +120,24 @@ def delete_topic(caseId, category, index):
     # Remove specified entry
     data[category].pop(int(index))
     mongo.db.case_summaries.replace_one(query, data, True)
+
+    # Update last edited time
+    data["lastEdit"] = json.loads(request.data)["time"]
+    # Update recent activity queue
+    recent_edits.put({
+        "id": caseId,
+        "case_name": data["name"],
+        "action": "DELETE", 
+        "time": data["lastEdit"]
+    })
     return json.dumps(data[category]), 200
 
+"""
+Returns the list of recent activities currently in the queue
+"""
+@app.route("/recentActivity", methods=['GET'])
+def recent_activity():
+    return json.dumps(list(recent_edits.queue))
 
 @app.route("/")
 def test():

@@ -1,9 +1,22 @@
+<<<<<<< HEAD
 import {useRouter} from 'next/router'
 import Link from 'next/link'
 import caseStyle from '../../../styles/Case.module.css'
 import OuterCase from '../../../components/casesummary/OuterCase'
 import RelatedCases from '../../../components/casesummary/RelatedCases'
 import 'bootstrap/dist/css/bootstrap.min.css'
+=======
+import { useRouter } from 'next/router';
+import Link from 'next/link';
+import OuterCase from '../../../components/casesummary/OuterCase';
+import axios from 'axios';
+
+const entry = () => {
+    const router = useRouter();
+    const {id} = router.query;
+    // Fetch case here, then pass as props to OuterCase
+    // TODO: needs Ivan's endpoint
+>>>>>>> dom
 
 const entry = (props) => {
     return (

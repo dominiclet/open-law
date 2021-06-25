@@ -1,0 +1,60 @@
+.container1 {
+	display: flex;
+	width: 100%;
+	max-width: 1000px;
+	flex-direction: column;
+}
+
+.cardContainer {
+	margin-bottom: 0.5rem;
+}
+
+.activityCard {
+	display: flex;
+	padding: 0;
+	flex-direction: row;
+}
+
+.activityCardHeader {
+	font-size: 1rem;
+	padding: 0.5rem;
+}
+
+.activityCardBody {
+	font-size: 1rem;
+	padding: 0.5rem;
+	padding-left: 1rem;
+}
+
+.activityCardWords {
+	margin: 0px;
+}
+
+.activityTimeStamp {
+	color: #BABCBD;
+	font-size: 0.80rem;
+	float: right;
+}
+
+.activityCardArrow {
+	align-self: center;
+	transition-duration: 0.4s;
+}
+
+.activityCardArrow:hover {
+	cursor: pointer;
+	transition-duration: 0.4s; 
+	filter: drop-shadow(0 0 0.1rem white);
+}
+
+.editSign {
+	align-self: center;
+	padding-right: 0.4rem;
+	transition-duration: 0.4s;
+}
+
+.editSign:hover {
+	cursor: pointer;
+	transition-duration: 0.4s;
+	filter: drop-shadow(0 0 0.1rem white);
+}

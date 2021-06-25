@@ -1,21 +1,162 @@
+.tagger {
+    height: 30px;
+    margin-bottom: 0px;
+    margin-top: 10px;
+    font-size: 1rem;
+}
+
+.editTimeStamp {
+    color: #BABCBD;
+    font-size: 0.8rem;
+    margin-bottom: 0px;
+    align-self: flex-end;
+}
+
 .editor {
-    width: 60vw;
-    min-width: 900px;
-    margin: 60px;
+    width: 100%;
+    margin-bottom: 30px;
+    max-width: 1000px;
+    min-width: 510px;
+    display: flex;
+    flex-direction: column;
 }
 
 .editorSubmitButton {
+    display: block;
+    clear: both;
     margin: 1em 5px 1em 1em;
-    float: right;
+    align-self: flex-end;
+    transition-duration: 0.5s;
+}
+
+.editorSubmitButton:hover {
+    cursor: pointer;
+    transition-duration: 0.5s;
+    filter: drop-shadow(0 0 0.1rem black);
 }
 
 .center {
     margin: auto;
-    width: 60vw;
-    min-width: 900px;
+    width: 100%;
+    max-width: 1000px;
+    min-width: 510px;
+}
+
+.addTopicButton {
+    position: relative;
+    left: 48%;
+    display: inline-block;
+    transition-duration: 0.4s;
+}
+
+.addTopicButton:hover {
+    cursor: pointer;
+    transition-duration: 0.4s;
+    filter: drop-shadow(0 0 0.1rem black);
+}
+
+.deleteTopicButton {
+    transition-duration: 0.5s;
+    display: block;
+    float: right;
+}
+
+.deleteTopicButton:hover {
+    transition-duration: 0.5s;
+    cursor: pointer;
+    filter: drop-shadow(0 0 0.1rem black);
+}
+
+.ratioButton {
+    align-self: flex-end;
+    margin-top: 20px;
 }
 
 .header {
-    margin-top: 2rem;
-    margin-left: 5rem;
+    margin-top: 1rem;
+    margin-bottom: 0;
 }
+
+.subTopic {
+    width: 100%;
+    margin-bottom:10px;
+}
+
+/* Title styling */
+.caseName {
+    width: 100%;
+}
+
+.citation {
+    width: 8em;
+    margin-right: 5px;
+}
+
+.deleteCitation {
+    margin-right: 5px;
+    transition-duration: 0.4s;
+}
+
+.deleteCitation:hover {
+    transition-duration: 0.4s;
+    cursor: pointer;
+    filter: drop-shadow(0 0 0.1rem black);
+}
+
+.saveButton {
+    transition-duration: 0.4s;
+    float: right;
+}
+
+.saveButton:hover {
+    transition-duration: 0.4s;
+    cursor: pointer;
+    filter: drop-shadow(0 0 0.1rem black);
+}
+
+.addButton {
+    transition-duration: 0.4s;
+}
+
+.addButton:hover {
+    transition-duration: 0.4s;
+    cursor: pointer;
+    filter: drop-shadow(0 0 0.1rem black);
+}
+
+/* For holding tags */
+.deleteTag {
+    transition-duration: 0.4s;
+}
+
+.deleteTag:hover {
+    transition-duration: 0.4s;
+    cursor: pointer;
+    filter: drop-shadow(0 0 0.1rem black);
+}
+
+/* For Dropdown Tags */
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdownContent {
+  display: none;
+  position: absolute;
+  background-color: #f9f9f9;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 1;
+  border-radius: 3px;
+}
+
+.dropdownContent a {
+  color: black;
+  padding: 5px 16px;
+  text-decoration: none;
+  display: block;
+  font-size: 1rem;
+}
+
+.dropdownContent a:hover {background-color: #f1f1f1}

@@ -8,8 +8,8 @@ const NavigationBar = () => {
             <Navbar.Toggle aria-controls="navbarScroll" />
             <Navbar.Brand href="/">Lawmology</Navbar.Brand>
             <Nav className="mr-auto">
-                <Nav.Link>Categories</Nav.Link>
-                <Nav.Link>About</Nav.Link>
+                <Nav.Link href='/categories'>Categories</Nav.Link>
+                <Nav.Link href='/about'>About</Nav.Link>
             </Nav>
         </Navbar>
     )

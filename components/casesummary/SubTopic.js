@@ -23,7 +23,7 @@ const CaseFact = (props) => {
             <Card style={cardStyle}>
                 <Accordion.Toggle className={caseStyle.subTopicTitle} as={Card.Header} eventKey={props.name}>
                     {props.content.title}
-                    {isHolding() && <TagButtons tags = {props.content.tags}/>}
+                    {isHolding() && <TagButtons tag = {props.content.tag}/>}
                 </Accordion.Toggle>
                 <Accordion.Collapse eventKey={props.name}>
                     <Card.Body className="subtopic">

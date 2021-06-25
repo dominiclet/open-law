@@ -42,9 +42,21 @@ const caseEditPage = () => {
 
         return(
         <div className={caseEditStyle.editor}>
-            <p className={caseEditStyle.editTimeStamp}>
-                Last edited by [someone] at {date.toLocaleTimeString("en-SG")} on {date.toLocaleDateString("en-SG")}
-            </p>
+            {(() => {
+                if (caseData.lastEdit == "") {
+                    return (
+                        <p className={caseEditStyle.editTimeStamp}>
+                            This is the first time this case is being edited.
+                        </p>
+                    );
+                } else {
+                    return (
+                        <p className={caseEditStyle.editTimeStamp}>
+                            Last edited by [someone] at {date.toLocaleTimeString("en-SG")} on {date.toLocaleDateString("en-SG")}
+                        </p>
+                    );
+                }
+            })()}
             <TitleEditor 
             caseId={caseData._id} 
             caseName={caseData.name} 

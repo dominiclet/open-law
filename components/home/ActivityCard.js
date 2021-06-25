@@ -6,7 +6,7 @@ import { ArrowRightShort } from 'react-bootstrap-icons';
 const ActivityCard = (props) => {
 	// props.caseId: unique case ID
 	// props.caseName: The literal case name 
-	// props.action: The activity that was undertaken (EDIT, DELETE, ADD)
+	// props.action: The activity that was undertaken (EDIT, DELETE, ADDTOPIC, ADDCASE)
 	// props.subtopic: The affected subtopic (applicable if DELETE or EDIT)
 	// props.time: The time of activity
 
@@ -40,19 +40,29 @@ const ActivityCard = (props) => {
 						if (props.action == "EDIT") {
 							return (
 							<p className={homeStyle.activityCardWords}>
-								[Someone] edited <b>{props.subtopic}</b> in <i>{props.caseName}</i>
+								[Someone] edited <b>
+									{props.subtopic ? props.subtopic : "the case name/citation"}
+								</b> in <i>{props.caseName}</i>
 							</p>
 							);
 						} else if (props.action == "DELETE") {
 							return (
 								<p className={homeStyle.activityCardWords}>
-									[Someone] deleted <b>{props.subtopic}</b> in <i>{props.caseName}</i>
+									[Someone] deleted <b>
+										{!props.subtopic ? "a topic" : props.subtopic}
+										</b> in <i>{props.caseName}</i>
 								</p>
 							);
-						} else if (props.action == "ADD") {
+						} else if (props.action == "ADDTOPIC") {
 							return (
 								<p className={homeStyle.activityCardWords}>
 									[Someone] added a new topic to <i>{props.caseName}</i>
+								</p>
+							);
+						} else if (props.action == "ADDCASE") {
+							return (
+								<p className={homeStyle.activityCardWords}>
+									[Someone] added a new case summary <i>{props.caseName}</i>
 								</p>
 							);
 						}

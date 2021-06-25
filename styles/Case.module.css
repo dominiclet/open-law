@@ -41,6 +41,24 @@
 }
 
 .subTopicTitle:hover {
-  background-color: #C0C0C0;
+  background-color: #c0c0c0;
   cursor: pointer;
+}
+
+.tags {
+  background-color: rgb(250, 242, 167);
+  text-align: center;
+  float: right;
+  margin: 5px;
+}
+
+.side {
+  display: grid;
+  grid-template-columns: 1fr 1fr; /*fr: fractional unit of space*/
+}
+
+.relatedCases {
+  width: 90%;
+  margin-left: auto;
+  margin-right: 0;
 }

@@ -7,7 +7,7 @@ const Header = () => {
                 <span>Open Law</span>
             </h1>
             <p className={headerStyles.description}>
-                Lawmology
+                
             </p>
         </div>
     )

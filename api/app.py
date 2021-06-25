@@ -12,17 +12,9 @@ cors = CORS(app)
 app.config["MONGO_URI"] = "mongodb://localhost:27017/open_law"
 mongo = PyMongo(app)
 
-<<<<<<< HEAD
-=======
 # Initialize recent edits queue
 # Activity is stored as {"id": , "case_name": , "action": , "subtopic": , "time": }
 recent_edits = Queue(10)
-
-@app.route("/cases/<caseId>")
-def getcase(caseId):
-    print(caseId)
-    data = mongo.db.case_summaries.find_one_or_404({"_id" : ObjectId(caseId)})
-    return JSONEncoder().encode(data)
 
 # For edit case summary page
 """
@@ -140,28 +132,14 @@ Returns the list of recent activities currently in the queue
 @app.route("/recentActivity", methods=['GET'])
 def recent_activity():
     return json.dumps(list(recent_edits.queue))
->>>>>>> dom
 
 @app.route("/")
 def test():
     return "Success!"
 
-
-"""
 @app.route("/testmongo")
 def testmongo():
-<<<<<<< HEAD
     return JSONEncoder().encode(mongo.db.case_summaries.find_one())
-
-
-@app.route("/cases")
-def getcases():
-    data = mongo.db.case_summaries.find()
-    case_information = []
-    for i in data:
-        case_information.append(i)
-    return JSONEncoder().encode(case_information)
-
 
 @app.route("/categories")
 def getcategories():
@@ -173,16 +151,10 @@ def getcategories():
                 categories.append(j)
     return JSONEncoder().encode(categories)
 
-
 @app.route("/cases/<caseId>")
 def getcase(caseId):
     data = mongo.db.case_summaries.find_one_or_404({"_id": ObjectId(caseId)})
     return JSONEncoder().encode(data)
-
-=======
-    return JSONEncoder().encode(mongo.db.inventory.find_one())
-"""
->>>>>>> dom
 
 # For JSON encoding of MongoDB ObjectId field
 class JSONEncoder(json.JSONEncoder):

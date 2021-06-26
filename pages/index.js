@@ -18,6 +18,7 @@ export default function Home(props) {
       time={activity.time}
     />);
   })
+  recentActivityBuilder.reverse();
 
   return (
     <div className={homeStyle.container1}>

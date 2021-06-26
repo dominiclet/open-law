@@ -95,7 +95,7 @@ def add_new_topic(caseId, category):
     recent_edits.put({
         "id": caseId,
         "case_name": data["name"],
-        "action": "ADD",
+        "action": "ADDTOPIC",
         "time": data["lastEdit"]
     })
     return empty_entry, 200
@@ -132,6 +132,33 @@ Returns the list of recent activities currently in the queue
 @app.route("/recentActivity", methods=['GET'])
 def recent_activity():
     return json.dumps(list(recent_edits.queue))
+
+"""
+Adds a new case with mostly empty data.
+Case name must be provided.
+"""
+@app.route("/addNewCase", methods=['POST'])
+def add_new_case():
+    post_data = json.loads(request.data)
+
+    new_doc = {
+        "name": post_data["caseName"],
+        "citation": [],
+        "tag": [],
+        "lastEdit": "",
+        "facts": [],
+        "holding": []
+    }
+    _id = mongo.db.case_summaries.insert(new_doc)
+
+    # Update recent activity queue
+    recent_edits.put({
+        "id": str(_id),
+        "case_name": new_doc["name"],
+        "action": "ADDCASE",
+        "time": post_data["time"]
+    })
+    return str(_id), 200
 
 @app.route("/")
 def test():

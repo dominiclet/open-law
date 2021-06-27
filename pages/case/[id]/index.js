@@ -8,7 +8,7 @@ import OuterCase from '../../../components/casesummary/OuterCase'
 import RelatedCases from '../../../components/casesummary/RelatedCases'
 import 'bootstrap/dist/css/bootstrap.min.css'
 
-const caseDisplayPage = (props) => {
+const caseDisplayPage = () => {
     const router = useRouter();
 
     // State to store case data

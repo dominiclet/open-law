@@ -1,0 +1,12 @@
+.header {
+  display: flex;
+  justify-content: center;
+}
+
+.body {
+  width: 800px;
+}
+
+.button {
+  float: right;
+}

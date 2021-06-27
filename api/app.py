@@ -148,11 +148,29 @@ def recent_activity():
 
 
 """
+Returns the list of cases for each tag 
+"""
+
+
+@app.route("/casesTag/<queryTag>/<limit>", methods=['GET'])
+def get_cases_by_tag(queryTag, limit):
+    data = mongo.db.case_summaries.find({"tag": queryTag})
+    cases = []
+    i = 0
+    limit = int(limit)
+    while limit > 0 and i < data.count():
+        cases.append(data[i])
+        i += 1
+        limit -= 1
+    return JSONEncoder().encode(cases)
+
+
+"""
 Returns list of categories (based on tags of cases)
 """
 
 
-@app.route("/categories")
+@app.route("/categories", methods=['GET'])
 def getcategories():
     data = mongo.db.case_summaries.find()
     categories = []
@@ -168,7 +186,7 @@ Returns individual case information
 """
 
 
-@app.route("/cases/<caseId>")
+@app.route("/cases/<caseId>", methods=['GET'])
 def getcase(caseId):
     data = mongo.db.case_summaries.find_one_or_404({"_id": ObjectId(caseId)})
     return JSONEncoder().encode(data)

@@ -24,8 +24,6 @@ caseId: Unique ID of the case
 category: facts/holding
 index: The index where the subtopic is located in the JSON array
 """
-
-
 @app.route("/editSubTopic/<caseId>/<category>/<index>", methods=['POST'])
 def edit_sub_topic(caseId, category, index):
     # Query by object ID of case
@@ -59,8 +57,6 @@ def edit_sub_topic(caseId, category, index):
 """
 Handles posting of case name and citation
 """
-
-
 @app.route("/editCaseIdentifiers/<caseId>", methods=['POST'])
 def edit_case_identifiers(caseId):
     # Query by object ID of case
@@ -81,8 +77,6 @@ def edit_case_identifiers(caseId):
 """
 Add a new sub-topic entry
 """
-
-
 @app.route("/addNewTopic/<caseId>/<category>", methods=['POST'])
 def add_new_topic(caseId, category):
     # Query case
@@ -115,8 +109,6 @@ caseId: Unique case ID
 category: facts/holding
 index: Index to identify the sub-topic entry that is deleted
 """
-
-
 @app.route("/deleteTopic/<caseId>/<category>/<index>", methods=['DELETE'])
 def delete_topic(caseId, category, index):
     query = {"_id": ObjectId(caseId)}
@@ -140,8 +132,6 @@ def delete_topic(caseId, category, index):
 """
 Returns the list of recent activities currently in the queue
 """
-
-
 @app.route("/recentActivity", methods=['GET'])
 def recent_activity():
     return json.dumps(list(recent_edits.queue))
@@ -173,15 +163,9 @@ def add_new_case():
     })
     return str(_id), 200
 
-@app.route("/")
-def test():
-    return "Success!"
-
 """
 Returns list of categories (based on tags of cases)
 """
-
-
 @app.route("/categories")
 def getcategories():
     data = mongo.db.case_summaries.find()
@@ -196,8 +180,6 @@ def getcategories():
 """
 Returns individual case information
 """
-
-
 @app.route("/cases/<caseId>")
 def getcase(caseId):
     data = mongo.db.case_summaries.find_one_or_404({"_id": ObjectId(caseId)})
@@ -216,8 +198,6 @@ class JSONEncoder(json.JSONEncoder):
 """
 Test methods
 """
-
-
 @app.route("/")
 def test():
     return "Success!"

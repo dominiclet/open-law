@@ -1,6 +1,9 @@
-from flask import Flask, request, Response
+from flask import Flask, request, Response, jsonify
 from flask_cors import CORS
 from flask_pymongo import PyMongo
+
+from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required, JWTManager
+
 from bson import ObjectId
 from queue import Queue
 import json
@@ -15,6 +18,31 @@ mongo = PyMongo(app)
 # Initialize recent edits queue
 # Activity is stored as {"id": , "case_name": , "action": , "subtopic": , "time": }
 recent_edits = Queue(10)
+
+#### Authentication setup ####
+# Set this as an environment variable (here temporarily for testing)
+app.config["JWT_SECRET_KEY"] = "ivanlikesgayporn"
+jwt = JWTManager(app)
+
+"""
+Handles login
+"""
+@app.route("/login", methods=['POST'])
+def login():
+    username = request.json.get("username")
+    password = request.json.get("password")
+    if username != "test" or password != "test":
+        return jsonify({"msg": "Bad username or password"}), 401
+    access_token = create_access_token(identity=username)
+    return jsonify(access_token=access_token)
+
+"""
+Allows pinging of backend to verify JWT
+"""
+@app.route("/token/ping", methods=['POST'])
+@jwt_required()
+def ping():
+    return "", 200
 
 # For edit case summary page
 """
@@ -141,6 +169,7 @@ Adds a new case with mostly empty data.
 Case name must be provided.
 """
 @app.route("/addNewCase", methods=['POST'])
+@jwt_required()
 def add_new_case():
     post_data = json.loads(request.data)
 

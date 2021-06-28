@@ -4,8 +4,9 @@ import RecentEditCard from '../components/home/RecentEditCard';
 import homeStyle from '../styles/Home.module.css';
 import { apiRoot } from '../config';
 import axios from 'axios';
+import withAuth  from '../helpers/withAuth';
 
-export default function Home(props) {
+const Home = (props) => {
   
   // Build recent activity
   let recentActivityBuilder = [];
@@ -33,6 +34,8 @@ export default function Home(props) {
     </div>
   )
 }
+
+export default withAuth(Home);
 
 export async function getStaticProps() {
   const res = await axios.get(apiRoot + '/recentActivity');

@@ -7,12 +7,15 @@ import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import axios from 'axios';
 import { apiRoot } from '../config';
+import { useRouter } from 'next/router';
 
 const Layout = (props) => {
     // States to handle add case modal
     const [show, setShow] = useState(false);
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
+
+    const router = useRouter();
 
     // Handles submitting new case
     const handleSubmit = () => {
@@ -24,13 +27,24 @@ const Layout = (props) => {
                 caseName: caseName,
                 time: new Date()
             };
-            axios.post(apiRoot + "/addNewCase", data)
-                .then(res => {
-                    if (res.status == 200) {
-                        // Redirect to the newly created case's edit page
-                        window.location.href = `/case/${res.data}/edit`;
-                    }
-                });
+            
+            // Retrieve token from storage
+            const token = localStorage.getItem("jwt-token");
+
+            if (token) {
+                axios.post(apiRoot + "/addNewCase", data, {
+                    headers: {'Authorization': 'Bearer ' + token}
+                }).then(res => {
+                        if (res.status == 200) {
+                            // Redirect to the newly created case's edit page
+                            router.push(`/case/${res.data}/edit`);
+                        } else if (res.status == 401) {
+                            router.push("/login");
+                        }
+                    });
+            } else {
+                router.push("/login");
+            }
         }
     }
 

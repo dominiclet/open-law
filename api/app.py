@@ -24,11 +24,13 @@ caseId: Unique ID of the case
 category: facts/holding
 index: The index where the subtopic is located in the JSON array
 """
+
+
 @app.route("/editSubTopic/<caseId>/<category>/<index>", methods=['POST'])
 def edit_sub_topic(caseId, category, index):
     # Query by object ID of case
     query = {"_id": ObjectId(caseId)}
-    # Fetch original data then update 
+    # Fetch original data then update
     data = mongo.db.case_summaries.find_one_or_404(query)
     updated_data = json.loads(request.data)
     # Update topic title
@@ -45,17 +47,20 @@ def edit_sub_topic(caseId, category, index):
 
     # Update recent edit queue
     recent_edits.put({
-        "id": caseId, 
-        "case_name": data["name"], 
+        "id": caseId,
+        "case_name": data["name"],
         "action": "EDIT",
         "subtopic": updated_data["data"]["topic"],
         "time": updated_data["data"]["time"]
     })
     return "", 200
 
+
 """
 Handles posting of case name and citation
 """
+
+
 @app.route("/editCaseIdentifiers/<caseId>", methods=['POST'])
 def edit_case_identifiers(caseId):
     # Query by object ID of case
@@ -64,7 +69,7 @@ def edit_case_identifiers(caseId):
     data = mongo.db.case_summaries.find_one_or_404(query)
     updated_data = json.loads(request.data)
     # Update case name
-    data["name"] =  updated_data["data"]["name"]
+    data["name"] = updated_data["data"]["name"]
     # Update citations
     data["citation"] = updated_data["data"]["citation"]
     # Update last edited time
@@ -76,6 +81,8 @@ def edit_case_identifiers(caseId):
 """
 Add a new sub-topic entry
 """
+
+
 @app.route("/addNewTopic/<caseId>/<category>", methods=['POST'])
 def add_new_topic(caseId, category):
     # Query case
@@ -84,7 +91,7 @@ def add_new_topic(caseId, category):
     # Need to add empty tag array and set ratio if category is holding
     if category == "holding":
         empty_entry = {"title": "", "content": "", "tag": [], "ratio": False}
-    else: 
+    else:
         empty_entry = {"title": "", "content": ""}
     data[category].append(empty_entry)
     mongo.db.case_summaries.replace_one(query, data, True)
@@ -100,6 +107,7 @@ def add_new_topic(caseId, category):
     })
     return empty_entry, 200
 
+
 """
 Delete a sub-topic entry
 
@@ -107,6 +115,8 @@ caseId: Unique case ID
 category: facts/holding
 index: Index to identify the sub-topic entry that is deleted
 """
+
+
 @app.route("/deleteTopic/<caseId>/<category>/<index>", methods=['DELETE'])
 def delete_topic(caseId, category, index):
     query = {"_id": ObjectId(caseId)}
@@ -121,14 +131,17 @@ def delete_topic(caseId, category, index):
     recent_edits.put({
         "id": caseId,
         "case_name": data["name"],
-        "action": "DELETE", 
+        "action": "DELETE",
         "time": data["lastEdit"]
     })
     return json.dumps(data[category]), 200
 
+
 """
 Returns the list of recent activities currently in the queue
 """
+
+
 @app.route("/recentActivity", methods=['GET'])
 def recent_activity():
     return json.dumps(list(recent_edits.queue))
@@ -164,19 +177,26 @@ def add_new_case():
 def test():
     return "Success!"
 
-@app.route("/testmongo")
-def testmongo():
-    return JSONEncoder().encode(mongo.db.case_summaries.find_one())
+"""
+Returns list of categories (based on tags of cases)
+"""
+
 
 @app.route("/categories")
 def getcategories():
     data = mongo.db.case_summaries.find()
     categories = []
     for i in data:
-        for j in i["tags"]:
+        for j in i["tag"]:
             if j not in categories:
                 categories.append(j)
     return JSONEncoder().encode(categories)
+
+
+"""
+Returns individual case information
+"""
+
 
 @app.route("/cases/<caseId>")
 def getcase(caseId):
@@ -184,8 +204,25 @@ def getcase(caseId):
     return JSONEncoder().encode(data)
 
 # For JSON encoding of MongoDB ObjectId field
+
+
 class JSONEncoder(json.JSONEncoder):
     def default(self, o):
         if isinstance(o, ObjectId):
             return str(o)
         return json.JSONEncoder.default(self, o)
+
+
+"""
+Test methods
+"""
+
+
+@app.route("/")
+def test():
+    return "Success!"
+
+
+@app.route("/testmongo")
+def testmongo():
+    return JSONEncoder().encode(mongo.db.case_summaries.find_one())

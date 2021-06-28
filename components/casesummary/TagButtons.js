@@ -5,7 +5,7 @@ import caseStyle from '../../styles/Case.module.css'
 const TagButtons = (props) => {
     return (
         <>
-            {props.tags.map((tag) => (
+            {props.tag.map((tag) => (
                 <Button variant="outline-primary" className={caseStyle.tags} 
                         type = "button"
                         onclick = "buttonFunction();"

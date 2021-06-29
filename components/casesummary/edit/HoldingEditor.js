@@ -8,6 +8,7 @@ import TagEditor from './TagEditor';
 import { apiRoot } from '../../../config';
 import axios from 'axios';
 import { Upload } from 'react-bootstrap-icons';
+import { useRouter } from 'next/router';
 
 // ReactQuill is only imported at client side 
 // due to issues with next's server-side rendering
@@ -26,6 +27,8 @@ const HoldingEditor = (props) => {
     // props.content: The content of this entry
     // props.isRatio: Boolean value indicating whether this entry is ratio (true) or obiter
     // props.tags: Array of tags relevant to this subtopic holding
+
+    const router = useRouter();
     
     // Width needs to be fixed otherwise text causes DOM elements to resize
     const styling = {
@@ -51,14 +54,24 @@ const HoldingEditor = (props) => {
             tag: tags,
             time: new Date().toJSON()
         };
+
+        // Retrieve token from local storage
+        const accessToken = localStorage.getItem("jwt-token");
         
         // Sends a POST request to the server
         axios.post(apiRoot + `/editSubTopic/${props.caseId}/holding/${props.index}`, 
-        { data })
-            .then(res => {
+        { data }, {
+            headers: {'Authorization': 'Bearer ' + accessToken}
+        }).then(res => {
                 // Do some kind of function that informs user that entry is updated here
                 console.log(res.status);
-            })
+        }).catch(e => {
+            console.error(e);
+            if (accessToken) {
+                localStorage.removeItem("jwt-token");
+            }
+            router.push("/login");
+        })
     }
 
     // Function to handle change of sub-topic title

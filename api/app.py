@@ -53,6 +53,7 @@ category: facts/holding
 index: The index where the subtopic is located in the JSON array
 """
 @app.route("/editSubTopic/<caseId>/<category>/<index>", methods=['POST'])
+@jwt_required()
 def edit_sub_topic(caseId, category, index):
     # Query by object ID of case
     query = {"_id": ObjectId(caseId)}
@@ -109,6 +110,7 @@ def edit_case_identifiers(caseId):
 Add a new sub-topic entry
 """
 @app.route("/addNewTopic/<caseId>/<category>", methods=['POST'])
+@jwt_required()
 def add_new_topic(caseId, category):
     # Query case
     query = {"_id": ObjectId(caseId)}
@@ -119,10 +121,12 @@ def add_new_topic(caseId, category):
     else:
         empty_entry = {"title": "", "content": ""}
     data[category].append(empty_entry)
-    mongo.db.case_summaries.replace_one(query, data, True)
 
     # Update last edited time
     data["lastEdit"] = json.loads(request.data)["data"]["time"]
+
+    mongo.db.case_summaries.replace_one(query, data, True)
+
     # Update recent activity queue
     recent_edits.put({
         "id": caseId,
@@ -141,15 +145,17 @@ category: facts/holding
 index: Index to identify the sub-topic entry that is deleted
 """
 @app.route("/deleteTopic/<caseId>/<category>/<index>", methods=['DELETE'])
+@jwt_required()
 def delete_topic(caseId, category, index):
     query = {"_id": ObjectId(caseId)}
     data = mongo.db.case_summaries.find_one_or_404(query)
     # Remove specified entry
     data[category].pop(int(index))
-    mongo.db.case_summaries.replace_one(query, data, True)
-
     # Update last edited time
     data["lastEdit"] = json.loads(request.data)["time"]
+
+    mongo.db.case_summaries.replace_one(query, data, True)
+
     # Update recent activity queue
     recent_edits.put({
         "id": caseId,

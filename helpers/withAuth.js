@@ -23,10 +23,11 @@ const withAuth = (WrappedComponent) => {
 				}).then(res => {
 					if (res.status == 200) {
 						setVerified(true);
-					} else if (res.status == 401) {
-						localStorage.removeItem("jwt-token");
-						router.push("/login");
-					}
+					} 
+				}).catch(e => {
+					// If error, reroute to login page
+					localStorage.removeItem("jwt-token");
+					router.push("/login");
 				});
 			}
 		}, []);

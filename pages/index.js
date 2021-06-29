@@ -5,21 +5,49 @@ import homeStyle from '../styles/Home.module.css';
 import { apiRoot } from '../config';
 import axios from 'axios';
 import withAuth  from '../helpers/withAuth';
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/router';
 
 const Home = (props) => {
+  const router = useRouter();
+
+  // State to store page data
+  const [pageData, setPageData] = useState();
+  // State to check if data has loaded
+  const [dataLoaded, setDataLoaded] = useState(false);
+
+  // Fetch page data
+  useEffect(() => {
+    const token = localStorage.getItem("jwt-token");
+    if (!token) router.push("/login");
+    else {
+      axios.get(apiRoot + "/recentActivity", {
+        headers: {'Authorization': 'Bearer ' + token}
+      }).then(res => {
+          setPageData(res.data);
+          setDataLoaded(true);
+        }).catch(err => console.log(err));
+    }
+  }, []);
   
-  // Build recent activity
+  // Recent activity component
   let recentActivityBuilder = [];
-  props.data.map((activity) => {
-    recentActivityBuilder.push(<ActivityCard 
-      caseId={activity.id}
-      caseName={activity.case_name}
-      action={activity.action}
-      subtopic={activity.subtopic}
-      time={activity.time}
-    />);
-  })
-  recentActivityBuilder.reverse();
+
+  if (!dataLoaded) {
+    recentActivityBuilder.push(<div>Loading...</div>);
+  } else {
+    // Build recent activity
+    pageData.map((activity) => {
+      recentActivityBuilder.push(<ActivityCard 
+        caseId={activity.id}
+        caseName={activity.case_name}
+        action={activity.action}
+        subtopic={activity.subtopic}
+        time={activity.time}
+      />);
+    })
+    recentActivityBuilder.reverse();
+  }
 
   return (
     <div className={homeStyle.container1}>
@@ -36,11 +64,3 @@ const Home = (props) => {
 }
 
 export default withAuth(Home);
-
-export async function getStaticProps() {
-  const res = await axios.get(apiRoot + '/recentActivity');
-  const data = res.data;
-  return {
-    props: { data }
-  }
-}

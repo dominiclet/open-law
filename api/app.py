@@ -86,6 +86,7 @@ def edit_sub_topic(caseId, category, index):
 Handles posting of case name and citation
 """
 @app.route("/editCaseIdentifiers/<caseId>", methods=['POST'])
+@jwt_required()
 def edit_case_identifiers(caseId):
     # Query by object ID of case
     query = {"_id": ObjectId(caseId)}
@@ -99,6 +100,8 @@ def edit_case_identifiers(caseId):
     # Update last edited time
     data["lastEdit"] = updated_data["data"]["time"]
     mongo.db.case_summaries.replace_one(query, data, True)
+
+    # TODO: UPDATE RECENT EDITS HERE
     return "", 200
 
 
@@ -161,6 +164,7 @@ def delete_topic(caseId, category, index):
 Returns the list of recent activities currently in the queue
 """
 @app.route("/recentActivity", methods=['GET'])
+@jwt_required()
 def recent_activity():
     return json.dumps(list(recent_edits.queue))
 

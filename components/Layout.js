@@ -38,6 +38,7 @@ const Layout = (props) => {
                         if (res.status == 200) {
                             // Redirect to the newly created case's edit page
                             router.push(`/case/${res.data}/edit`);
+                            handleClose();
                         } else if (res.status == 401) {
                             router.push("/login");
                         }

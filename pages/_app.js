@@ -1,5 +1,5 @@
 import Layout from '../components/Layout';
-import LoginLayout from '../components/LoginLayout';
+import NoNavbarLayout from '../components/NoNavbarLayout';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'react-quill/dist/quill.bubble.css'; // CSS for Quill
 import '../styles/globals.css';
@@ -9,12 +9,12 @@ function MyApp({ Component, pageProps }) {
   const router = useRouter();
 
   // Paths that do not require authentication
-  const noAuth = ["/login"];
+  const noAuth = ["/login", "/register"];
   if (noAuth.includes(router.pathname)) {
     return (
-      <LoginLayout>
+      <NoNavbarLayout>
         <Component {...pageProps} />
-      </LoginLayout>
+      </NoNavbarLayout>
     );
   }
 

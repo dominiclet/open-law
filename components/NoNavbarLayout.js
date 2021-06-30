@@ -1,6 +1,6 @@
 import styles from '../styles/Layout.module.css';
 
-const LoginLayout = (props) => {
+const NoNavbarLayout = (props) => {
 
 	return (
 		<div className={styles.container}>
@@ -11,4 +11,4 @@ const LoginLayout = (props) => {
 	);
 }
 
-export default LoginLayout
+export default NoNavbarLayout 

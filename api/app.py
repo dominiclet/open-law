@@ -6,6 +6,7 @@ from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_requir
 
 from bson import ObjectId
 from queue import Queue
+from datetime import timedelta
 import json
 
 app = Flask(__name__)
@@ -23,6 +24,7 @@ recent_edits = Queue(10)
 # Set this as an environment variable (here temporarily for testing)
 app.config["JWT_SECRET_KEY"] = "ivanlikesgayporn"
 jwt = JWTManager(app)
+# TOKEN_EXPIRY = timedelta(minutes=15)
 
 """
 Handles login
@@ -31,10 +33,17 @@ Handles login
 def login():
     username = request.json.get("username")
     password = request.json.get("password")
-    if username != "test" or password != "test":
+    data = mongo.db.users.find_one({"username": username})
+    if not data or data["password"] != password:
         return jsonify({"msg": "Bad username or password"}), 401
-    access_token = create_access_token(identity=username)
-    return jsonify(access_token=access_token)
+    else:
+        access_token = create_access_token(identity=username)
+        return jsonify(access_token=access_token)
+
+"""
+Handles logout
+"""
+# Maybe set up a blocklist? Is there a need? 
 
 """
 Allows pinging of backend to verify JWT

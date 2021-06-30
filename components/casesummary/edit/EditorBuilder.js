@@ -46,7 +46,7 @@ const EditorBuilder = (props) => {
                 }).catch(e => {
                     console.error(e);
                     if (accessToken) {
-                        localStorage.deleteItem("jwt-token");
+                        localStorage.removeItem("jwt-token");
                     }
                     router.push("/login");
                 });

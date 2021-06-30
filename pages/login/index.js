@@ -1,6 +1,7 @@
 import axios from "axios";
 import { apiRoot } from "../../config";
 import { useRouter } from 'next/router';
+import loginStyle from '../../styles/Login.module.css';
 
 
 const loginPage = () => {
@@ -25,13 +26,37 @@ const loginPage = () => {
 			});
 	};
 
+	// Handle enter functionality 
+	const handleEnterKey = (e) => {
+		if (e.key === "Enter") {
+			handleSubmit();
+		}
+	}
+
 	return (
-		<div>
-			Username
-			<input id="username"/><br/>
-			Password
-			<input id="password"/><br />
-			<button onClick={handleSubmit}>Submit</button>
+		<div className={loginStyle.loginContainer}>
+			<div className={loginStyle.logoContainer}>
+				Login to Pornhub
+			</div>
+			<div className={loginStyle.inputContainer}>
+				<input 
+					autoFocus
+					className={loginStyle.input} 
+					onKeyPress={handleEnterKey}
+					id="username" 
+					placeholder="Username" 
+				/>
+			</div>
+			<div className={loginStyle.inputContainer}>
+				<input 
+					className={loginStyle.input} 
+					onKeyPress={handleEnterKey}
+					id="password" 
+					placeholder="Password" 
+					type="password" 
+				/>
+			</div>
+			<button className={loginStyle.submit} onClick={handleSubmit}>LOGIN</button>
 		</div>
 	);
 }

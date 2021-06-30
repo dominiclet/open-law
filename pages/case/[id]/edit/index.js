@@ -5,7 +5,6 @@ import axios from 'axios';
 import { apiRoot } from '../../../../config';
 import { useEffect, useState } from 'react';
 import EditorBuilder from '../../../../components/casesummary/edit/EditorBuilder';
-import withAuth from '../../../../helpers/withAuth';
 
 const caseEditPage = () => {
     const router = useRouter();
@@ -69,4 +68,4 @@ const caseEditPage = () => {
         );
     }
 }
- export default withAuth(caseEditPage)
+ export default caseEditPage

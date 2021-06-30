@@ -1,4 +1,3 @@
-import Header from './Header'
 import styles from '../styles/Layout.module.css'
 import NavigationBar from './NavigationBar'
 import { useState } from 'react';
@@ -8,6 +7,7 @@ import Form from 'react-bootstrap/Form';
 import axios from 'axios';
 import { apiRoot } from '../config';
 import { useRouter } from 'next/router';
+import withAuth from '../helpers/withAuth';
 
 const Layout = (props) => {
     // States to handle add case modal
@@ -90,4 +90,4 @@ const Layout = (props) => {
     )
 }
 
-export default Layout
+export default withAuth(Layout)

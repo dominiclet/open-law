@@ -19,8 +19,10 @@ const Home = (props) => {
   // Fetch page data
   useEffect(() => {
     const token = localStorage.getItem("jwt-token");
-    if (!token) router.push("/login");
-    else {
+    if (!token) {
+      console.error("No login token!");
+      router.push("/login");
+    } else {
       axios.get(apiRoot + "/recentActivity", {
         headers: {'Authorization': 'Bearer ' + token}
       }).then(res => {
@@ -63,4 +65,4 @@ const Home = (props) => {
   )
 }
 
-export default withAuth(Home);
+export default Home;

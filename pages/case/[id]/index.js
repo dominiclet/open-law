@@ -52,4 +52,4 @@ const caseDisplayPage = (props) => {
     }
 }
 
-export default withAuth(caseDisplayPage)
+export default caseDisplayPage

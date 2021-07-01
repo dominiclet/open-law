@@ -5,7 +5,7 @@
 	border-radius: 5px;
 	box-shadow: 0 5px 10px 0 rgb(0 0 0 / 10%);
 	display: grid;
-	grid-template-rows: 40% 10% 10% 20%;
+	grid-template-rows: 40% 10% 10% 10% 10%;
 }
 
 .logoContainer {
@@ -49,4 +49,10 @@
 	background-color: #343a40;
 	color:white;
 	transition-duration: 0.3s;
+}
+
+.warning {
+	color: red;
+	font-size: 0.8rem;
+	justify-self: center;
 }

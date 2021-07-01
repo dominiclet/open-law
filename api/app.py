@@ -7,6 +7,7 @@ from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_requir
 from bson import ObjectId
 from queue import Queue
 from datetime import timedelta
+from werkzeug.security import generate_password_hash, check_password_hash
 import json
 
 app = Flask(__name__)
@@ -34,7 +35,7 @@ def login():
     username = request.json.get("username")
     password = request.json.get("password")
     data = mongo.db.users.find_one({"username": username})
-    if not data or data["password"] != password:
+    if not data or not check_password_hash(data.get("password"), password):
         return jsonify({"msg": "Bad username or password"}), 401
     else:
         access_token = create_access_token(identity=username)
@@ -44,6 +45,21 @@ def login():
 Handles logout
 """
 # Maybe set up a blocklist? Is there a need? 
+
+"""
+Handles registration of user
+"""
+@app.route("/register", methods=['POST'])
+def register():
+    data = request.json
+    new_user = {
+        "name": data.get("name"),
+        "year": data.get("year"),
+        "username": data.get("username"),
+        "password": generate_password_hash(data.get("password"))
+    }
+    _id = mongo.db.users.insert(new_user)
+    return str(_id), 200
 
 """
 Allows pinging of backend to verify JWT

@@ -21,7 +21,10 @@ const loginPage = () => {
 				} 
 			}).catch((e) => {
 				if (e.response.status == 401) {
-					console.log("Bad username or password");
+					document.getElementById("username").style.borderColor = "red";
+					document.getElementById("password").style.borderColor = "red";
+					document.getElementById("warning").innerHTML = "Wrong username or password";
+					console.error("Bad username or password");
 				}
 			});
 	};
@@ -56,6 +59,7 @@ const loginPage = () => {
 					type="password" 
 				/>
 			</div>
+			<div id="warning" className={loginStyle.warning}></div>
 			<button className={loginStyle.submit} onClick={handleSubmit}>LOGIN</button>
 		</div>
 	);

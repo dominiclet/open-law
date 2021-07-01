@@ -1,8 +1,13 @@
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import styles from '../../styles/Register.module.css';
+import { apiRoot } from '../../config';
+import axios from 'axios';
+import { useRouter } from 'next/router';
 
 const registerPage = () => {
+	const router = useRouter();
+
 	// For descriptions in the form, reduces font size
 	const mutedTextStyle = {
 		"fontSize": "0.8rem"
@@ -26,48 +31,74 @@ const registerPage = () => {
 	}
 
 	// Handle submit button
-	const handleSubmit = () => {
+	const handleSubmit = (event) => {
+		event.preventDefault();
+
+		const name = document.getElementById("name");
+		const username = document.getElementById("username");
+		const password = document.getElementById("password");
+		const confirmPw = document.getElementById("confirmpw");
+
 		document.getElementById("fullNameNote").innerHTML = null;
 		document.getElementById("usernameNote").innerHTML = null;
 		document.getElementById("passwordNote").innerHTML = null;
 		document.getElementById("confirmpwNote").innerHTML = null;
 		let noError = true;
-		if (document.getElementById("name").value == 0) {
+		if (name.value == 0) {
 			// Check that full name is not empty
 			document.getElementById("fullNameNote").innerHTML = "Full Name is required.";
 			noError = false;
 		}
-		if (document.getElementById("username").value == 0) {
+		if (username.value == 0) {
 			// Check that username is not empty
 			document.getElementById("usernameNote").innerHTML = "Username is required.";
 			noError = false;
 		}
-		if (document.getElementById("username").value.includes(" ")) {
+		if (username.value.includes(" ")) {
 			// Do not allow spaces in username
 			document.getElementById("usernameNote").innerHTML = "No spaces in username.";
 			noError = false;
 		}
-		if (document.getElementById("username").value.length > 30) {
+		if (username.value.length > 30) {
 			// Limit length of username
 			document.getElementById("usernameNote").innerHTML = "Username must be less than 30 characters long.";
 			noError = false;
 		}
-		if (document.getElementById("password").value.length < 8) {
+		if (password.value.length < 8) {
 			// Check that password is at least 8 characters long
 			document.getElementById("passwordNote").innerHTML = "Password must be at least 8 characters long.";
 			noError = false;
 		}
-		if (document.getElementById("password").value !== document.getElementById("confirmpw").value) {
+		if (password.value !== confirmPw.value) {
 			// Check that confirm password is the same as password
 			document.getElementById("confirmpwNote").innerHTML = "Password does not match.";
 			noError = false;
+		}
+
+		if (noError) {
+			const data = {
+				"name": name.value,
+				"year": document.getElementById("academicYear").value,
+				"username": username.value,
+				"password": password.value
+			}
+
+			axios.post(apiRoot + "/register", data)
+				.then(res => {
+					if (res.status == 200) {
+						alert("Registration successful");
+						router.push("/login");
+					}
+				}).catch(e => {
+					console.error(e);
+				});
 		}
 	}
 
 	return (
 		<div className={styles.formContainer}>
 			<h4>Register</h4>
-			<Form>
+			<Form onSubmit={handleSubmit}>
 				<Form.Group controlId="name">
 					<Form.Label>Full name</Form.Label>
 					<Form.Control type="text" placeholder="Enter full name" />
@@ -104,7 +135,7 @@ const registerPage = () => {
 					<Form.Control type="password" placeholder="Enter password again" id="confirmpw" onChange={handleEnterPassword} />
 					<Form.Text id="confirmpwNote" style={warningStyle}></Form.Text>
 				</Form.Group>
-				<Button onClick={handleSubmit}>Submit</Button>
+				<Button type="submit">Submit</Button>
 			</Form>
 		</div>
 	);

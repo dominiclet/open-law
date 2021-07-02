@@ -100,6 +100,7 @@ def edit_sub_topic(caseId, category, index):
     # Update recent edit queue
     recent_edits.put({
         "id": caseId,
+        "name": get_jwt_identity(),
         "case_name": data["name"],
         "action": "EDIT",
         "subtopic": updated_data["data"]["topic"],
@@ -119,6 +120,8 @@ def edit_case_identifiers(caseId):
     # Fetch original data then update
     data = mongo.db.case_summaries.find_one_or_404(query)
     updated_data = json.loads(request.data)
+    prev_name = data["name"]
+    prev_citation = data["citation"]
     # Update case name
     data["name"] = updated_data["data"]["name"]
     # Update citations
@@ -127,7 +130,18 @@ def edit_case_identifiers(caseId):
     data["lastEdit"] = updated_data["data"]["time"]
     mongo.db.case_summaries.replace_one(query, data, True)
 
-    # TODO: UPDATE RECENT EDITS HERE
+    # Update recent edit queue
+    recent_edits.put({
+        "id": caseId,
+        "name": get_jwt_identity(),
+        "action": "EDITCASENAME",
+        "time": data["lastEdit"],
+        "prevName": prev_name,
+        "prevCitation": prev_citation,
+        "case_name": data["name"],
+        "currCitation": data["citation"]
+    })
+
     return "", 200
 
 
@@ -155,6 +169,7 @@ def add_new_topic(caseId, category):
     # Update recent activity queue
     recent_edits.put({
         "id": caseId,
+        "name": get_jwt_identity(),
         "case_name": data["name"],
         "action": "ADDTOPIC",
         "time": data["lastEdit"]
@@ -184,6 +199,7 @@ def delete_topic(caseId, category, index):
     # Update recent activity queue
     recent_edits.put({
         "id": caseId,
+        "name": get_jwt_identity(),
         "case_name": data["name"],
         "action": "DELETE",
         "time": data["lastEdit"]
@@ -221,6 +237,7 @@ def add_new_case():
     # Update recent activity queue
     recent_edits.put({
         "id": str(_id),
+        "name": get_jwt_identity(),
         "case_name": new_doc["name"],
         "action": "ADDCASE",
         "time": post_data["time"]

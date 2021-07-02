@@ -37,11 +37,12 @@ const Layout = (props) => {
                 }).then(res => {
                         if (res.status == 200) {
                             // Redirect to the newly created case's edit page
-                            router.push(`/case/${res.data}/edit`);
                             handleClose();
-                        } else if (res.status == 401) {
-                            router.push("/login");
-                        }
+                            window.location.href = `/case/${res.data}/edit`;
+                        } 
+                    }).catch(e => {
+                        console.error(e);
+                        router.push("/login");
                     });
             } else {
                 router.push("/login");

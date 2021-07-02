@@ -31,6 +31,17 @@ const Home = (props) => {
         }).catch(err => console.log(err));
     }
   }, []);
+
+  // Build recent edits component
+  let recentEditsBuilder = [];
+  const recentEdits = JSON.parse(localStorage.getItem("recentEdits"));
+  if (!recentEdits) {
+    recentEditsBuilder.push("No recently edited cases.");
+  } else {
+    recentEdits.forEach(elem => {
+      recentEditsBuilder.push(<RecentEditCard caseName={elem.caseName} caseId={elem.caseId} />)
+    })
+  }
   
   // Recent activity component
   let recentActivityBuilder = [];
@@ -42,10 +53,14 @@ const Home = (props) => {
     pageData.map((activity) => {
       recentActivityBuilder.push(<ActivityCard 
         caseId={activity.id}
+        name={activity.name}
         caseName={activity.case_name}
         action={activity.action}
         subtopic={activity.subtopic}
         time={activity.time}
+        prevName={activity.prevName}
+        prevCitation={activity.prevCitation}
+        currCitation={activity.currCitation}
       />);
     })
     recentActivityBuilder.reverse();
@@ -57,7 +72,7 @@ const Home = (props) => {
         <title>David</title>
       </Head>
       <h4>Your recent edits</h4>
-      <RecentEditCard />
+      {recentEditsBuilder}
       <br/>
       <h4>Recent activity</h4>
       {recentActivityBuilder}

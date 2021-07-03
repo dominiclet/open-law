@@ -5,12 +5,16 @@ import { useState } from 'react';
 import FactEditor from './FactEditor';
 import HoldingEditor from './HoldingEditor';
 import { Trash, PlusLg } from 'react-bootstrap-icons';
+import { useRouter } from 'next/router';
+import { Accordion } from 'react-bootstrap';
 
 // Component that encapsulates the logic behind building the fact editors
 const EditorBuilder = (props) => {
     // props.caseId: Unique ID of case
     // props.facts: array of facts subtopic entries
     // props.holding: array of holding subtopic entries
+
+    const router = useRouter();
     
     const [facts, setFacts] = useState(props.facts);
     const [holding, setHolding] = useState(props.holding);
@@ -30,12 +34,21 @@ const EditorBuilder = (props) => {
                 const data = {
                     time: new Date().toJSON()
                 };
-                axios.delete(apiRoot + `/deleteTopic/${props.caseId}/facts/${i}`, { data })
-                .then(res => {
+                const accessToken = localStorage.getItem("jwt-token");
+                axios.delete(apiRoot + `/deleteTopic/${props.caseId}/facts/${i}`, { 
+                    headers: {'Authorization': 'Bearer ' + accessToken},
+                    data: data
+                }).then(res => {
                     console.log(res.status);
                     if (res.status == 200) {
                         setFacts(res.data);
                     }
+                }).catch(e => {
+                    console.error(e);
+                    if (accessToken) {
+                        localStorage.removeItem("jwt-token");
+                    }
+                    router.push("/login");
                 });
             }
         }
@@ -67,18 +80,30 @@ const EditorBuilder = (props) => {
             time: new Date().toJSON()
         };
 
-        // Button adds an empty entry to the database
-        axios.post(apiRoot + `/addNewTopic/${props.caseId}/facts`, { data })
-        .then(res => {
-            console.log(res.status);
-            if (res.status == 200) {
-                setFacts((() => {
-                    let newFacts = facts.concat();
-                    newFacts.push(res.data);
-                    return newFacts;
-                })());
-            }
-        });
+        // Retrieve jwt token if it exists
+        const accessToken = localStorage.getItem("jwt-token");
+
+        if (!accessToken) {
+            router.push("/login");
+        } else {
+            // Button adds an empty entry to the database
+            axios.post(apiRoot + `/addNewTopic/${props.caseId}/facts`, { data }, {
+                headers: {'Authorization': 'Bearer ' + accessToken}
+            }).then(res => {
+                if (res.status == 200) {
+                    setFacts((() => {
+                        let newFacts = facts.concat();
+                        newFacts.push(res.data);
+                        return newFacts;
+                    })());
+                }
+            }).catch(e => {
+                // Either token expired or fraud token
+                console.error(e);
+                localStorage.removeItem("jwt-token");
+                router.push("/login");
+            });
+        }
     }
     // Add button for facts
     editingPortion.push(
@@ -100,11 +125,20 @@ const EditorBuilder = (props) => {
                 const data = {
                     time: new Date().toJSON()
                 };
-                axios.delete(apiRoot + `/deleteTopic/${props.caseId}/holding/${i}`, { data })
-                .then(res => {
+                const accessToken = localStorage.getItem("jwt-token");
+                axios.delete(apiRoot + `/deleteTopic/${props.caseId}/holding/${i}`, {
+                    headers: {'Authorization': 'Bearer ' + accessToken},
+                    data: data
+                }).then(res => {
                     if (res.status == 200) {
                         setHolding(res.data);
                     }
+                }).catch(e => {
+                    console.error(e);
+                    if (accessToken) {
+                        localStorage.removeItem("jwt-token");
+                    }
+                    router.push("/login");
                 });
             }
         }
@@ -137,8 +171,13 @@ const EditorBuilder = (props) => {
         const data = {
             time: new Date().toJSON()
         };
+
+        // Fetch token from local storage
+        const accessToken = localStorage.getItem("jwt-token");
         // Button adds an empty entry to the database
-        axios.post(apiRoot + `/addNewTopic/${props.caseId}/holding`, { data })
+        axios.post(apiRoot + `/addNewTopic/${props.caseId}/holding`, { data }, {
+            headers: {'Authorization': 'Bearer ' + accessToken}
+        })
         .then(res => {
             if (res.status == 200) {
                 setHolding((() => {
@@ -147,6 +186,10 @@ const EditorBuilder = (props) => {
                     return newHolding;
                 })());
             }
+        }).catch(e => {
+            console.error(e);
+            localStorage.removeItem("jwt-token");
+            router.push("/login");
         });
     }
 

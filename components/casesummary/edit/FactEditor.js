@@ -5,6 +5,7 @@ import caseEditStyle from '../../../styles/CaseEdit.module.css';
 import { apiRoot } from '../../../config';
 import axios from 'axios';
 import { Upload } from 'react-bootstrap-icons';
+import { useRouter } from 'next/router';
 
 // ReactQuill is only imported at client side 
 // due to issues with next's server-side rendering
@@ -17,6 +18,8 @@ const ReactQuill = dynamic(
 );
 
 const FactEditor = (props) => {
+
+    const router = useRouter();
     
     // Width needs to be fixed otherwise text causes DOM elements to resize
     const styling = {
@@ -37,13 +40,23 @@ const FactEditor = (props) => {
             time: new Date().toJSON()
         };
 
+        // Retrieve token from local storage
+        const accessToken = localStorage.getItem("jwt-token");
+
         // Sends a POST request to the server
         axios.post(apiRoot + `/editSubTopic/${props.caseId}/facts/${props.index}`, 
-        { data })
-            .then(res => {
+        { data }, {
+            headers: {'Authorization': 'Bearer ' + accessToken}
+        }).then(res => {
                 // Do some kind of function that informs user that entry is updated here
                 console.log(res.status);
-            })
+        }).catch(e => {
+            console.error(e);
+            if (accessToken) {
+                localStorage.removeItem("jwt-token");
+            }
+            router.push("/login");
+        })
     }
 
     // Function to handle change of sub-topic title

@@ -1,0 +1,11 @@
+.formContainer {
+	width: 400px;
+}
+
+.confirmPassword:focus {
+	background-color: black!;
+}
+
+.checkMatch {
+	display: inline;
+}

@@ -4,11 +4,14 @@ import { useState } from 'react';
 import { apiRoot } from '../../../config';
 import axios from 'axios';
 import { Trash, Upload, Plus } from 'react-bootstrap-icons';
+import { useRouter } from 'next/router';
 
 const TitleEditor = (props) => {
     // props.caseId: Unique ID of case
     // props.caseName: String of the case name
     // props.citation: Array of citations
+
+    const router = useRouter();
 
     // Jumotron styling (Reduce padding for Jumbotron)
     const jumboStyle = {
@@ -37,12 +40,23 @@ const TitleEditor = (props) => {
             time: new Date().toJSON()
         };
 
-        // Send a POST request to the server with the relevant data
-        axios.post(apiRoot + `/editCaseIdentifiers/${props.caseId}`, { data })
-        .then(res => {
-            // Add UI function that informs user entry is updated/saved
-            console.log("Add UI that informs user entry is uploaded");
-        })
+        // Retrieve token from storage
+        const token = localStorage.getItem("jwt-token");
+        
+        if (!token) {
+            router.push("/login");
+        } else {
+            // Send a POST request to the server with the relevant data
+            axios.post(apiRoot + `/editCaseIdentifiers/${props.caseId}`, { data }, {
+                headers: {'Authorization': 'Bearer ' + token}
+            }).then(res => {
+                // Add UI function that informs user entry is updated/saved
+                console.log("Add UI that informs user entry is uploaded");
+            }).catch(err => {
+                console.log("Access denied");
+                router.push("/login");
+            });
+        }
     }
 
     // Build edit citation 

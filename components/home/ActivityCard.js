@@ -9,6 +9,9 @@ const ActivityCard = (props) => {
 	// props.action: The activity that was undertaken (EDIT, DELETE, ADDTOPIC, ADDCASE)
 	// props.subtopic: The affected subtopic (applicable if DELETE or EDIT)
 	// props.time: The time of activity
+	// props.name: The name of the person who executed the action
+	// props.prevName (optional): Previous case name
+	// props.prevCitation (optional): Previous case citation
 
 	// Calculate how long ago was this activity
 	const timeStamp = (() => {
@@ -40,7 +43,7 @@ const ActivityCard = (props) => {
 						if (props.action == "EDIT") {
 							return (
 							<p className={homeStyle.activityCardWords}>
-								[Someone] edited <b>
+								{props.name} edited <b>
 									{props.subtopic ? props.subtopic : "the case name/citation"}
 								</b> in <i>{props.caseName}</i>
 							</p>
@@ -48,7 +51,7 @@ const ActivityCard = (props) => {
 						} else if (props.action == "DELETE") {
 							return (
 								<p className={homeStyle.activityCardWords}>
-									[Someone] deleted <b>
+									{props.name} deleted <b>
 										{!props.subtopic ? "a topic" : props.subtopic}
 										</b> in <i>{props.caseName}</i>
 								</p>
@@ -56,13 +59,22 @@ const ActivityCard = (props) => {
 						} else if (props.action == "ADDTOPIC") {
 							return (
 								<p className={homeStyle.activityCardWords}>
-									[Someone] added a new topic to <i>{props.caseName}</i>
+									{props.name} added a new topic to <i>{props.caseName}</i>
 								</p>
 							);
 						} else if (props.action == "ADDCASE") {
 							return (
 								<p className={homeStyle.activityCardWords}>
-									[Someone] added a new case summary <i>{props.caseName}</i>
+									{props.name} added a new case summary <i>{props.caseName}</i>
+								</p>
+							);
+						} else if (props.action == "EDITCASENAME") {
+							return (
+								<p className={homeStyle.activityCardWords}>
+									{props.name} changed a case's name/citation from 
+									<i>{" " + props.prevName}</i> 
+									{" " + props.prevCitation.join("; ")} to <i>{props.caseName}</i>
+									{" " + props.currCitation.join("; ")}
 								</p>
 							);
 						}

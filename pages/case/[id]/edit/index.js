@@ -9,6 +9,8 @@ import EditorBuilder from '../../../../components/casesummary/edit/EditorBuilder
 const caseEditPage = () => {
     const router = useRouter();
 
+    // Set max number of recent edits to show
+    const MAX_RECENT_EDITS = 3;
     // State to store case data
     const [caseData, setCaseData] = useState();
     // State to check if data has loaded
@@ -19,11 +21,29 @@ const caseEditPage = () => {
         if (router.isReady) {
             const {id} = router.query;
             axios.get(apiRoot + `/cases/${id}`)
-            .then(res => {
-                setCaseData(res.data);
-                setdataLoaded(true);
-            })
-            .catch(error => console.log(error));
+                .then(res => {
+                    setCaseData(res.data);
+                    setdataLoaded(true);
+
+                    // Remember visit to this case edit for RecentEditCard
+                    let recentEdits = localStorage.getItem("recentEdits");
+                    const recentEditInfo = {
+                        "caseName": res.data.name,
+                        "caseId": id
+                    }
+                    if (recentEdits) {
+                        let recents = JSON.parse(recentEdits);
+                        if (!recents.some(elem => elem.caseId == id)) {
+                            recents.push(recentEditInfo);
+                            if (recents.length > MAX_RECENT_EDITS) {
+                                recents.splice(0, 1);
+                            }
+                            localStorage.setItem("recentEdits", JSON.stringify(recents));
+                        }
+                    } else {
+                        localStorage.setItem("recentEdits", JSON.stringify([recentEditInfo]));
+                    }
+                }).catch(error => console.log(error));
         } else return;
     }, [router.isReady]);
 

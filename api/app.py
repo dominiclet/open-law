@@ -1,8 +1,13 @@
-from flask import Flask, request, Response
+from flask import Flask, request, Response, jsonify
 from flask_cors import CORS
 from flask_pymongo import PyMongo
+
+from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required, JWTManager
+
 from bson import ObjectId
 from queue import Queue
+from datetime import timedelta
+from werkzeug.security import generate_password_hash, check_password_hash
 import json
 
 app = Flask(__name__)
@@ -16,6 +21,54 @@ mongo = PyMongo(app)
 # Activity is stored as {"id": , "case_name": , "action": , "subtopic": , "time": }
 recent_edits = Queue(10)
 
+#### Authentication setup ####
+# Set this as an environment variable (here temporarily for testing)
+app.config["JWT_SECRET_KEY"] = "ivanlikesgayporn"
+jwt = JWTManager(app)
+# TOKEN_EXPIRY = timedelta(minutes=15)
+
+"""
+Handles login
+"""
+@app.route("/login", methods=['POST'])
+def login():
+    username = request.json.get("username")
+    password = request.json.get("password")
+    data = mongo.db.users.find_one({"username": username})
+    if not data or not check_password_hash(data.get("password"), password):
+        return jsonify({"msg": "Bad username or password"}), 401
+    else:
+        access_token = create_access_token(identity=username)
+        return jsonify(access_token=access_token)
+
+"""
+Handles logout
+"""
+# Maybe set up a blocklist? Is there a need? 
+
+"""
+Handles registration of user
+"""
+@app.route("/register", methods=['POST'])
+def register():
+    data = request.json
+    new_user = {
+        "name": data.get("name"),
+        "year": data.get("year"),
+        "username": data.get("username"),
+        "password": generate_password_hash(data.get("password"))
+    }
+    _id = mongo.db.users.insert(new_user)
+    return str(_id), 200
+
+"""
+Allows pinging of backend to verify JWT
+"""
+@app.route("/token/ping", methods=['POST'])
+@jwt_required()
+def ping():
+    return "", 200
+
 # For edit case summary page
 """
 Handles posting of case summary sub-topic and its contents into database
@@ -25,6 +78,7 @@ category: facts/holding
 index: The index where the subtopic is located in the JSON array
 """
 @app.route("/editSubTopic/<caseId>/<category>/<index>", methods=['POST'])
+@jwt_required()
 def edit_sub_topic(caseId, category, index):
     # Query by object ID of case
     query = {"_id": ObjectId(caseId)}
@@ -46,6 +100,7 @@ def edit_sub_topic(caseId, category, index):
     # Update recent edit queue
     recent_edits.put({
         "id": caseId,
+        "name": get_jwt_identity(),
         "case_name": data["name"],
         "action": "EDIT",
         "subtopic": updated_data["data"]["topic"],
@@ -58,12 +113,15 @@ def edit_sub_topic(caseId, category, index):
 Handles posting of case name and citation
 """
 @app.route("/editCaseIdentifiers/<caseId>", methods=['POST'])
+@jwt_required()
 def edit_case_identifiers(caseId):
     # Query by object ID of case
     query = {"_id": ObjectId(caseId)}
     # Fetch original data then update
     data = mongo.db.case_summaries.find_one_or_404(query)
     updated_data = json.loads(request.data)
+    prev_name = data["name"]
+    prev_citation = data["citation"]
     # Update case name
     data["name"] = updated_data["data"]["name"]
     # Update citations
@@ -71,6 +129,19 @@ def edit_case_identifiers(caseId):
     # Update last edited time
     data["lastEdit"] = updated_data["data"]["time"]
     mongo.db.case_summaries.replace_one(query, data, True)
+
+    # Update recent edit queue
+    recent_edits.put({
+        "id": caseId,
+        "name": get_jwt_identity(),
+        "action": "EDITCASENAME",
+        "time": data["lastEdit"],
+        "prevName": prev_name,
+        "prevCitation": prev_citation,
+        "case_name": data["name"],
+        "currCitation": data["citation"]
+    })
+
     return "", 200
 
 
@@ -78,6 +149,7 @@ def edit_case_identifiers(caseId):
 Add a new sub-topic entry
 """
 @app.route("/addNewTopic/<caseId>/<category>", methods=['POST'])
+@jwt_required()
 def add_new_topic(caseId, category):
     # Query case
     query = {"_id": ObjectId(caseId)}
@@ -88,13 +160,16 @@ def add_new_topic(caseId, category):
     else:
         empty_entry = {"title": "", "content": ""}
     data[category].append(empty_entry)
-    mongo.db.case_summaries.replace_one(query, data, True)
 
     # Update last edited time
     data["lastEdit"] = json.loads(request.data)["data"]["time"]
+
+    mongo.db.case_summaries.replace_one(query, data, True)
+
     # Update recent activity queue
     recent_edits.put({
         "id": caseId,
+        "name": get_jwt_identity(),
         "case_name": data["name"],
         "action": "ADDTOPIC",
         "time": data["lastEdit"]
@@ -110,18 +185,21 @@ category: facts/holding
 index: Index to identify the sub-topic entry that is deleted
 """
 @app.route("/deleteTopic/<caseId>/<category>/<index>", methods=['DELETE'])
+@jwt_required()
 def delete_topic(caseId, category, index):
     query = {"_id": ObjectId(caseId)}
     data = mongo.db.case_summaries.find_one_or_404(query)
     # Remove specified entry
     data[category].pop(int(index))
-    mongo.db.case_summaries.replace_one(query, data, True)
-
     # Update last edited time
     data["lastEdit"] = json.loads(request.data)["time"]
+
+    mongo.db.case_summaries.replace_one(query, data, True)
+
     # Update recent activity queue
     recent_edits.put({
         "id": caseId,
+        "name": get_jwt_identity(),
         "case_name": data["name"],
         "action": "DELETE",
         "time": data["lastEdit"]
@@ -133,6 +211,7 @@ def delete_topic(caseId, category, index):
 Returns the list of recent activities currently in the queue
 """
 @app.route("/recentActivity", methods=['GET'])
+@jwt_required()
 def recent_activity():
     return json.dumps(list(recent_edits.queue))
 
@@ -174,6 +253,7 @@ Adds a new case with mostly empty data.
 Case name must be provided.
 """
 @app.route("/addNewCase", methods=['POST'])
+@jwt_required()
 def add_new_case():
     post_data = json.loads(request.data)
 
@@ -190,6 +270,7 @@ def add_new_case():
     # Update recent activity queue
     recent_edits.put({
         "id": str(_id),
+        "name": get_jwt_identity(),
         "case_name": new_doc["name"],
         "action": "ADDCASE",
         "time": post_data["time"]

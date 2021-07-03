@@ -6,6 +6,7 @@ import Link from 'next/link'
 import caseStyle from '../../../styles/Case.module.css'
 import OuterCase from '../../../components/casesummary/OuterCase'
 import RelatedCases from '../../../components/casesummary/RelatedCases'
+import withAuth from '../../../helpers/withAuth';
 import Forum from '../../../components/casesummary/Forum'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import Tabs from 'react-bootstrap/Tabs'

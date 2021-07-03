@@ -18,6 +18,8 @@ const CaseFact = (props) => {
         return props.name == "Holding";
     }
 
+    const { htmlToText } = require("html-to-text");
+
     return (
         <Accordion defaultActiveKey="Facts">
             <Card style={cardStyle}>
@@ -27,7 +29,7 @@ const CaseFact = (props) => {
                 </Accordion.Toggle>
                 <Accordion.Collapse eventKey={props.name}>
                     <Card.Body className="subtopic">
-                        {props.content.content}
+                        {htmlToText(props.content.content)}
                     </Card.Body>
                 </Accordion.Collapse>
             </Card>

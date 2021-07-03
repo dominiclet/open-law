@@ -46,19 +46,18 @@
 }
 
 .tags {
-  background-color: rgb(250, 242, 167);
   text-align: center;
   float: right;
   margin: 5px;
 }
 
-.side {
-  display: grid;
-  grid-template-columns: 1fr 1fr; /*fr: fractional unit of space*/
-}
-
 .relatedCases {
-  width: 90%;
   margin-left: auto;
   margin-right: 0;
+}
+
+.body {
+  justify-content: center;
+  display: flex;
+  margin: 10px;
 }

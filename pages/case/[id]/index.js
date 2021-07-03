@@ -6,7 +6,10 @@ import Link from 'next/link'
 import caseStyle from '../../../styles/Case.module.css'
 import OuterCase from '../../../components/casesummary/OuterCase'
 import RelatedCases from '../../../components/casesummary/RelatedCases'
+import Forum from '../../../components/casesummary/Forum'
 import 'bootstrap/dist/css/bootstrap.min.css'
+import Tabs from 'react-bootstrap/Tabs'
+import Tab from 'react-bootstrap/Tab'
 
 const caseDisplayPage = () => {
     const router = useRouter();
@@ -34,18 +37,25 @@ const caseDisplayPage = () => {
     } else {
         return (
             <>
-                <div className={caseStyle.side}>
-                    <OuterCase entry={caseData} />
-                    <RelatedCases />
-                </div>
-                <Link
-                    href={`/case/${caseData._id}/edit`}
-                    className="d-flex justify-content-center"
-                >
-                    <a>Edit this case</a>
-                </Link>
-                <br />
-                <Link href='/'>Go Back</Link>
+                <Tabs defaultActiveKey="case" id="test">
+                    <Tab eventKey="case" title="Case Summary">
+                        <div>
+                            <OuterCase entry={caseData} />
+                        </div>
+                        <Link href={`/case/${caseData._id}/edit`} >
+                            <a className={caseStyle.body}>Edit this case</a>
+                        </Link>
+                        <Link href='/'>
+                            <a className={caseStyle.body}>Go Back</a>
+                        </Link>
+                    </Tab>
+                    <Tab eventKey="forum" title="Forum">
+                        <Forum posts = {caseData.posts}/>
+                    </Tab>
+                    <Tab eventKey="relatedCases" title="Related Cases">
+                        <RelatedCases entry={caseData}/>
+                    </Tab>
+                </Tabs>
             </>
         );
     }

@@ -148,7 +148,7 @@ def recent_activity():
 
 
 """
-Returns the list of cases for each tag 
+Returns the list of cases for each tag with given limit
 """
 
 
@@ -163,6 +163,24 @@ def get_cases_by_tag(queryTag, limit):
         i += 1
         limit -= 1
     return JSONEncoder().encode(cases)
+
+"""
+Returns all related cases for a given case based on matching tags
+"""
+
+@app.route("/relatedCases/<caseId>", methods=['GET'])
+def get_related_cases(caseId):
+    # get tags of input case
+    tags = mongo.db.case_summaries.find_one_or_404({"_id": ObjectId(caseId)})["tag"]
+    related_cases = []
+    # find cases with most number of similar tags and append to list
+    for i in range(len(tags)):
+        data = mongo.db.case_summaries.find({"tag": {"$all": tags[i:]}})
+        for j in data:
+            if j not in related_cases and j["_id"] != ObjectId(caseId):
+                related_cases.append(j)
+    return JSONEncoder().encode(related_cases)
+
 
 
 """
@@ -193,6 +211,41 @@ def getcase(caseId):
 
 # For JSON encoding of MongoDB ObjectId field
 
+
+"""
+Returns forum posts for each case sorted by timestamp
+"""
+
+
+@app.route("/<caseId>/posts", methods=['GET'])
+def get_posts(caseId):
+    # find a way to sort, sort = {'_id': -1}
+    data = mongo.db.case_summaries.find_one_or_404({"_id": ObjectId(caseId)})
+    return JSONEncoder().encode(data["posts"])
+
+
+"""
+Increment up/downvotes
+"""
+
+"""
+@app.route("/incrementvotes/<caseId>/<postId>/<votetype>", methods=['POST'])
+def increment_votes(caseId, postId, votetype):
+    # Query by object ID of case and post
+    query = {"_id": ObjectId(caseId)}
+    # Fetch original data then update
+    data = mongo.db.case_summaries.find_one_or_404(query)
+    # Filter for post to update
+    post = filter(lambda post: post["key"] == ObjectId(postId), data["posts"])
+    # Update vote
+    if votetype == "up":
+        post["upvote"] += 1
+    else:
+        post["downvote"] += 1
+
+    mongo.db.case_summaries.replace_one(query, data, True)
+    return "", 200
+"""
 
 class JSONEncoder(json.JSONEncoder):
     def default(self, o):

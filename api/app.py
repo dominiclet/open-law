@@ -216,6 +216,39 @@ def recent_activity():
     return json.dumps(list(recent_edits.queue))
 
 """
+Returns the list of cases for each tag with given limit
+"""
+@app.route("/casesTag/<queryTag>/<limit>", methods=['GET'])
+def get_cases_by_tag(queryTag, limit):
+    data = mongo.db.case_summaries.find({"tag": queryTag})
+    cases = []
+    i = 0
+    limit = int(limit)
+    while limit > 0 and i < data.count():
+        cases.append(data[i])
+        i += 1
+        limit -= 1
+    return JSONEncoder().encode(cases)
+
+"""
+Returns all related cases for a given case based on matching tags
+"""
+@app.route("/relatedCases/<caseId>", methods=['GET'])
+def get_related_cases(caseId):
+    # get tags of input case
+    tags = mongo.db.case_summaries.find_one_or_404({"_id": ObjectId(caseId)})["tag"]
+    related_cases = []
+    # find cases with most number of similar tags and append to list
+    for i in range(len(tags)):
+        data = mongo.db.case_summaries.find({"tag": {"$all": tags[i:]}})
+        for j in data:
+            if j not in related_cases and j["_id"] != ObjectId(caseId):
+                related_cases.append(j)
+    return JSONEncoder().encode(related_cases)
+
+
+
+"""
 Adds a new case with mostly empty data.
 Case name must be provided.
 """
@@ -247,7 +280,7 @@ def add_new_case():
 """
 Returns list of categories (based on tags of cases)
 """
-@app.route("/categories")
+@app.route("/categories", methods=['GET'])
 def getcategories():
     data = mongo.db.case_summaries.find()
     categories = []
@@ -261,20 +294,26 @@ def getcategories():
 """
 Returns individual case information
 """
-@app.route("/cases/<caseId>")
+@app.route("/cases/<caseId>", methods=['GET'])
 def getcase(caseId):
     data = mongo.db.case_summaries.find_one_or_404({"_id": ObjectId(caseId)})
     return JSONEncoder().encode(data)
 
+"""
+Returns forum posts for each case sorted by timestamp
+"""
+@app.route("/<caseId>/posts", methods=['GET'])
+def get_posts(caseId):
+    # find a way to sort, sort = {'_id': -1}
+    data = mongo.db.case_summaries.find_one_or_404({"_id": ObjectId(caseId)})
+    return JSONEncoder().encode(data["posts"])
+
 # For JSON encoding of MongoDB ObjectId field
-
-
 class JSONEncoder(json.JSONEncoder):
     def default(self, o):
         if isinstance(o, ObjectId):
             return str(o)
         return json.JSONEncoder.default(self, o)
-
 
 """
 Test methods
@@ -282,7 +321,6 @@ Test methods
 @app.route("/")
 def test():
     return "Success!"
-
 
 @app.route("/testmongo")
 def testmongo():

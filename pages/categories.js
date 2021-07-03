@@ -1,21 +1,22 @@
-// import css
-// import js component for each category
+import categoriesStyle from '../styles/Categories.module.css'
+import Item from '../components/categories/Item'
+import { apiRoot } from '../config'
+import axios from 'axios'
 
-const topics = (props) => {
+const categories = (props) => {
     return (
         <div>
-            <h1>Categories</h1>
+            <h1 className={categoriesStyle.header}>Categories</h1>
             {props.entries.map( (entry) => (
-                <a>{entry}</a>
+                <Item key = {entry} tag = {entry}/>
             ))}
         </div>
     )
 }
 
-const defaultEndPoint = `http://localhost:5000/categories`;
-export const getServerSideProps = async() => {
-  const res = await fetch (defaultEndPoint)
-  const entries = await res.json()
+export const getStaticProps = async() => {
+  const res = await axios.get(apiRoot + '/categories')
+  const entries = res.data
   return {
     props: {
       entries
@@ -23,4 +24,4 @@ export const getServerSideProps = async() => {
   }
 }
 
-export default topics
+export default categories

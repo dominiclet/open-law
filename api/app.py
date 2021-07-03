@@ -24,8 +24,6 @@ caseId: Unique ID of the case
 category: facts/holding
 index: The index where the subtopic is located in the JSON array
 """
-
-
 @app.route("/editSubTopic/<caseId>/<category>/<index>", methods=['POST'])
 def edit_sub_topic(caseId, category, index):
     # Query by object ID of case
@@ -59,8 +57,6 @@ def edit_sub_topic(caseId, category, index):
 """
 Handles posting of case name and citation
 """
-
-
 @app.route("/editCaseIdentifiers/<caseId>", methods=['POST'])
 def edit_case_identifiers(caseId):
     # Query by object ID of case
@@ -81,8 +77,6 @@ def edit_case_identifiers(caseId):
 """
 Add a new sub-topic entry
 """
-
-
 @app.route("/addNewTopic/<caseId>/<category>", methods=['POST'])
 def add_new_topic(caseId, category):
     # Query case
@@ -102,7 +96,7 @@ def add_new_topic(caseId, category):
     recent_edits.put({
         "id": caseId,
         "case_name": data["name"],
-        "action": "ADD",
+        "action": "ADDTOPIC",
         "time": data["lastEdit"]
     })
     return empty_entry, 200
@@ -115,8 +109,6 @@ caseId: Unique case ID
 category: facts/holding
 index: Index to identify the sub-topic entry that is deleted
 """
-
-
 @app.route("/deleteTopic/<caseId>/<category>/<index>", methods=['DELETE'])
 def delete_topic(caseId, category, index):
     query = {"_id": ObjectId(caseId)}
@@ -140,18 +132,13 @@ def delete_topic(caseId, category, index):
 """
 Returns the list of recent activities currently in the queue
 """
-
-
 @app.route("/recentActivity", methods=['GET'])
 def recent_activity():
     return json.dumps(list(recent_edits.queue))
 
-
 """
 Returns the list of cases for each tag with given limit
 """
-
-
 @app.route("/casesTag/<queryTag>/<limit>", methods=['GET'])
 def get_cases_by_tag(queryTag, limit):
     data = mongo.db.case_summaries.find({"tag": queryTag})
@@ -167,7 +154,6 @@ def get_cases_by_tag(queryTag, limit):
 """
 Returns all related cases for a given case based on matching tags
 """
-
 @app.route("/relatedCases/<caseId>", methods=['GET'])
 def get_related_cases(caseId):
     # get tags of input case
@@ -184,10 +170,35 @@ def get_related_cases(caseId):
 
 
 """
+Adds a new case with mostly empty data.
+Case name must be provided.
+"""
+@app.route("/addNewCase", methods=['POST'])
+def add_new_case():
+    post_data = json.loads(request.data)
+
+    new_doc = {
+        "name": post_data["caseName"],
+        "citation": [],
+        "tag": [],
+        "lastEdit": "",
+        "facts": [],
+        "holding": []
+    }
+    _id = mongo.db.case_summaries.insert(new_doc)
+
+    # Update recent activity queue
+    recent_edits.put({
+        "id": str(_id),
+        "case_name": new_doc["name"],
+        "action": "ADDCASE",
+        "time": post_data["time"]
+    })
+    return str(_id), 200
+
+"""
 Returns list of categories (based on tags of cases)
 """
-
-
 @app.route("/categories", methods=['GET'])
 def getcategories():
     data = mongo.db.case_summaries.find()
@@ -202,67 +213,33 @@ def getcategories():
 """
 Returns individual case information
 """
-
-
 @app.route("/cases/<caseId>", methods=['GET'])
 def getcase(caseId):
     data = mongo.db.case_summaries.find_one_or_404({"_id": ObjectId(caseId)})
     return JSONEncoder().encode(data)
 
-# For JSON encoding of MongoDB ObjectId field
-
-
 """
 Returns forum posts for each case sorted by timestamp
 """
-
-
 @app.route("/<caseId>/posts", methods=['GET'])
 def get_posts(caseId):
     # find a way to sort, sort = {'_id': -1}
     data = mongo.db.case_summaries.find_one_or_404({"_id": ObjectId(caseId)})
     return JSONEncoder().encode(data["posts"])
 
-
-"""
-Increment up/downvotes
-"""
-
-"""
-@app.route("/incrementvotes/<caseId>/<postId>/<votetype>", methods=['POST'])
-def increment_votes(caseId, postId, votetype):
-    # Query by object ID of case and post
-    query = {"_id": ObjectId(caseId)}
-    # Fetch original data then update
-    data = mongo.db.case_summaries.find_one_or_404(query)
-    # Filter for post to update
-    post = filter(lambda post: post["key"] == ObjectId(postId), data["posts"])
-    # Update vote
-    if votetype == "up":
-        post["upvote"] += 1
-    else:
-        post["downvote"] += 1
-
-    mongo.db.case_summaries.replace_one(query, data, True)
-    return "", 200
-"""
-
+# For JSON encoding of MongoDB ObjectId field
 class JSONEncoder(json.JSONEncoder):
     def default(self, o):
         if isinstance(o, ObjectId):
             return str(o)
         return json.JSONEncoder.default(self, o)
 
-
 """
 Test methods
 """
-
-
 @app.route("/")
 def test():
     return "Success!"
-
 
 @app.route("/testmongo")
 def testmongo():

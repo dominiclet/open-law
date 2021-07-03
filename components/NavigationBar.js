@@ -4,7 +4,7 @@ import Nav from 'react-bootstrap/Nav';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 
-const NavigationBar = () => {
+const NavigationBar = (props) => {
     return (
         <Navbar bg="dark" variant="dark">
             <Navbar.Toggle aria-controls="navbarScroll" />
@@ -13,11 +13,11 @@ const NavigationBar = () => {
                 <Nav.Link href='/categories'>Categories</Nav.Link>
                 <Nav.Link href='/about'>About</Nav.Link>
             </Nav>
-            <Form inline>
-                <Form.Control type="text" placeholder="Search" className="mr-sm-2" />
-                <Button variant="outline-primary">Search</Button>
-            </Form>
-
+            <Nav classname="justify-content-end">
+                <Nav.Item>
+                    <Button onClick={props.addCase}>Add case</Button>
+                </Nav.Item>
+            </Nav>
         </Navbar>
     )
 }

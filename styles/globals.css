@@ -23,13 +23,19 @@ a {
   min-height: 18em;
   resize: vertical;
   width: 100%;
+  background-color: white;
+  border-color: grey;
+  border-width: 1px;
+  border-style: solid;
+  border-radius: 0.2em;
+}
+
+.ql-editor:focus {
+  border-color: black;
+  border-width: 2px;
 }
 
 .ql-container {
-  border-style: solid;
-  border-width: thin;
-  border-color: black;
-  border-radius: 0.3em;
   font-size: 1rem;
 }
 

@@ -8,7 +8,7 @@ import TagEditor from './TagEditor';
 import { apiRoot } from '../../../config';
 import axios from 'axios';
 import { Upload } from 'react-bootstrap-icons';
-import { useRouter } from 'next/router';
+import { useRouter, withRouter } from 'next/router';
 
 // ReactQuill is only imported at client side 
 // due to issues with next's server-side rendering
@@ -33,7 +33,7 @@ const HoldingEditor = (props) => {
     // Width needs to be fixed otherwise text causes DOM elements to resize
     const styling = {
         "width": "100%",
-        "margin": "auto"
+        "margin": "auto",
     }
 
     // State stores the contents of the textbox
@@ -63,8 +63,11 @@ const HoldingEditor = (props) => {
         { data }, {
             headers: {'Authorization': 'Bearer ' + accessToken}
         }).then(res => {
-                // Do some kind of function that informs user that entry is updated here
-                console.log(res.status);
+            if (res.status == 200) {
+                // Remove red glow
+                document.getElementById("holdingTitle" + props.index).classList.remove(caseEditStyle.inputGlow);
+                document.getElementById("holding" + props.index).classList.remove(caseEditStyle.inputGlow);
+            }
         }).catch(e => {
             console.error(e);
             if (accessToken) {
@@ -76,7 +79,14 @@ const HoldingEditor = (props) => {
 
     // Function to handle change of sub-topic title
     const handleChange = (event) => {
+        event.target.classList.add(caseEditStyle.inputGlow);
         setSubTopic(event.target.value);
+    }
+
+    // Handle change of quill (main) editor box
+    const handleQuillChange = (cont) => {
+        document.getElementById("holding" + props.index).classList.add(caseEditStyle.inputGlow);
+        setContent(cont);
     }
 
     // To allow child TagEditor to handle updating of tags state
@@ -86,9 +96,11 @@ const HoldingEditor = (props) => {
 
     return (
         <div className={caseEditStyle.editor}>
-            <input className={caseEditStyle.subTopic} value={subTopic} type="text" 
+            <input id={"holdingTitle"+props.index} className={caseEditStyle.subTopic} value={subTopic} type="text" 
             onChange={handleChange} />
-            <ReactQuill theme="bubble" value={content} onChange={setContent} style={styling} />
+            <div id={"holding"+props.index}>
+                <ReactQuill theme="bubble" value={content} onChange={handleQuillChange} style={styling} />
+            </div>
             <TagEditor tags={tags} updateTags={updateTags} />
             <ButtonGroup toggle className={caseEditStyle.ratioButton} >
                 <ToggleButton

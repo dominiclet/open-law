@@ -48,8 +48,11 @@ const FactEditor = (props) => {
         { data }, {
             headers: {'Authorization': 'Bearer ' + accessToken}
         }).then(res => {
-                // Do some kind of function that informs user that entry is updated here
-                console.log(res.status);
+            if (res.status == 200) {
+                // Remove red glow to let user know that post was successful
+                document.getElementById("factTitle" + props.index).classList.remove(caseEditStyle.inputGlow);
+                document.getElementById("fact" + props.index).classList.remove(caseEditStyle.inputGlow);
+            }
         }).catch(e => {
             console.error(e);
             if (accessToken) {
@@ -61,14 +64,23 @@ const FactEditor = (props) => {
 
     // Function to handle change of sub-topic title
     const handleTopicChange = (event) => {
+        event.target.classList.add(caseEditStyle.inputGlow);
         setSubTopic(event.target.value);
+    }
+
+    // Function to handle change of quill editor
+    const handleEditorChange = (value) => {
+        document.getElementById("fact" + props.index).classList.add(caseEditStyle.inputGlow);
+        setContent(value);
     }
 
     return (
         <form className={caseEditStyle.editor}>
-            <input className={caseEditStyle.subTopic} value={subTopic} 
+            <input id={"factTitle"+props.index} className={caseEditStyle.subTopic} value={subTopic} 
             type="text" onChange={handleTopicChange} />
-            <ReactQuill theme="bubble" value={content} onChange={setContent} style={styling} />
+            <div id={"fact"+props.index}>
+                <ReactQuill theme="bubble" value={content} onChange={handleEditorChange} style={styling} />
+            </div>
             <Upload className={caseEditStyle.editorSubmitButton} size = {30} onClick={handleSubmit} />
         </form>
     );

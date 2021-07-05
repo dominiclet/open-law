@@ -6,7 +6,6 @@ import FactEditor from './FactEditor';
 import HoldingEditor from './HoldingEditor';
 import { Trash, PlusLg } from 'react-bootstrap-icons';
 import { useRouter } from 'next/router';
-import { Accordion } from 'react-bootstrap';
 
 // Component that encapsulates the logic behind building the fact editors
 const EditorBuilder = (props) => {
@@ -160,7 +159,7 @@ const EditorBuilder = (props) => {
             index={i}
             subTopic={holding[i].title}
             content={holding[i].content}
-            isRatio={holding[i].ratio}
+            ratioSelector={holding[i].ratio}
             tags={holding[i].tag}
         />);
     }
@@ -177,12 +176,13 @@ const EditorBuilder = (props) => {
         // Button adds an empty entry to the database
         axios.post(apiRoot + `/addNewTopic/${props.caseId}/holding`, { data }, {
             headers: {'Authorization': 'Bearer ' + accessToken}
-        })
-        .then(res => {
+        }).then(res => {
+            console.log(res.status);
             if (res.status == 200) {
                 setHolding((() => {
                     let newHolding = holding.concat();
                     newHolding.push(res.data);
+                    console.log("Added");
                     return newHolding;
                 })());
             }

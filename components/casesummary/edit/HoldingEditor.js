@@ -2,13 +2,14 @@
 import dynamic from 'next/dynamic';
 import ToggleButton from 'react-bootstrap/ToggleButton';
 import ButtonGroup from 'react-bootstrap/ButtonGroup';
+import Form from 'react-bootstrap/Form';
 import { useState } from 'react';
 import caseEditStyle from '../../../styles/CaseEdit.module.css';
 import TagEditor from './TagEditor';
 import { apiRoot } from '../../../config';
 import axios from 'axios';
 import { Upload } from 'react-bootstrap-icons';
-import { useRouter, withRouter } from 'next/router';
+import { useRouter } from 'next/router';
 
 // ReactQuill is only imported at client side 
 // due to issues with next's server-side rendering
@@ -40,17 +41,25 @@ const HoldingEditor = (props) => {
     const [content, setContent] = useState(props.content);
     // State stores the sub-topic title
     const [subTopic, setSubTopic] = useState(props.subTopic);
-    // State stores whether this sub-topic is classified ratio/obiter (default to ratio)
-    const [isRatio, setIsRatio] = useState(props.isRatio ? "1" : "0");
     // State stores tags
     const [tags, setTags] = useState(props.tags);
 
     // Function to handle submit button for editor
     const handleSubmit = () => {
+        // Prep ratio checkbox data
+        let ratioSelector;
+        if (document.getElementById("ratio" + props.index).checked) {
+            ratioSelector = 1;
+        } else if (document.getElementById("obiter" + props.index).checked) {
+            ratioSelector = 0;
+        } else if (document.getElementById("notSure" + props.index).checked) {
+            ratioSelector = 2;
+        }
+
         const data = {
             topic: subTopic,
             text: content, 
-            ratio: isRatio == "1" ? true : false,
+            ratio: ratioSelector,
             tag: tags,
             time: new Date().toJSON()
         };
@@ -101,31 +110,37 @@ const HoldingEditor = (props) => {
             <div id={"holding"+props.index}>
                 <ReactQuill theme="bubble" value={content} onChange={handleQuillChange} style={styling} />
             </div>
-            <TagEditor tags={tags} updateTags={updateTags} />
-            <ButtonGroup toggle className={caseEditStyle.ratioButton} >
-                <ToggleButton
-                    key="1"
-                    type="radio"
-                    variant="secondary"
-                    name="radio"
-                    value="1"
-                    checked={isRatio=="1"}
-                    onChange={(e) => setIsRatio(e.currentTarget.value)}
-                >
-                    Ratio
-                </ToggleButton>
-                <ToggleButton
-                    key="2"
-                    type="radio"
-                    variant="secondary"
-                    name="radio"
-                    value="0"
-                    checked={isRatio=="0"}
-                    onChange={(e) => setIsRatio(e.currentTarget.value)}
-                >
-                    Obiter
-                </ToggleButton>
-            </ButtonGroup>
+            <div className={caseEditStyle.bottomHoldingContainer}>
+                <TagEditor tags={tags} updateTags={updateTags} />
+                <div className={caseEditStyle.ratioButton}>
+                    <Form>
+                        <Form.Check 
+                            inline 
+                            defaultChecked={props.ratioSelector == 1} 
+                            label="Ratio" 
+                            name="group" 
+                            type="radio" 
+                            id={"ratio"+props.index} 
+                            />
+                        <Form.Check 
+                            inline 
+                            defaultChecked={props.ratioSelector == 0}
+                            label="Obiter" 
+                            name="group" 
+                            type="radio" 
+                            id={"obiter"+props.index} 
+                            />
+                        <Form.Check 
+                            inline 
+                            defaultChecked={props.ratioSelector == 2}
+                            label="Not sure" 
+                            name="group" 
+                            type="radio" 
+                            id={"notSure"+props.index} 
+                            />
+                    </Form>
+                </div>
+            </div>
             <Upload className={caseEditStyle.editorSubmitButton} size={30} onClick={handleSubmit} />
         </div>
     );

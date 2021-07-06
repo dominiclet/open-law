@@ -43,16 +43,24 @@ const caseEditPage = () => {
                     } else {
                         localStorage.setItem("recentEdits", JSON.stringify([recentEditInfo]));
                     }
-                }).catch(error => console.log(error));
+                }).catch(error => {
+                    if (error.response.status == 404) {
+                        alert("Case is either deleted or does not exist. Redirecting back to home...");
+                        let recentEdits = JSON.parse(localStorage.getItem("recentEdits"));
+                        for (let i = 0; i < recentEdits.length; i++) {
+                            if (recentEdits[i].caseId === id) {
+                                recentEdits.splice(i, 1);
+                                break;
+                            }
+                        }
+                        localStorage.setItem("recentEdits", JSON.stringify(recentEdits));
+                        router.push("/");
+                    } else {
+                        throw error;
+                    }
+                });
         } else return;
     }, [router.isReady]);
-
-    // Reduce padding for Jumbotron
-    const jumboStyle = {
-        "padding": "1rem 2rem",
-        "width": "60vw",
-        "margin": "auto",
-    };
 
     if (!dataLoaded) {
         // If data is not loaded yet, display "loading"
@@ -66,13 +74,13 @@ const caseEditPage = () => {
                 if (caseData.lastEdit == "") {
                     return (
                         <p className={caseEditStyle.editTimeStamp}>
-                            This is the first time this case is being edited.
+                            This case was added by {caseData.lastEditBy}
                         </p>
                     );
                 } else {
                     return (
                         <p className={caseEditStyle.editTimeStamp}>
-                            Last edited by [someone] at {date.toLocaleTimeString("en-SG")} on {date.toLocaleDateString("en-SG")}
+                            Last edited by {caseData.lastEditBy} at {date.toLocaleTimeString("en-SG")} on {date.toLocaleDateString("en-SG")}
                         </p>
                     );
                 }

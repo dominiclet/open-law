@@ -2,6 +2,7 @@
 import dynamic from 'next/dynamic';
 import ToggleButton from 'react-bootstrap/ToggleButton';
 import ButtonGroup from 'react-bootstrap/ButtonGroup';
+import Form from 'react-bootstrap/Form';
 import { useState } from 'react';
 import caseEditStyle from '../../../styles/CaseEdit.module.css';
 import TagEditor from './TagEditor';
@@ -33,24 +34,32 @@ const HoldingEditor = (props) => {
     // Width needs to be fixed otherwise text causes DOM elements to resize
     const styling = {
         "width": "100%",
-        "margin": "auto"
+        "margin": "auto",
     }
 
     // State stores the contents of the textbox
     const [content, setContent] = useState(props.content);
     // State stores the sub-topic title
     const [subTopic, setSubTopic] = useState(props.subTopic);
-    // State stores whether this sub-topic is classified ratio/obiter (default to ratio)
-    const [isRatio, setIsRatio] = useState(props.isRatio ? "1" : "0");
     // State stores tags
     const [tags, setTags] = useState(props.tags);
 
     // Function to handle submit button for editor
     const handleSubmit = () => {
+        // Prep ratio checkbox data
+        let ratioSelector;
+        if (document.getElementById("ratio" + props.index).checked) {
+            ratioSelector = 1;
+        } else if (document.getElementById("obiter" + props.index).checked) {
+            ratioSelector = 0;
+        } else if (document.getElementById("notSure" + props.index).checked) {
+            ratioSelector = 2;
+        }
+
         const data = {
             topic: subTopic,
             text: content, 
-            ratio: isRatio == "1" ? true : false,
+            ratio: ratioSelector,
             tag: tags,
             time: new Date().toJSON()
         };
@@ -63,8 +72,11 @@ const HoldingEditor = (props) => {
         { data }, {
             headers: {'Authorization': 'Bearer ' + accessToken}
         }).then(res => {
-                // Do some kind of function that informs user that entry is updated here
-                console.log(res.status);
+            if (res.status == 200) {
+                // Remove red glow
+                document.getElementById("holdingTitle" + props.index).classList.remove(caseEditStyle.inputGlow);
+                document.getElementById("holding" + props.index).classList.remove(caseEditStyle.inputGlow);
+            }
         }).catch(e => {
             console.error(e);
             if (accessToken) {
@@ -76,7 +88,14 @@ const HoldingEditor = (props) => {
 
     // Function to handle change of sub-topic title
     const handleChange = (event) => {
+        event.target.classList.add(caseEditStyle.inputGlow);
         setSubTopic(event.target.value);
+    }
+
+    // Handle change of quill (main) editor box
+    const handleQuillChange = (cont) => {
+        document.getElementById("holding" + props.index).classList.add(caseEditStyle.inputGlow);
+        setContent(cont);
     }
 
     // To allow child TagEditor to handle updating of tags state
@@ -84,36 +103,60 @@ const HoldingEditor = (props) => {
         setTags(updated);
     }
 
+    // Set quill toolbar functionalities
+    const formats = ['bold', 'italic', 'underline', 'blockquote', 'list', 'bullet']
+    const modules = {
+        toolbar: [
+            ['bold', 'italic', 'underline', 'blockquote'],
+            [{'list': 'ordered'}, {'list': 'bullet'}]
+        ]
+    }
+
     return (
         <div className={caseEditStyle.editor}>
-            <input className={caseEditStyle.subTopic} value={subTopic} type="text" 
+            <input id={"holdingTitle"+props.index} className={caseEditStyle.subTopic} value={subTopic} type="text" 
             onChange={handleChange} />
-            <ReactQuill theme="bubble" value={content} onChange={setContent} style={styling} />
-            <TagEditor tags={tags} updateTags={updateTags} />
-            <ButtonGroup toggle className={caseEditStyle.ratioButton} >
-                <ToggleButton
-                    key="1"
-                    type="radio"
-                    variant="secondary"
-                    name="radio"
-                    value="1"
-                    checked={isRatio=="1"}
-                    onChange={(e) => setIsRatio(e.currentTarget.value)}
-                >
-                    Ratio
-                </ToggleButton>
-                <ToggleButton
-                    key="2"
-                    type="radio"
-                    variant="secondary"
-                    name="radio"
-                    value="0"
-                    checked={isRatio=="0"}
-                    onChange={(e) => setIsRatio(e.currentTarget.value)}
-                >
-                    Obiter
-                </ToggleButton>
-            </ButtonGroup>
+            <div id={"holding"+props.index}>
+                <ReactQuill 
+                    theme="bubble" 
+                    formats={formats}
+                    modules={modules}
+                    value={content} 
+                    onChange={handleQuillChange} 
+                    style={styling} 
+                />
+            </div>
+            <div className={caseEditStyle.bottomHoldingContainer}>
+                <TagEditor tags={tags} updateTags={updateTags} />
+                <div className={caseEditStyle.ratioButton}>
+                    <Form>
+                        <Form.Check 
+                            inline 
+                            defaultChecked={props.ratioSelector == 1} 
+                            label="Ratio" 
+                            name="group" 
+                            type="radio" 
+                            id={"ratio"+props.index} 
+                            />
+                        <Form.Check 
+                            inline 
+                            defaultChecked={props.ratioSelector == 0}
+                            label="Obiter" 
+                            name="group" 
+                            type="radio" 
+                            id={"obiter"+props.index} 
+                            />
+                        <Form.Check 
+                            inline 
+                            defaultChecked={props.ratioSelector == 2}
+                            label="Not sure" 
+                            name="group" 
+                            type="radio" 
+                            id={"notSure"+props.index} 
+                            />
+                    </Form>
+                </div>
+            </div>
             <Upload className={caseEditStyle.editorSubmitButton} size={30} onClick={handleSubmit} />
         </div>
     );

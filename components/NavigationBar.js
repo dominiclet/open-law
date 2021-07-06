@@ -1,9 +1,10 @@
 import Link from 'next/link';
 import Navbar from 'react-bootstrap/Navbar';
 import Nav from 'react-bootstrap/Nav';
-import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import { useRouter } from 'next/router';
+import navbarStyles from '../styles/Navbar.module.css';
+import CaseSearch from './CaseSearch';
 
 const NavigationBar = (props) => {
     const router = useRouter();
@@ -30,9 +31,12 @@ const NavigationBar = (props) => {
             </Nav>
             <Nav classname="justify-content-end">
                 <Nav.Item>
+                    <CaseSearch />
+                </Nav.Item>
+                <Nav.Item className={navbarStyles.button}>
                     <Button onClick={props.addCase}>Add case</Button>
                 </Nav.Item>
-                <Nav.Item>
+                <Nav.Item className={navbarStyles.button}>
                     <Button onClick={handleLogout}>Logout</Button>
                 </Nav.Item>
             </Nav>

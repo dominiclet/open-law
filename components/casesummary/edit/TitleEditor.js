@@ -29,6 +29,7 @@ const TitleEditor = (props) => {
 
     // Handler for changing case name
     const handleNameChange = (event) => {
+        event.target.classList.add(caseEditStyle.inputGlow);
         setCaseName(event.target.value);
     }
 
@@ -50,8 +51,10 @@ const TitleEditor = (props) => {
             axios.post(apiRoot + `/editCaseIdentifiers/${props.caseId}`, { data }, {
                 headers: {'Authorization': 'Bearer ' + token}
             }).then(res => {
-                // Add UI function that informs user entry is updated/saved
-                console.log("Add UI that informs user entry is uploaded");
+                if (res.status == 200) {
+                    // Remove red glow
+                    document.getElementById("title").classList.remove(caseEditStyle.inputGlow);
+                }
             }).catch(err => {
                 console.log("Access denied");
                 router.push("/login");
@@ -99,7 +102,9 @@ const TitleEditor = (props) => {
 
     return(
         <Jumbotron style={jumboStyle}>
-            <h3><input type="text" 
+            <h3><input 
+            id="title"
+            type="text" 
             value={caseName} 
             onChange={handleNameChange}
             className={caseEditStyle.caseName}

@@ -92,9 +92,18 @@ def edit_sub_topic(caseId, category, index):
     # Need to handle ratio and tags data if category is holding
     if category == "holding":
         data[category][int(index)]["ratio"] = updated_data["data"]["ratio"]
+        # Updates individual holding tag
         data[category][int(index)]["tag"] = updated_data["data"]["tag"]
+        # Update the general tags of the case
+        case_tags = set()
+        for holding in data[category]:
+            for tag in holding["tag"]:
+                case_tags.add(tag)
+        data["tag"] = list(case_tags)
     # Update last edited time
     data["lastEdit"] = updated_data["data"]["time"]
+    # Update last edited person
+    data["lastEditBy"] = get_jwt_identity()
     mongo.db.case_summaries.replace_one(query, data, True)
 
     # Update recent edit queue
@@ -128,6 +137,8 @@ def edit_case_identifiers(caseId):
     data["citation"] = updated_data["data"]["citation"]
     # Update last edited time
     data["lastEdit"] = updated_data["data"]["time"]
+    # Update person who last edited
+    data["lastEditBy"] = get_jwt_identity()
     mongo.db.case_summaries.replace_one(query, data, True)
 
     # Update recent edit queue
@@ -156,13 +167,15 @@ def add_new_topic(caseId, category):
     data = mongo.db.case_summaries.find_one_or_404(query)
     # Need to add empty tag array and set ratio if category is holding
     if category == "holding":
-        empty_entry = {"title": "", "content": "", "tag": [], "ratio": False}
+        empty_entry = {"title": "", "content": "", "tag": [], "ratio": 2}
     else:
         empty_entry = {"title": "", "content": ""}
     data[category].append(empty_entry)
 
     # Update last edited time
     data["lastEdit"] = json.loads(request.data)["data"]["time"]
+    # Update person who added case
+    data["lastEditedBy"] = get_jwt_identity()
 
     mongo.db.case_summaries.replace_one(query, data, True)
 
@@ -193,6 +206,8 @@ def delete_topic(caseId, category, index):
     data[category].pop(int(index))
     # Update last edited time
     data["lastEdit"] = json.loads(request.data)["time"]
+    # Update person who last edited
+    data["lastEditBy"] = get_jwt_identity()
 
     mongo.db.case_summaries.replace_one(query, data, True)
 
@@ -262,6 +277,7 @@ def add_new_case():
         "citation": [],
         "tag": [],
         "lastEdit": "",
+        "lastEditBy": get_jwt_identity(),
         "facts": [],
         "holding": []
     }

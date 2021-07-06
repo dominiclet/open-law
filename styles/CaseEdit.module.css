@@ -21,6 +21,14 @@
     flex-direction: column;
 }
 
+/* For the red glow */
+.inputGlow {
+    border: 1px solid red;
+    border-radius: 0.2em;
+    box-shadow: 0px 0px 4px red;
+    transition-duration: 0.2s;
+}
+
 .editorSubmitButton {
     display: block;
     clear: both;
@@ -68,8 +76,8 @@
 }
 
 .ratioButton {
-    align-self: flex-end;
     margin-top: 20px;
+    font-size: 1rem;
 }
 
 .header {
@@ -80,6 +88,12 @@
 .subTopic {
     width: 100%;
     margin-bottom:10px;
+}
+
+/* Container for tag editor and ratio selector */
+.bottomHoldingContainer {
+    display: flex;
+    justify-content: space-between;
 }
 
 /* Title styling */
@@ -133,6 +147,14 @@
     transition-duration: 0.4s;
     cursor: pointer;
     filter: drop-shadow(0 0 0.1rem black);
+}
+
+.outerTagContainer {
+    font-size: 1rem;
+}
+
+.indivTagContainer {
+    display: inline-block;
 }
 
 /* For Dropdown Tags */

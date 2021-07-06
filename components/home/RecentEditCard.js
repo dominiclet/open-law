@@ -1,10 +1,13 @@
 import Card from 'react-bootstrap/Card';
 import homeStyle from '../../styles/Home.module.css';
 import { PencilSquare } from 'react-bootstrap-icons';
+import { useRouter } from 'next/router';
 
 const RecentEditCard = (props) => {
 	// props.caseName: Name of relevant case
 	// props.caseId: ID of relevant case
+	
+	const router = useRouter();
 
 	return (
 		<div className={homeStyle.cardContainer}>
@@ -16,7 +19,7 @@ const RecentEditCard = (props) => {
 					size="25"
 					className={homeStyle.editSign}
 					onClick={() => {
-						window.location.href = `/case/${props.caseId}/edit`;
+						router.push(`/case/${props.caseId}/edit`);
 					}}
 				/>
 			</Card>

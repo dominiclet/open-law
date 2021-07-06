@@ -18,7 +18,7 @@ const TagEditor = (props) => {
             return "No tags added";
         } else {
             return props.tags.map((tag) => (
-                <div>
+                <div className={caseEditStyle.indivTagContainer}>
                     <Badge pill variant="dark">{tag}</Badge>
                     <Trash 
                         className={caseEditStyle.deleteTag}
@@ -35,7 +35,7 @@ const TagEditor = (props) => {
 
     return (
         <div className={caseEditStyle.dropdown}>
-            <div>
+            <div className={caseEditStyle.outerTagContainer}>
                 {tagBuilder()}
             </div>
             <input 

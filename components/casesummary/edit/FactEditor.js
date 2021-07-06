@@ -74,12 +74,28 @@ const FactEditor = (props) => {
         setContent(value);
     }
 
+    // Set quill toolbar functionalities
+    const formats = ['bold', 'italic', 'underline', 'blockquote', 'list', 'bullet']
+    const modules = {
+        toolbar: [
+            ['bold', 'italic', 'underline', 'blockquote'],
+            [{'list': 'ordered'}, {'list': 'bullet'}]
+        ]
+    }
+
     return (
         <form className={caseEditStyle.editor}>
             <input id={"factTitle"+props.index} className={caseEditStyle.subTopic} value={subTopic} 
             type="text" onChange={handleTopicChange} />
             <div id={"fact"+props.index}>
-                <ReactQuill theme="bubble" value={content} onChange={handleEditorChange} style={styling} />
+                <ReactQuill 
+                    theme="bubble" 
+                    modules={modules}
+                    format={formats} 
+                    value={content} 
+                    onChange={handleEditorChange} 
+                    style={styling} 
+                />
             </div>
             <Upload className={caseEditStyle.editorSubmitButton} size = {30} onClick={handleSubmit} />
         </form>

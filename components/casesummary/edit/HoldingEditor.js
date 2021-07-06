@@ -103,12 +103,28 @@ const HoldingEditor = (props) => {
         setTags(updated);
     }
 
+    // Set quill toolbar functionalities
+    const formats = ['bold', 'italic', 'underline', 'blockquote', 'list', 'bullet']
+    const modules = {
+        toolbar: [
+            ['bold', 'italic', 'underline', 'blockquote'],
+            [{'list': 'ordered'}, {'list': 'bullet'}]
+        ]
+    }
+
     return (
         <div className={caseEditStyle.editor}>
             <input id={"holdingTitle"+props.index} className={caseEditStyle.subTopic} value={subTopic} type="text" 
             onChange={handleChange} />
             <div id={"holding"+props.index}>
-                <ReactQuill theme="bubble" value={content} onChange={handleQuillChange} style={styling} />
+                <ReactQuill 
+                    theme="bubble" 
+                    formats={formats}
+                    modules={modules}
+                    value={content} 
+                    onChange={handleQuillChange} 
+                    style={styling} 
+                />
             </div>
             <div className={caseEditStyle.bottomHoldingContainer}>
                 <TagEditor tags={tags} updateTags={updateTags} />

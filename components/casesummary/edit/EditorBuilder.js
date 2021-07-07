@@ -87,8 +87,12 @@ const EditorBuilder = (props) => {
         } else {
             // Button adds an empty entry to the database
             axios.post(apiRoot + `/addNewTopic/${props.caseId}/facts`, { data }, {
-                headers: {'Authorization': 'Bearer ' + accessToken}
+                headers: {
+                    'Authorization': 'Bearer ' + accessToken,
+                    'Content-Type': 'application/json;charset=UTF-8'
+                }
             }).then(res => {
+                console.log(res);
                 if (res.status == 200) {
                     setFacts((() => {
                         let newFacts = facts.concat();

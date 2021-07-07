@@ -4,7 +4,6 @@ import RecentEditCard from '../components/home/RecentEditCard';
 import homeStyle from '../styles/Home.module.css';
 import { apiRoot } from '../config';
 import axios from 'axios';
-import withAuth  from '../helpers/withAuth';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 

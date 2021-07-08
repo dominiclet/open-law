@@ -10,7 +10,7 @@ const caseEditPage = () => {
     const router = useRouter();
 
     // Set max number of recent edits to show
-    const MAX_RECENT_EDITS = 3;
+    const MAX_RECENT_EDITS = 5;
     // State to store case data
     const [caseData, setCaseData] = useState();
     // State to check if data has loaded
@@ -86,12 +86,16 @@ const caseEditPage = () => {
                 }
             })()}
             <TitleEditor 
-            caseId={caseData._id} 
-            caseName={caseData.name} 
-            citation={caseData.citation} 
+                caseId={caseData._id} 
+                caseName={caseData.name} 
+                citation={caseData.citation} 
             />
-            <EditorBuilder caseId={caseData._id} facts={caseData.facts}
-            holding={caseData.holding} />
+            <EditorBuilder 
+                caseId={caseData._id} 
+                facts={caseData.facts}
+                issues={caseData.issues}
+                holding={caseData.holding} 
+            />
         </div>
         );
     }

@@ -3,13 +3,21 @@ import { Search } from 'react-bootstrap-icons';
 
 const CaseSearch = () => {
 
+	// Handles search functionality: Redirects to search page
 	const handleSearch = () => {
 		window.location.href = `/search?q=${document.getElementById("searchQ").value}`;
 	}
 
+	// Handles enter functionality
+	const handleEnterKey = (e) => {
+		if (e.key === 'Enter') {
+			handleSearch();
+		}
+	}
+
 	return (
 		<div className={navbarStyles.searchContainer}>
-			<input id="searchQ" type="text" className={navbarStyles.searchBar} placeholder="Search" />
+			<input id="searchQ" onKeyPress={handleEnterKey} type="text" className={navbarStyles.searchBar} placeholder="Search" />
 			<Search onClick={handleSearch} className={navbarStyles.searchIcon} size="20" />
 		</div>
 	)

@@ -1,5 +1,6 @@
 import { Card, Badge } from "react-bootstrap"
 import searchResultStyle from "../../styles/SearchResult.module.css";
+import Link from 'next/Link';
 
 const SearchResult = (props) => {
 	// props.resultInfo: Search result relating to this particular case
@@ -9,7 +10,9 @@ const SearchResult = (props) => {
 		<Card className={searchResultStyle.searchResult}>
 			<Card.Header className={searchResultStyle.searchResultHeader}>
 				<div>
-					{props.resultInfo.name}
+					<Link href={`/case/${props.resultInfo._id}`}>
+						{props.resultInfo.name}
+					</Link>
 				</div>
 				<div>
 					{props.resultInfo.tag.map(tag => {

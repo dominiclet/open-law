@@ -1,20 +1,13 @@
-import Link from 'next/link';
 import Navbar from 'react-bootstrap/Navbar';
 import Nav from 'react-bootstrap/Nav';
 import Button from 'react-bootstrap/Button';
 import { useRouter } from 'next/router';
 import navbarStyles from '../styles/Navbar.module.css';
-import CaseSearch from './CaseSearch';
+import CaseSearch from './search/CaseSearch';
 
 const NavigationBar = (props) => {
     const router = useRouter();
     
-    // Hide navbar for the following paths
-    const hideNavPaths = ["/login"];
-    if (hideNavPaths.includes(router.pathname)) {
-        return null;
-    } 
-
     // Logout functionality
     const handleLogout = () => {
         localStorage.removeItem("jwt-token");
@@ -30,7 +23,7 @@ const NavigationBar = (props) => {
                 <Nav.Link href='/about'>About</Nav.Link>
             </Nav>
             <Nav classname="justify-content-end">
-                <Nav.Item>
+                <Nav.Item className={navbarStyles.navSearchContainer}>
                     <CaseSearch />
                 </Nav.Item>
                 <Nav.Item className={navbarStyles.button}>

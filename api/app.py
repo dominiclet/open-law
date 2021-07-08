@@ -6,20 +6,22 @@ from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_requir
 
 from bson import ObjectId
 from queue import Queue
+from collections import deque
 from datetime import timedelta
 from werkzeug.security import generate_password_hash, check_password_hash
 import json
 
 app = Flask(__name__)
 # To allow Cross-origin resource sharing
-cors = CORS(app)
+app.config["CORS_HEADERS"] = "Content-Type"
+cors = CORS(app, origins=["http://localhost:3000"], supports_credentials=True)
 # MongoDB setup
 app.config["MONGO_URI"] = "mongodb://localhost:27017/open_law"
 mongo = PyMongo(app)
 
-# Initialize recent edits queue
+# Initialize recent edits deque
 # Activity is stored as {"id": , "case_name": , "action": , "subtopic": , "time": }
-recent_edits = Queue(10)
+recent_edits = deque(maxlen=5)
 
 #### Authentication setup ####
 # Set this as an environment variable (here temporarily for testing)
@@ -107,7 +109,7 @@ def edit_sub_topic(caseId, category, index):
     mongo.db.case_summaries.replace_one(query, data, True)
 
     # Update recent edit queue
-    recent_edits.put({
+    recent_edits.append({
         "id": caseId,
         "name": get_jwt_identity(),
         "case_name": data["name"],
@@ -142,7 +144,7 @@ def edit_case_identifiers(caseId):
     mongo.db.case_summaries.replace_one(query, data, True)
 
     # Update recent edit queue
-    recent_edits.put({
+    recent_edits.append({
         "id": caseId,
         "name": get_jwt_identity(),
         "action": "EDITCASENAME",
@@ -173,6 +175,7 @@ def add_new_topic(caseId, category):
     data[category].append(empty_entry)
 
     # Update last edited time
+    print(request.data)
     data["lastEdit"] = json.loads(request.data)["data"]["time"]
     # Update person who added case
     data["lastEditedBy"] = get_jwt_identity()
@@ -180,7 +183,7 @@ def add_new_topic(caseId, category):
     mongo.db.case_summaries.replace_one(query, data, True)
 
     # Update recent activity queue
-    recent_edits.put({
+    recent_edits.append({
         "id": caseId,
         "name": get_jwt_identity(),
         "case_name": data["name"],
@@ -212,7 +215,7 @@ def delete_topic(caseId, category, index):
     mongo.db.case_summaries.replace_one(query, data, True)
 
     # Update recent activity queue
-    recent_edits.put({
+    recent_edits.append({
         "id": caseId,
         "name": get_jwt_identity(),
         "case_name": data["name"],
@@ -228,7 +231,7 @@ Returns the list of recent activities currently in the queue
 @app.route("/recentActivity", methods=['GET'])
 @jwt_required()
 def recent_activity():
-    return json.dumps(list(recent_edits.queue))
+    return json.dumps(list(recent_edits))
 
 """
 Returns the list of cases for each tag with given limit
@@ -284,7 +287,7 @@ def add_new_case():
     _id = mongo.db.case_summaries.insert(new_doc)
 
     # Update recent activity queue
-    recent_edits.put({
+    recent_edits.append({
         "id": str(_id),
         "name": get_jwt_identity(),
         "case_name": new_doc["name"],
@@ -324,6 +327,25 @@ def get_posts(caseId):
     data = mongo.db.case_summaries.find_one_or_404({"_id": ObjectId(caseId)})
     return JSONEncoder().encode(data["posts"])
 
+"""
+Search functionality
+"""
+@app.route("/search", methods=['GET'])
+def search():
+    query = request.args.get("q")
+    cursor = mongo.db.case_summaries.find({"$text": {"$search": query}}, {
+        "name": 1,
+        "citation": 1,
+        "tag": 1,
+        "lastEdit": 1,
+        "lastEditBy": 1,
+        "score": {"$meta": "textScore"}
+    }).sort([("score", {"$meta": "textScore"})]).limit(10)
+    return JSONEncoder().encode(list(cursor))
+
+"""
+Helper class
+"""
 # For JSON encoding of MongoDB ObjectId field
 class JSONEncoder(json.JSONEncoder):
     def default(self, o):

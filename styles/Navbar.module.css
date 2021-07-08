@@ -13,7 +13,8 @@
 
 .searchBar {
 	height: 100%;
-	width: 20em;
+	width: 18vw;
+	max-width: 20em;
 	border-width: 1px;
 	border-color: white;
 	border-style: solid;
@@ -25,6 +26,7 @@
 }
 
 .searchIcon {
+	display: inline;
 	transition-duration: 0.2s;
 	color: white;
 	margin-left: 10px;

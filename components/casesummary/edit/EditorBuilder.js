@@ -6,6 +6,7 @@ import FactEditor from './FactEditor';
 import HoldingEditor from './HoldingEditor';
 import { Trash, PlusLg } from 'react-bootstrap-icons';
 import { useRouter } from 'next/router';
+import IssuesEditor from './IssuesEditor';
 
 // Component that encapsulates the logic behind building the fact editors
 const EditorBuilder = (props) => {
@@ -16,6 +17,7 @@ const EditorBuilder = (props) => {
     const router = useRouter();
     
     const [facts, setFacts] = useState(props.facts);
+    const [issues, setIssues] = useState(props.issues);
     const [holding, setHolding] = useState(props.holding);
     
     // Used to build the editors
@@ -87,8 +89,12 @@ const EditorBuilder = (props) => {
         } else {
             // Button adds an empty entry to the database
             axios.post(apiRoot + `/addNewTopic/${props.caseId}/facts`, { data }, {
-                headers: {'Authorization': 'Bearer ' + accessToken}
+                headers: {
+                    'Authorization': 'Bearer ' + accessToken,
+                    'Content-Type': 'application/json;charset=UTF-8'
+                }
             }).then(res => {
+                console.log(res);
                 if (res.status == 200) {
                     setFacts((() => {
                         let newFacts = facts.concat();
@@ -111,7 +117,13 @@ const EditorBuilder = (props) => {
             size="30"
             className={caseEditStyle.addTopicButton}
             onClick={handleAddFact} 
-        />);
+        />
+    );
+
+    // Build issues
+    editingPortion.push(<h3 key="issuesHeader" className={caseEditStyle.header}>Issues</h3>)
+
+    editingPortion.push(<IssuesEditor data={issues} setData={setIssues} />);
 
     // Build holding
     editingPortion.push(<h3 key="holdingHeader" className={caseEditStyle.header}>Holding</h3>)

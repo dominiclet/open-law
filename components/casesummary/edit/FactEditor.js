@@ -49,9 +49,7 @@ const FactEditor = (props) => {
             headers: {'Authorization': 'Bearer ' + accessToken}
         }).then(res => {
             if (res.status == 200) {
-                // Remove red glow to let user know that post was successful
-                document.getElementById("factTitle" + props.index).classList.remove(caseEditStyle.inputGlow);
-                document.getElementById("fact" + props.index).classList.remove(caseEditStyle.inputGlow);
+                document.getElementById("factUpload").style.color = "black";
             }
         }).catch(e => {
             console.error(e);
@@ -64,14 +62,14 @@ const FactEditor = (props) => {
 
     // Function to handle change of sub-topic title
     const handleTopicChange = (event) => {
-        event.target.classList.add(caseEditStyle.inputGlow);
         setSubTopic(event.target.value);
+        document.getElementById("factUpload").style.color = "red";
     }
 
     // Function to handle change of quill editor
     const handleEditorChange = (value) => {
-        document.getElementById("fact" + props.index).classList.add(caseEditStyle.inputGlow);
         setContent(value);
+        document.getElementById("factUpload").style.color = "red";
     }
 
     // Set quill toolbar functionalities
@@ -97,7 +95,12 @@ const FactEditor = (props) => {
                     style={styling} 
                 />
             </div>
-            <Upload className={caseEditStyle.editorSubmitButton} size = {30} onClick={handleSubmit} />
+            <Upload 
+                id="factUpload"
+                className={caseEditStyle.editorSubmitButton} 
+                size={30} 
+                onClick={handleSubmit} 
+            />
         </form>
     );
 }

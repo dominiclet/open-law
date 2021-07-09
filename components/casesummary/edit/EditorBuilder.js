@@ -123,7 +123,14 @@ const EditorBuilder = (props) => {
     // Build issues
     editingPortion.push(<h3 key="issuesHeader" className={caseEditStyle.header}>Issues</h3>)
 
-    editingPortion.push(<IssuesEditor data={issues} setData={setIssues} />);
+    editingPortion.push(
+        <IssuesEditor 
+            key="issuesEditor"
+            data={issues} 
+            caseId={props.caseId}
+            setData={setIssues} 
+        />
+    );
 
     // Build holding
     editingPortion.push(<h3 key="holdingHeader" className={caseEditStyle.header}>Holding</h3>)
@@ -215,7 +222,7 @@ const EditorBuilder = (props) => {
         />);
 
     return (
-        <div className="center">
+        <div className={caseEditStyle.center}>
             {editingPortion}
         </div>
     );

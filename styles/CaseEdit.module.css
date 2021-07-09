@@ -14,7 +14,6 @@
 
 .editor {
     width: 100%;
-    margin-bottom: 30px;
     max-width: 1000px;
     min-width: 510px;
     display: flex;
@@ -30,8 +29,6 @@
 }
 
 .editorSubmitButton {
-    display: block;
-    clear: both;
     margin: 1em 5px 1em 1em;
     align-self: flex-end;
     transition-duration: 0.5s;
@@ -45,14 +42,15 @@
 
 .center {
     margin: auto;
+    display: flex;
+    flex-direction: column;
     width: 100%;
     max-width: 1000px;
     min-width: 510px;
 }
 
 .addTopicButton {
-    position: relative;
-    left: 48%;
+    align-self: center;
     display: inline-block;
     transition-duration: 0.4s;
 }
@@ -65,8 +63,7 @@
 
 .deleteTopicButton {
     transition-duration: 0.5s;
-    display: block;
-    float: right;
+    align-self: flex-end;
 }
 
 .deleteTopicButton:hover {
@@ -88,6 +85,37 @@
 .subTopic {
     width: 100%;
     margin-bottom:10px;
+}
+
+/* Styling for issues */
+.issuesContainer {
+    display: flex;
+    flex-direction: column;
+}
+
+.listContainer {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 5px;
+}
+
+.issuesInput {
+    width: 920px;
+}
+
+.deleteIssue {
+    align-self: center;
+    transition-duration: 0.4s;
+}
+
+.deleteIssue:hover {
+    transition-duration: 0.4s;
+    cursor: pointer;
+    filter: drop-shadow(0 0 0.1rem black);
+}
+
+.issuesUpload {
+    align-self: flex-end;
 }
 
 /* Container for tag editor and ratio selector */

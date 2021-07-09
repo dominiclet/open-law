@@ -29,8 +29,8 @@ const TitleEditor = (props) => {
 
     // Handler for changing case name
     const handleNameChange = (event) => {
-        event.target.classList.add(caseEditStyle.inputGlow);
         setCaseName(event.target.value);
+        document.getElementById("titleUpload").style.color = "red";
     }
 
     // Handler for save button
@@ -53,7 +53,7 @@ const TitleEditor = (props) => {
             }).then(res => {
                 if (res.status == 200) {
                     // Remove red glow
-                    document.getElementById("title").classList.remove(caseEditStyle.inputGlow);
+                    document.getElementById("titleUpload").style.color = "black";
                 }
             }).catch(err => {
                 console.log("Access denied");
@@ -72,6 +72,7 @@ const TitleEditor = (props) => {
                 newCitationArr[i] = event.target.value;
                 return newCitationArr;
             })());
+            document.getElementById("titleUpload").style.color = "red";
         }
         citeEdit.push(<input 
             type="text"
@@ -87,6 +88,7 @@ const TitleEditor = (props) => {
                 newCitationArr.splice(i, 1);
                 return newCitationArr;
             })());
+            document.getElementById("titleUpload").style.color = "red";
         }
 
         citeEdit.push(<Trash
@@ -98,24 +100,32 @@ const TitleEditor = (props) => {
     // Handle add citation
     const handleAddCitation = () => {
         setCitationArr(citationArr.concat(""));
+        document.getElementById("titleUpload").style.color = "red";
     }
 
     return(
         <Jumbotron style={jumboStyle}>
-            <h3><input 
-            id="title"
-            type="text" 
-            value={caseName} 
-            onChange={handleNameChange}
-            className={caseEditStyle.caseName}
-            /></h3>
+            <h3>
+                <input 
+                    id="title"
+                    type="text" 
+                    value={caseName} 
+                    onChange={handleNameChange}
+                    className={caseEditStyle.caseName}
+                />
+            </h3>
             <p>
                 {citeEdit}
                 <Plus className={caseEditStyle.addButton} 
                     size="30" onClick={handleAddCitation} 
                 />
             </p>
-            <Upload className={caseEditStyle.saveButton} size="30" onClick={handleSave} />
+            <Upload 
+                id="titleUpload"
+                className={caseEditStyle.saveButton} 
+                size="30" 
+                onClick={handleSave} 
+            />
         </Jumbotron>
     );
 }

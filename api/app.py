@@ -310,7 +310,8 @@ def add_new_case():
         "lastEdit": "",
         "lastEditBy": get_jwt_identity(),
         "facts": [],
-        "holding": []
+        "holding": [],
+        "issues": []
     }
     _id = mongo.db.case_summaries.insert(new_doc)
 
@@ -364,6 +365,7 @@ def search():
     cursor = mongo.db.case_summaries.find({"$text": {"$search": query}}, {
         "name": 1,
         "citation": 1,
+        "issues": 1,
         "tag": 1,
         "lastEdit": 1,
         "lastEditBy": 1,

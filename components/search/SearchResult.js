@@ -23,7 +23,16 @@ const SearchResult = (props) => {
 			<Card.Body className={searchResultStyle.searchResultBody}>
 				<Card.Text>
 					<div>
-						{props.resultInfo.citation.join("; ")}
+						<p className={searchResultStyle.innerHeader}>Citation</p>
+						<p>{props.resultInfo.citation.join("; ")}</p>
+					</div>
+					<div>
+						<p className={searchResultStyle.innerHeader}>Issues</p>
+						<ol>
+							{props.resultInfo.issues.map((issue) => {
+								return <li>{issue}</li>;
+							})}
+						</ol>
 					</div>
 				</Card.Text>
 			</Card.Body>

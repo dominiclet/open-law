@@ -105,15 +105,13 @@ const TitleEditor = (props) => {
 
     return(
         <Jumbotron style={jumboStyle}>
-            <h3>
-                <input 
-                    id="title"
-                    type="text" 
-                    value={caseName} 
-                    onChange={handleNameChange}
-                    className={caseEditStyle.caseName}
-                />
-            </h3>
+            <input 
+                id="title"
+                type="text" 
+                value={caseName} 
+                onChange={handleNameChange}
+                className={caseEditStyle.caseName}
+            />
             <p>
                 {citeEdit}
                 <Plus className={caseEditStyle.addButton} 

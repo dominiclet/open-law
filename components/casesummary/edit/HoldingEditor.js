@@ -73,9 +73,7 @@ const HoldingEditor = (props) => {
             headers: {'Authorization': 'Bearer ' + accessToken}
         }).then(res => {
             if (res.status == 200) {
-                // Remove red glow
-                document.getElementById("holdingTitle" + props.index).classList.remove(caseEditStyle.inputGlow);
-                document.getElementById("holding" + props.index).classList.remove(caseEditStyle.inputGlow);
+                document.getElementById("holdingUpload").style.color = "black";
             }
         }).catch(e => {
             console.error(e);
@@ -88,19 +86,20 @@ const HoldingEditor = (props) => {
 
     // Function to handle change of sub-topic title
     const handleChange = (event) => {
-        event.target.classList.add(caseEditStyle.inputGlow);
         setSubTopic(event.target.value);
+        document.getElementById("holdingUpload").style.color = "red";
     }
 
     // Handle change of quill (main) editor box
     const handleQuillChange = (cont) => {
-        document.getElementById("holding" + props.index).classList.add(caseEditStyle.inputGlow);
         setContent(cont);
+        document.getElementById("holdingUpload").style.color = "red";
     }
 
     // To allow child TagEditor to handle updating of tags state
     const updateTags = (updated) => {
         setTags(updated);
+        document.getElementById("holdingUpload").style.color = "red";
     }
 
     // Set quill toolbar functionalities
@@ -157,7 +156,12 @@ const HoldingEditor = (props) => {
                     </Form>
                 </div>
             </div>
-            <Upload className={caseEditStyle.editorSubmitButton} size={30} onClick={handleSubmit} />
+            <Upload 
+                id="holdingUpload"
+                className={caseEditStyle.editorSubmitButton} 
+                size={30} 
+                onClick={handleSubmit} 
+            />
         </div>
     );
 }

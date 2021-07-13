@@ -29,6 +29,11 @@
 	justify-content: space-between;
 }
 
+.innerHeader {
+	margin-bottom: 0px;
+	font-weight: 500;
+}
+
 .tag {
 	margin-left: 3px;
 }

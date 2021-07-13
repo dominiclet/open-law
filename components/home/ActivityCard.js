@@ -1,6 +1,5 @@
 import Card from 'react-bootstrap/Card';
 import homeStyle from '../../styles/Home.module.css';
-import Link from 'next/link'
 import { ArrowRightShort } from 'react-bootstrap-icons';
 
 const ActivityCard = (props) => {
@@ -75,6 +74,13 @@ const ActivityCard = (props) => {
 									<i>{" " + props.prevName}</i> 
 									{" " + props.prevCitation.join("; ")} to <i>{props.caseName}</i>
 									{" " + props.currCitation.join("; ")}
+								</p>
+							);
+						} else if (props.action == "EDITISSUES") {
+							return (
+								<p className={homeStyle.activityCardWords}>
+									{props.name} edited the issues in
+									<i>{` ${props.caseName}`}</i>
 								</p>
 							);
 						}

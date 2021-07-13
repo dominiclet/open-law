@@ -175,7 +175,6 @@ def add_new_topic(caseId, category):
     data[category].append(empty_entry)
 
     # Update last edited time
-    print(request.data)
     data["lastEdit"] = json.loads(request.data)["data"]["time"]
     # Update person who added case
     data["lastEditedBy"] = get_jwt_identity()
@@ -223,6 +222,35 @@ def delete_topic(caseId, category, index):
         "time": data["lastEdit"]
     })
     return json.dumps(data[category]), 200
+
+"""
+Updates issues
+caseId: Unique case ID
+"""
+@app.route("/updateIssues/<caseId>", methods=['POST'])
+@jwt_required()
+def update_issues(caseId):
+    query = {"_id": ObjectId(caseId)}
+    data = mongo.db.case_summaries.find_one_or_404(query)
+    incoming_data = json.loads(request.data)
+    # Update issues
+    data["issues"] = incoming_data["issuesData"]
+    # Update last edit time
+    data["lastEdit"] = incoming_data["time"]
+    # Update last edit person
+    data["lastEditBy"] = get_jwt_identity()
+
+    mongo.db.case_summaries.replace_one(query, data, True)
+
+    # Update recent activity queue
+    recent_edits.append({
+        "id": caseId,
+        "name": get_jwt_identity(),
+        "case_name": data["name"],
+        "action": "EDITISSUES",
+        "time": data["lastEdit"]
+    })
+    return json.dumps(data["issues"]), 200
 
 
 """
@@ -282,7 +310,8 @@ def add_new_case():
         "lastEdit": "",
         "lastEditBy": get_jwt_identity(),
         "facts": [],
-        "holding": []
+        "holding": [],
+        "issues": []
     }
     _id = mongo.db.case_summaries.insert(new_doc)
 
@@ -336,6 +365,7 @@ def search():
     cursor = mongo.db.case_summaries.find({"$text": {"$search": query}}, {
         "name": 1,
         "citation": 1,
+        "issues": 1,
         "tag": 1,
         "lastEdit": 1,
         "lastEditBy": 1,

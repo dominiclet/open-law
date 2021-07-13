@@ -49,6 +49,33 @@ Handles logout
 # Maybe set up a blocklist? Is there a need? 
 
 """
+Handles verification of password
+"""
+@app.route("/verifypw", methods=['POST'])
+@jwt_required()
+def verifypw():
+    username = get_jwt_identity()
+    password = request.json.get("password")
+    data = mongo.db.users.find_one({"username": username})
+    if not data or not check_password_hash(data.get("password"), password):
+        return jsonify({"msg": "Bad password"}), 401
+    else:
+        return "", 200
+
+"""
+Handles change password
+"""
+@app.route("/changepw", methods=['POST'])
+@jwt_required()
+def changepw():
+    username = get_jwt_identity()
+    new_password = request.json.get("newPassword")
+    data = mongo.db.users.find_one({"username": username})
+    data["password"] = generate_password_hash(new_password)
+    mongo.db.users.replace_one({"username": username}, data, True)
+    return "", 200
+
+"""
 Handles registration of user
 """
 @app.route("/register", methods=['POST'])
@@ -58,6 +85,7 @@ def register():
         "name": data.get("name"),
         "year": data.get("year"),
         "username": data.get("username"),
+        "email": data.get("email"),
         "password": generate_password_hash(data.get("password"))
     }
     _id = mongo.db.users.insert(new_user)

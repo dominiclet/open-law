@@ -34,22 +34,25 @@ const registerPage = () => {
 	const handleSubmit = (event) => {
 		event.preventDefault();
 
+		// Form validation 
 		const name = document.getElementById("name");
 		const username = document.getElementById("username");
 		const password = document.getElementById("password");
 		const confirmPw = document.getElementById("confirmpw");
+		const email = document.getElementById("email");
 
 		document.getElementById("fullNameNote").innerHTML = null;
 		document.getElementById("usernameNote").innerHTML = null;
 		document.getElementById("passwordNote").innerHTML = null;
 		document.getElementById("confirmpwNote").innerHTML = null;
+		document.getElementById("emailNote").innerHTML = null;
 		let noError = true;
-		if (name.value == 0) {
+		if (name.value.length == 0) {
 			// Check that full name is not empty
 			document.getElementById("fullNameNote").innerHTML = "Full Name is required.";
 			noError = false;
 		}
-		if (username.value == 0) {
+		if (username.value.length == 0) {
 			// Check that username is not empty
 			document.getElementById("usernameNote").innerHTML = "Username is required.";
 			noError = false;
@@ -62,6 +65,11 @@ const registerPage = () => {
 		if (username.value.length > 30) {
 			// Limit length of username
 			document.getElementById("usernameNote").innerHTML = "Username must be less than 30 characters long.";
+			noError = false;
+		}
+		if (email.value.length == 0) {
+			// Check that email is not empty
+			document.getElementById("emailNote").innerHTML = "Email is required";
 			noError = false;
 		}
 		if (password.value.length < 8) {
@@ -80,6 +88,7 @@ const registerPage = () => {
 				"name": name.value,
 				"year": document.getElementById("academicYear").value,
 				"username": username.value,
+				"email": email.value,
 				"password": password.value
 			}
 
@@ -124,6 +133,11 @@ const registerPage = () => {
 					<Form.Text className="text-muted" style={mutedTextStyle}>
 						This will be your display name, as well as the username you use to login.
 					</Form.Text>
+				</Form.Group>
+				<Form.Group controlId="email">
+					<Form.Label>Email</Form.Label>
+					<Form.Control type="text" placeholder="Enter email" />
+					<Form.Text id="emailNote" style={warningStyle}></Form.Text>
 				</Form.Group>
 				<Form.Group controlId="password">
 					<Form.Label>Password</Form.Label>

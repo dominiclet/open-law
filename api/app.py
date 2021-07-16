@@ -23,6 +23,11 @@ mongo = PyMongo(app)
 # Activity is stored as {"id": , "case_name": , "action": , "subtopic": , "time": }
 recent_edits = deque(maxlen=5)
 
+# Initialize dictionary to store categories and their corresponding number of cases
+# key: category
+# value: [list of cases in category]
+categories_dict = {}
+
 #### Authentication setup ####
 # Set this as an environment variable (here temporarily for testing)
 app.config["JWT_SECRET_KEY"] = "ivanlikesgayporn"
@@ -293,16 +298,16 @@ def recent_activity():
 Returns the list of cases for each tag with given limit
 """
 @app.route("/casesTag/<queryTag>/<limit>", methods=['GET'])
-def get_cases_by_tag(queryTag, limit):
-    data = mongo.db.case_summaries.find({"tag": queryTag})
-    cases = []
-    i = 0
-    limit = int(limit)
-    while limit > 0 and i < data.count():
-        cases.append(data[i])
-        i += 1
-        limit -= 1
-    return JSONEncoder().encode(cases)
+def get_cases_by_tag(queryTag, limit=10):
+    try:
+        categories_dict[queryTag]
+    except KeyError:
+        getcategories()
+    finally:
+        limit = int(limit)
+        if limit > len(categories_dict[queryTag]):
+            limit = len(categories_dict[queryTag])
+        return JSONEncoder().encode(categories_dict[queryTag][:limit])
 
 """
 Returns all related cases for a given case based on matching tags
@@ -354,16 +359,22 @@ def add_new_case():
     return str(_id), 200
 
 """
-Returns list of categories (based on tags of cases)
+Returns list of categories with corresponding number of cases in each category.
+Only loops through tags of all cases when categories_dict is empty.
 """
 @app.route("/categories", methods=['GET'])
 def getcategories():
-    data = mongo.db.case_summaries.find()
+    if not categories_dict:
+        data = mongo.db.case_summaries.find()
+        for case in data:
+            for tag in case["tag"]:
+                if tag not in categories_dict:
+                    categories_dict[tag] = [case]
+                else:
+                    categories_dict[tag].append(case)
     categories = []
-    for i in data:
-        for j in i["tag"]:
-            if j not in categories:
-                categories.append(j)
+    for tag in categories_dict:
+        categories.append([tag, len(categories_dict[tag])])
     return JSONEncoder().encode(categories)
 
 

@@ -12,6 +12,13 @@ const categoryPage = () => {
     const router = useRouter();
     const {tag} = router.query;
 
+    // Convert iso date string to date representation
+    const convertDate = (date) => {
+        date = new Date(date)
+        return `${date.toLocaleTimeString("en-SG")} on ${date.toLocaleDateString("en-SG")}`
+    }
+
+
     // State to store cases
     const [cases, setCaseData] = useState();
     // State to check if data has loaded
@@ -52,7 +59,7 @@ const categoryPage = () => {
                                     </Link>
                                 </td>
                                 <td>{entry.citation}</td>
-                                <td>{entry.lastEdit}</td>
+                                <td>{convertDate(entry.lastEdit)}</td>
                             </tr>
                         ))}
                     </tbody>

@@ -50,9 +50,6 @@ const caseDisplayPage = () => {
                             <a className={caseStyle.body}>Go Back</a>
                         </Link>
                     </Tab>
-                    <Tab eventKey="forum" title="Forum">
-                        <Forum posts = {caseData.posts}/>
-                    </Tab>
                     <Tab eventKey="relatedCases" title="Related Cases">
                         <RelatedCases entry={caseData}/>
                     </Tab>
@@ -63,3 +60,9 @@ const caseDisplayPage = () => {
 }
 
 export default caseDisplayPage
+
+/* Removed for now
+                    <Tab eventKey="forum" title="Forum">
+                        <Forum posts = {caseData.posts}/>
+                    </Tab>
+*/

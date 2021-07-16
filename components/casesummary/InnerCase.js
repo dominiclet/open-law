@@ -5,7 +5,7 @@ import caseStyle from '../../styles/Case.module.css'
 /*
 InnerCase expects a property "name" representing
 the portion of the inner judgment we are referring to,
-either "Facts" or "Holding".
+either "Facts", "Issues" or "Holding".
 */
 // Props: name, content
 const InnerCase = (props) => {

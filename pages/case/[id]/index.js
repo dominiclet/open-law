@@ -59,7 +59,7 @@ const caseDisplayPage = () => {
                     <Tab.Content className={caseStyle.contentContainer}>
                         <Tab.Pane eventKey="case">
                             <OuterCase entry={caseData} />
-                            <Link href={`/case/${caseData._id}/edit`} >
+                            <Link href={`/case/${caseData._id}/edit`}>
                                 <a className={caseStyle.body}>Edit this case</a>
                             </Link>
                             <Link href='/'>
@@ -79,8 +79,15 @@ const caseDisplayPage = () => {
                     Can use to include new features on the right in the future.*/}
                 </div>
             </div>
+
         );
     }
 }
 
 export default caseDisplayPage
+
+/* Removed for now
+                    <Tab eventKey="forum" title="Forum">
+                        <Forum posts = {caseData.posts}/>
+                    </Tab>
+*/

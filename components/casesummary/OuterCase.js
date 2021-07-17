@@ -10,18 +10,25 @@ const OuterCase = (props) => {
     const width = {"min-width": "1000px"};
     const date = new Date(props.entry.lastEdit);
 
+    // check if there is link to full case
+    const missingLink = () => {
+        return props.entry.link === undefined;
+    }
+
     return(
         <Card className={caseStyle.casesummary} style={width}>
             <Card.Title className={caseStyle.casename}>
-                <Link href={props.entry.link}>{props.entry.name}</Link>
+                {!missingLink() && <Link href={props.entry.link}>{props.entry.name}</Link>}
+                {missingLink() && <>{props.entry.name}</>}
                 <p className={caseStyle.citations}>
                     {props.entry.citation.join("; ")}
                 </p>
             </Card.Title>
             <InnerCase name="Facts" content = {props.entry.facts}/>
+            <InnerCase name="Issues" content = {props.entry.issues}/>
             <InnerCase name="Holding" content = {props.entry.holding}/>
             <p className={caseEditStyle.editTimeStamp}>
-                Last edited by [someone] at {date.toLocaleTimeString("en-SG")} on {date.toLocaleDateString("en-SG")}
+                Last edited by {props.entry.lastEditBy} at {date.toLocaleTimeString("en-SG")} on {date.toLocaleDateString("en-SG")}
             </p>
         </Card>
     );

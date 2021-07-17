@@ -18,6 +18,10 @@ const CaseFact = (props) => {
         return props.name == "Holding";
     }
 
+    const isIssues = () => {
+        return props.name == "Issues";
+    }
+
     const { htmlToText } = require("html-to-text");
 
     return (
@@ -25,13 +29,17 @@ const CaseFact = (props) => {
             <Card style={cardStyle}>
                 <Accordion.Toggle className={caseStyle.subTopicTitle} as={Card.Header} eventKey={props.name}>
                     {props.content.title}
+                    {isIssues() && <>{props.content}</>}
                     {isHolding() && <TagButtons tag = {props.content.tag}/>}
                 </Accordion.Toggle>
-                <Accordion.Collapse eventKey={props.name}>
-                    <Card.Body className={caseStyle.subtopic}>
-                        {htmlToText(props.content.content)}
-                    </Card.Body>
-                </Accordion.Collapse>
+
+                {!isIssues() && 
+                    <Accordion.Collapse eventKey={props.name}>
+                        <Card.Body className={caseStyle.subtopic}>
+                            {htmlToText(props.content.content)}
+                        </Card.Body>
+                    </Accordion.Collapse>
+                }
             </Card>
         </Accordion>
     )

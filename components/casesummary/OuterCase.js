@@ -20,10 +20,9 @@ const OuterCase = (props) => {
             <Card.Title className={caseStyle.casename}>
                 {!missingLink() && <Link href={props.entry.link}>{props.entry.name}</Link>}
                 {missingLink() && <>{props.entry.name}</>}
-                <br/>
-                {props.entry.citation.map( (cite) => (
-                    <>({cite}) &ensp;</>
-                ))}
+                <p className={caseStyle.citations}>
+                    {props.entry.citation.join("; ")}
+                </p>
             </Card.Title>
             <InnerCase name="Facts" content = {props.entry.facts}/>
             <InnerCase name="Issues" content = {props.entry.issues}/>

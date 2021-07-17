@@ -32,9 +32,10 @@ const CaseFact = (props) => {
                     {isIssues() && <>{props.content}</>}
                     {isHolding() && <TagButtons tag = {props.content.tag}/>}
                 </Accordion.Toggle>
+
                 {!isIssues() && 
                     <Accordion.Collapse eventKey={props.name}>
-                        <Card.Body className="subtopic">
+                        <Card.Body className={caseStyle.subtopic}>
                             {htmlToText(props.content.content)}
                         </Card.Body>
                     </Accordion.Collapse>

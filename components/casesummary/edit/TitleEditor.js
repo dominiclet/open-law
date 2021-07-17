@@ -112,7 +112,7 @@ const TitleEditor = (props) => {
                 onChange={handleNameChange}
                 className={caseEditStyle.caseName}
             />
-            <p>
+            <p className={caseEditStyle.citationContainer}>
                 {citeEdit}
                 <Plus className={caseEditStyle.addButton} 
                     size="30" onClick={handleAddCitation} 

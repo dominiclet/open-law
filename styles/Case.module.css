@@ -12,14 +12,15 @@
     monospace;
 }
 
-.casesummary {
-  width: 60%;
+/* Overall styling */
+.overallContainer {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
 }
 
-.subtopic {
-  border-left: none;
-  border-right: none;
-  border-radius: 0;
+.casesummary {
+  width: 60%;
 }
 
 .header {
@@ -31,19 +32,46 @@
   background-color: darkcyan;
 }
 
+/* Styling for title of case */
 .casename {
   text-align: center;
   padding: 10px;
+  margin-bottom: 0px;
+  background-color: rgb(163, 160, 160);
 }
 
+.citations {
+  font-size: 1rem;
+  font-weight: 400;
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+
+/* Styling for inner contents of case */
 .innerCaseTitle {
+  padding: 10px;
+  margin-bottom: 0;
+  background-color:rgb(194, 191, 191);
+}
+
+.subTopicTitle {
+  background-color: #e4e4e4;
   padding: 10px;
 }
 
 .subTopicTitle:hover {
-  background-color: #c0c0c0;
+  background-color: #cacaca;
   cursor: pointer;
 }
+
+.subtopic {
+  border-left: none;
+  border-right: none;
+  border-radius: 0;
+  font-size: 1rem;
+  padding: 15px;
+}
+
 
 .tags {
   text-align: center;
@@ -60,4 +88,18 @@
   justify-content: center;
   display: flex;
   margin: 10px;
+}
+
+/* Nav tabs styling */
+.navContainer {
+  display: flex;
+  flex-direction: column; 
+  width: 170px;
+  font-size: 1rem;
+  margin-right: 10px;
+}
+
+/* Overall styling for content of display box */
+.contentContainer {
+  display: flex;
 }

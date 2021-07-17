@@ -46,11 +46,6 @@ const caseDisplayPage = () => {
                             </Nav.Link>
                         </Nav.Item>
                         <Nav.Item>
-                            <Nav.Link eventKey="forum">
-                                Forum
-                            </Nav.Link>
-                        </Nav.Item>
-                        <Nav.Item>
                             <Nav.Link eventKey="relatedCases">
                                 Related cases
                             </Nav.Link>
@@ -65,9 +60,6 @@ const caseDisplayPage = () => {
                             <Link href='/'>
                                 <a className={caseStyle.body}>Go Back</a>
                             </Link>
-                        </Tab.Pane>
-                        <Tab.Pane eventKey="forum">
-                            <Forum posts = {caseData.posts}/>
                         </Tab.Pane>
                         <Tab.Pane eventKey="relatedCases">
                             <RelatedCases entry={caseData}/>

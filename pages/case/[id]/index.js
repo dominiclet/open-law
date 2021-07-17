@@ -1,16 +1,16 @@
-import { useRouter } from 'next/router'
+import { useRouter } from 'next/router';
 import axios from 'axios';
-import { apiRoot } from '../../../config'
+import { apiRoot } from '../../../config';
 import { useEffect, useState } from 'react';
-import Link from 'next/link'
-import caseStyle from '../../../styles/Case.module.css'
-import OuterCase from '../../../components/casesummary/OuterCase'
-import RelatedCases from '../../../components/casesummary/RelatedCases'
-import withAuth from '../../../helpers/withAuth';
-import Forum from '../../../components/casesummary/Forum'
-import 'bootstrap/dist/css/bootstrap.min.css'
-import Tabs from 'react-bootstrap/Tabs'
-import Tab from 'react-bootstrap/Tab'
+import Link from 'next/link';
+import caseStyle from '../../../styles/Case.module.css';
+import OuterCase from '../../../components/casesummary/OuterCase';
+import RelatedCases from '../../../components/casesummary/RelatedCases';
+import Forum from '../../../components/casesummary/Forum';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import Tabs from 'react-bootstrap/Tabs';
+import Tab from 'react-bootstrap/Tab';
+import Nav from 'react-bootstrap/Nav';
 
 const caseDisplayPage = () => {
     const router = useRouter();
@@ -37,27 +37,48 @@ const caseDisplayPage = () => {
         return (<span>Loading...</span>)
     } else {
         return (
-            <>
-                <Tabs defaultActiveKey="case" id="test">
-                    <Tab eventKey="case" title="Case Summary">
-                        <div>
+            <div className={caseStyle.overallContainer}>
+                <Tab.Container defaultActiveKey="case">
+                    <Nav className={caseStyle.navContainer} variant="pills">
+                        <Nav.Item>
+                            <Nav.Link eventKey="case">
+                                Case summary
+                            </Nav.Link>
+                        </Nav.Item>
+                        <Nav.Item>
+                            <Nav.Link eventKey="forum">
+                                Forum
+                            </Nav.Link>
+                        </Nav.Item>
+                        <Nav.Item>
+                            <Nav.Link eventKey="relatedCases">
+                                Related cases
+                            </Nav.Link>
+                        </Nav.Item>
+                    </Nav>
+                    <Tab.Content className={caseStyle.contentContainer}>
+                        <Tab.Pane eventKey="case">
                             <OuterCase entry={caseData} />
-                        </div>
-                        <Link href={`/case/${caseData._id}/edit`} >
-                            <a className={caseStyle.body}>Edit this case</a>
-                        </Link>
-                        <Link href='/'>
-                            <a className={caseStyle.body}>Go Back</a>
-                        </Link>
-                    </Tab>
-                    <Tab eventKey="forum" title="Forum">
-                        <Forum posts = {caseData.posts}/>
-                    </Tab>
-                    <Tab eventKey="relatedCases" title="Related Cases">
-                        <RelatedCases entry={caseData}/>
-                    </Tab>
-                </Tabs>
-            </>
+                            <Link href={`/case/${caseData._id}/edit`} >
+                                <a className={caseStyle.body}>Edit this case</a>
+                            </Link>
+                            <Link href='/'>
+                                <a className={caseStyle.body}>Go Back</a>
+                            </Link>
+                        </Tab.Pane>
+                        <Tab.Pane eventKey="forum">
+                            <Forum posts = {caseData.posts}/>
+                        </Tab.Pane>
+                        <Tab.Pane eventKey="relatedCases">
+                            <RelatedCases entry={caseData}/>
+                        </Tab.Pane>
+                    </Tab.Content>
+                </Tab.Container>
+                <div className={caseStyle.navContainer}>
+                    {/* Dummy div for now, used to center the contents.
+                    Can use to include new features on the right in the future.*/}
+                </div>
+            </div>
         );
     }
 }

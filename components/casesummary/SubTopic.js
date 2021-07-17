@@ -4,7 +4,7 @@ import Card from 'react-bootstrap/Card'
 import Accordion from 'react-bootstrap/Accordion'
 
 // props: name, content 
-const CaseFact = (props) => {
+const SubTopic = (props) => {
     // Needed to override bootstrap css, 
     // to prevent inner Card from having rounded edges
     const cardStyle = {
@@ -45,4 +45,4 @@ const CaseFact = (props) => {
     )
 }
 
-export default CaseFact
+export default SubTopic 

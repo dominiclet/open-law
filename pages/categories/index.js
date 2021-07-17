@@ -1,6 +1,6 @@
-import categoriesStyle from '../styles/Categories.module.css'
-import Item from '../components/categories/Item'
-import { apiRoot } from '../config'
+import categoriesStyle from '../../styles/Categories.module.css'
+import Item from '../../components/categories/Item'
+import { apiRoot } from '../../config'
 import axios from 'axios'
 
 const categories = (props) => {
@@ -8,7 +8,7 @@ const categories = (props) => {
         <div>
             <h1 className={categoriesStyle.header}>Categories</h1>
             {props.entries.map( (entry) => (
-                <Item key = {entry} tag = {entry}/>
+                <Item key = {entry[0]} tag = {entry[0]} count = {entry[1]}/>
             ))}
         </div>
     )

@@ -13,7 +13,7 @@ const Item = (props) => {
                 <thead>
                     <td colSpan = "2">
                         {props.tag}
-                        <Link href = '/categories/[tag]' as={`/categories/${props.tag}`}>
+                        <Link href = '/category/[tag]' as={`/category/${props.tag}`}>
                             <Button className = {categoriesStyle.button}>
                                 Load More
                                 <ArrowRight/>
@@ -21,16 +21,9 @@ const Item = (props) => {
                         </Link>
                     </td>
                 </thead>
-                <thead>
-                    <tr>
-                        <th>Case</th>
-                        <th>Last Edited</th>
-                    </tr>
-                </thead>
                 <tbody>
                     <tr>
-                        <td>case name</td>
-                        <td>last edited</td>
+                        <td>{props.count} cases in this category</td>
                     </tr>
                 </tbody>
             </Table>

@@ -10,13 +10,16 @@ const TitleEditor = (props) => {
     // props.caseId: Unique ID of case
     // props.caseName: String of the case name
     // props.citation: Array of citations
+    // props.link: Link to case
 
     const router = useRouter();
 
     // State stores case name
     const [caseName, setCaseName] = useState(props.caseName);
     // State stores case citation (note that this is an array)
-    const [citationArr, setCitationArr] = useState(props.citation)
+    const [citationArr, setCitationArr] = useState(props.citation);
+    // State stores link to case
+    const [caseLink, setCaseLink] = useState(props.link ? props.link : '');
 
     // Handler for changing case name
     const handleNameChange = (event) => {
@@ -29,6 +32,7 @@ const TitleEditor = (props) => {
         const data = {
             name: caseName,
             citation: citationArr,
+            link: caseLink,
             time: new Date().toJSON()
         };
 
@@ -97,6 +101,12 @@ const TitleEditor = (props) => {
         document.getElementById("titleUpload").style.color = "red";
     }
 
+    // Handle change of case link
+    const handleChangeLink = (event) => {
+        setCaseLink(event.target.value);
+        document.getElementById("titleUpload").style.color = "red";
+    }
+
     return(
         <Jumbotron className={caseEditStyle.titleContainer}>
             <input 
@@ -113,12 +123,13 @@ const TitleEditor = (props) => {
                     size="30" onClick={handleAddCitation} 
                 />
             </p>
-            <div>
-                <input 
-                    className={caseEditStyle.caseLink}
-                    placeholder="Link to case"
-                />
-            </div>
+            <input 
+                type="text"
+                className={caseEditStyle.caseLink}
+                placeholder="Link to case"
+                value={caseLink}
+                onChange={handleChangeLink}
+            />
             <Upload 
                 id="titleUpload"
                 className={caseEditStyle.saveButton} 

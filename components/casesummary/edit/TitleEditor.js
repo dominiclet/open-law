@@ -13,15 +13,6 @@ const TitleEditor = (props) => {
 
     const router = useRouter();
 
-    // Jumotron styling (Reduce padding for Jumbotron)
-    const jumboStyle = {
-        "padding": "1rem 2rem",
-        "width": "100%",
-        "margin": "auto",
-        "height": "175px",
-        "maxWidth": "1000px"
-    };
-
     // State stores case name
     const [caseName, setCaseName] = useState(props.caseName);
     // State stores case citation (note that this is an array)
@@ -107,7 +98,7 @@ const TitleEditor = (props) => {
     }
 
     return(
-        <Jumbotron style={jumboStyle}>
+        <Jumbotron className={caseEditStyle.titleContainer}>
             <input 
                 id="title"
                 type="text" 
@@ -122,6 +113,12 @@ const TitleEditor = (props) => {
                     size="30" onClick={handleAddCitation} 
                 />
             </p>
+            <div>
+                <input 
+                    className={caseEditStyle.caseLink}
+                    placeholder="Link to case"
+                />
+            </div>
             <Upload 
                 id="titleUpload"
                 className={caseEditStyle.saveButton} 

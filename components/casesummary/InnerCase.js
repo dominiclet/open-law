@@ -1,6 +1,7 @@
-import Card from 'react-bootstrap/Card'
-import SubTopic from './SubTopic'
-import caseStyle from '../../styles/Case.module.css'
+import Card from 'react-bootstrap/Card';
+import SubTopic from './SubTopic';
+import caseStyle from '../../styles/Case.module.css';
+import { Accordion } from 'react-bootstrap';
 
 /*
 InnerCase expects a property "name" representing
@@ -17,6 +18,35 @@ const InnerCase = (props) => {
         "border-bottom": "none",
         "border-radius": "0"
     };
+
+    // Handle issues separately because simpler
+    if (props.name === "Issues") {
+
+        return (
+            <Accordion defaultActiveKey="issues">
+                <Card style={cardStyle}>
+                        <Accordion.Toggle 
+                            as={Card.Header} 
+                            className={caseStyle.innerCaseTitle}
+                            eventKey="issues"
+                        >
+                            {props.name}
+                        </Accordion.Toggle>
+                        <Accordion.Collapse eventKey="issues">
+                            <Card.Body className={caseStyle.subtopic}>
+                                <ol>
+                                    {props.content.map((issue, index) => {
+                                        return (
+                                            <li key={index}>{issue}</li>
+                                        );
+                                    })}
+                                </ol>
+                            </Card.Body>
+                        </Accordion.Collapse>
+                </Card>
+            </Accordion>
+        );
+    }
 
     return (
         <Card style={cardStyle}>

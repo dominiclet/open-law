@@ -74,12 +74,15 @@ const TitleEditor = (props) => {
             })());
             document.getElementById("titleUpload").style.color = "red";
         }
-        citeEdit.push(<input 
-            type="text"
-            value={citationArr[i]}
-            onChange={handleCitationChange}
-            className={caseEditStyle.citation}
-        />);
+        citeEdit.push(
+            <input 
+                type="text"
+                value={citationArr[i]}
+                onChange={handleCitationChange}
+                className={caseEditStyle.citation}
+                placeholder="Citation"
+            />
+        );
 
         // Handler for delete button
         const handleDeleteCite = () => {
@@ -111,6 +114,7 @@ const TitleEditor = (props) => {
                 value={caseName} 
                 onChange={handleNameChange}
                 className={caseEditStyle.caseName}
+                placeholder="Case name"
             />
             <p className={caseEditStyle.citationContainer}>
                 {citeEdit}

@@ -1,7 +1,7 @@
-import TagButtons from './TagButtons'
 import caseStyle from '../../styles/Case.module.css'
 import Card from 'react-bootstrap/Card'
 import Accordion from 'react-bootstrap/Accordion'
+import CaseTag from './CaseTag'
 
 // props: name, content 
 const SubTopic = (props) => {
@@ -18,10 +18,6 @@ const SubTopic = (props) => {
         return props.name == "Holding";
     }
 
-    const isIssues = () => {
-        return props.name == "Issues";
-    }
-
     const { htmlToText } = require("html-to-text");
 
     return (
@@ -29,17 +25,17 @@ const SubTopic = (props) => {
             <Card style={cardStyle}>
                 <Accordion.Toggle className={caseStyle.subTopicTitle} as={Card.Header} eventKey={props.name}>
                     {props.content.title}
-                    {isIssues() && <>{props.content}</>}
-                    {isHolding() && <TagButtons tag = {props.content.tag}/>}
+                    {isHolding() && 
+                        <div>
+                            {props.content.tag.map(tag => <CaseTag tag={tag} />)}
+                        </div>
+                    }
                 </Accordion.Toggle>
-
-                {!isIssues() && 
-                    <Accordion.Collapse eventKey={props.name}>
-                        <Card.Body className={caseStyle.subtopic}>
-                            {htmlToText(props.content.content)}
-                        </Card.Body>
-                    </Accordion.Collapse>
-                }
+                <Accordion.Collapse eventKey={props.name}>
+                    <Card.Body className={caseStyle.subtopic}>
+                        {htmlToText(props.content.content)}
+                    </Card.Body>
+                </Accordion.Collapse>
             </Card>
         </Accordion>
     )

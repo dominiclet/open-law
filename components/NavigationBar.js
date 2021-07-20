@@ -27,10 +27,10 @@ const NavigationBar = (props) => {
                     <CaseSearch />
                 </Nav.Item>
                 <Nav.Item className={navbarStyles.button}>
-                    <Button onClick={props.addCase}>Add case</Button>
+                    <Button variant="light" onClick={props.addCase}>Add case</Button>
                 </Nav.Item>
                 <Nav.Item className={navbarStyles.button}>
-                    <Button onClick={handleLogout}>Logout</Button>
+                    <Button variant="light" onClick={handleLogout}>Logout</Button>
                 </Nav.Item>
             </Nav>
         </Navbar>

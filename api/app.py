@@ -340,7 +340,7 @@ def add_new_case():
 
     new_doc = {
         "name": post_data["caseName"],
-        "citation": [],
+        "citation": [post_data["caseCitation"]],
         "tag": [],
         "lastEdit": "",
         "lastEditBy": get_jwt_identity(),

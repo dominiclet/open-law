@@ -18,3 +18,13 @@
   font-size: 1.25rem;
   margin: 1.5rem;
 }
+
+/* For add new case modal */
+.citationContainer {
+  display: flex;
+  justify-content: flex-start;
+}
+
+.citationInput {
+  width: 200px !important;
+}

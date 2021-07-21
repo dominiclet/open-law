@@ -10,22 +10,16 @@ const TitleEditor = (props) => {
     // props.caseId: Unique ID of case
     // props.caseName: String of the case name
     // props.citation: Array of citations
+    // props.link: Link to case
 
     const router = useRouter();
-
-    // Jumotron styling (Reduce padding for Jumbotron)
-    const jumboStyle = {
-        "padding": "1rem 2rem",
-        "width": "100%",
-        "margin": "auto",
-        "height": "175px",
-        "maxWidth": "1000px"
-    };
 
     // State stores case name
     const [caseName, setCaseName] = useState(props.caseName);
     // State stores case citation (note that this is an array)
-    const [citationArr, setCitationArr] = useState(props.citation)
+    const [citationArr, setCitationArr] = useState(props.citation);
+    // State stores link to case
+    const [caseLink, setCaseLink] = useState(props.link ? props.link : '');
 
     // Handler for changing case name
     const handleNameChange = (event) => {
@@ -38,6 +32,7 @@ const TitleEditor = (props) => {
         const data = {
             name: caseName,
             citation: citationArr,
+            link: caseLink,
             time: new Date().toJSON()
         };
 
@@ -74,12 +69,15 @@ const TitleEditor = (props) => {
             })());
             document.getElementById("titleUpload").style.color = "red";
         }
-        citeEdit.push(<input 
-            type="text"
-            value={citationArr[i]}
-            onChange={handleCitationChange}
-            className={caseEditStyle.citation}
-        />);
+        citeEdit.push(
+            <input 
+                type="text"
+                value={citationArr[i]}
+                onChange={handleCitationChange}
+                className={caseEditStyle.citation}
+                placeholder="Citation"
+            />
+        );
 
         // Handler for delete button
         const handleDeleteCite = () => {
@@ -103,14 +101,21 @@ const TitleEditor = (props) => {
         document.getElementById("titleUpload").style.color = "red";
     }
 
+    // Handle change of case link
+    const handleChangeLink = (event) => {
+        setCaseLink(event.target.value);
+        document.getElementById("titleUpload").style.color = "red";
+    }
+
     return(
-        <Jumbotron style={jumboStyle}>
+        <Jumbotron className={caseEditStyle.titleContainer}>
             <input 
                 id="title"
                 type="text" 
                 value={caseName} 
                 onChange={handleNameChange}
                 className={caseEditStyle.caseName}
+                placeholder="Case name"
             />
             <p className={caseEditStyle.citationContainer}>
                 {citeEdit}
@@ -118,6 +123,13 @@ const TitleEditor = (props) => {
                     size="30" onClick={handleAddCitation} 
                 />
             </p>
+            <input 
+                type="text"
+                className={caseEditStyle.caseLink}
+                placeholder="Link to case"
+                value={caseLink}
+                onChange={handleChangeLink}
+            />
             <Upload 
                 id="titleUpload"
                 className={caseEditStyle.saveButton} 

@@ -11,6 +11,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import Tabs from 'react-bootstrap/Tabs';
 import Tab from 'react-bootstrap/Tab';
 import Nav from 'react-bootstrap/Nav';
+import { PencilSquare } from 'react-bootstrap-icons';
 
 const caseDisplayPage = () => {
     const router = useRouter();
@@ -36,6 +37,11 @@ const caseDisplayPage = () => {
     if (!dataLoaded) {
         return (<span>Loading...</span>)
     } else {
+        // Handle edit data button
+        const handleEditButton = () => {
+            router.push(`/case/${caseData._id}/edit`);
+        }
+
         return (
             <div className={caseStyle.overallContainer}>
                 <Tab.Container defaultActiveKey="case">
@@ -54,12 +60,7 @@ const caseDisplayPage = () => {
                     <Tab.Content className={caseStyle.contentContainer}>
                         <Tab.Pane eventKey="case">
                             <OuterCase entry={caseData} />
-                            <Link href={`/case/${caseData._id}/edit`}>
-                                <a className={caseStyle.body}>Edit this case</a>
-                            </Link>
-                            <Link href='/'>
-                                <a className={caseStyle.body}>Go Back</a>
-                            </Link>
+                            <PencilSquare className={caseStyle.editIcon} onClick={handleEditButton} />
                         </Tab.Pane>
                         <Tab.Pane eventKey="relatedCases">
                             <RelatedCases entry={caseData}/>

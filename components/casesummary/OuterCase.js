@@ -3,6 +3,7 @@ import caseStyle from '../../styles/Case.module.css';
 import caseEditStyle from '../../styles/CaseEdit.module.css';
 import InnerCase from './InnerCase';
 import Card from 'react-bootstrap/Card';
+import { PencilSquare } from 'react-bootstrap-icons';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 const OuterCase = (props) => {
@@ -17,9 +18,11 @@ const OuterCase = (props) => {
 
     return(
         <Card className={caseStyle.casesummary} style={width}>
-            <Card.Title className={caseStyle.casename}>
-                {!missingLink() && <Link href={props.entry.link}>{props.entry.name}</Link>}
-                {missingLink() && <>{props.entry.name}</>}
+            <Card.Title className={caseStyle.caseNameContainer}>
+                <div className={caseStyle.casename}>
+                    {!missingLink() && <Link href={props.entry.link}>{props.entry.name}</Link>}
+                    {missingLink() && <>{props.entry.name}</>}
+                </div>
                 <p className={caseStyle.citations}>
                     {props.entry.citation.join("; ")}
                 </p>

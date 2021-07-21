@@ -1,6 +1,6 @@
 import axios from "axios";
-import { useEffect, useState } from "react";
-import { PersonPlus, Plus, Trash, Upload } from "react-bootstrap-icons";
+import { useState } from "react";
+import { Plus, Trash, Upload } from "react-bootstrap-icons";
 import { apiRoot } from "../../../config";
 import caseEditStyle from '../../../styles/CaseEdit.module.css';
 import { useRouter } from 'next/router';
@@ -48,6 +48,7 @@ const IssuesEditor = (props) => {
                         className={caseEditStyle.issuesInput}
                         value={issuesData[idx]} 
                         onChange={handleInput}
+                        placeholder="Enter issue here"
                     />
                     <Trash
                         key={"deleteIssue" + idx}

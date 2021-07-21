@@ -89,6 +89,7 @@ const caseEditPage = () => {
                 caseId={caseData._id} 
                 caseName={caseData.name} 
                 citation={caseData.citation} 
+                link={caseData.link}
             />
             <EditorBuilder 
                 caseId={caseData._id} 

@@ -84,7 +84,7 @@ const FactEditor = (props) => {
     return (
         <form className={caseEditStyle.editor}>
             <input id={"factTitle"+props.index} className={caseEditStyle.subTopic} value={subTopic} 
-            type="text" onChange={handleTopicChange} />
+            type="text" onChange={handleTopicChange} placeholder="Subtopic title" />
             <div id={"fact"+props.index}>
                 <ReactQuill 
                     theme="bubble" 
@@ -93,6 +93,7 @@ const FactEditor = (props) => {
                     value={content} 
                     onChange={handleEditorChange} 
                     style={styling} 
+                    placeholder="Enter content here"
                 />
             </div>
             <Upload 

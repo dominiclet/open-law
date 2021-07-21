@@ -170,6 +170,8 @@ def edit_case_identifiers(caseId):
     data["name"] = updated_data["data"]["name"]
     # Update citations
     data["citation"] = updated_data["data"]["citation"]
+    # Update case link
+    data["link"] = updated_data["data"]["link"]
     # Update last edited time
     data["lastEdit"] = updated_data["data"]["time"]
     # Update person who last edited

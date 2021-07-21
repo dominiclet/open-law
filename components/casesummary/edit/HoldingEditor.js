@@ -114,7 +114,7 @@ const HoldingEditor = (props) => {
     return (
         <div className={caseEditStyle.editor}>
             <input id={"holdingTitle"+props.index} className={caseEditStyle.subTopic} value={subTopic} type="text" 
-            onChange={handleChange} />
+            onChange={handleChange} placeholder="Subtopic title" />
             <div id={"holding"+props.index}>
                 <ReactQuill 
                     theme="bubble" 
@@ -123,6 +123,7 @@ const HoldingEditor = (props) => {
                     value={content} 
                     onChange={handleQuillChange} 
                     style={styling} 
+                    placeholder="Enter content here"
                 />
             </div>
             <div className={caseEditStyle.bottomHoldingContainer}>

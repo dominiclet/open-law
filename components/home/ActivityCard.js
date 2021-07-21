@@ -35,65 +35,63 @@ const ActivityCard = (props) => {
 	})()
 
 	return (
-		<div className={homeStyle.cardContainer}>
-			<Card bg="secondary" text="white" className={homeStyle.activityCard}>
-				<Card.Body className={homeStyle.activityCardBody}>
-					{(() => {
-						if (props.action == "EDIT") {
-							return (
+		<div className={homeStyle.activityCard}>
+			<div className={homeStyle.activityInnerContainer}>
+				{(() => {
+					if (props.action == "EDIT") {
+						return (
 							<p className={homeStyle.activityCardWords}>
-								{props.name} edited <b>
-									{props.subtopic ? props.subtopic : "the case name/citation"}
-								</b> in <i>{props.caseName}</i>
+							<b>{props.name}</b> edited <b>
+								{props.subtopic ? props.subtopic : "the case name/citation"}
+							</b> in <i>{props.caseName}</i>
+						</p>
+						);
+					} else if (props.action == "DELETE") {
+						return (
+							<p className={homeStyle.activityCardWords}>
+								<b>{props.name}</b> deleted <b>
+									{!props.subtopic ? "a topic" : props.subtopic}
+									</b> in <i>{props.caseName}</i>
 							</p>
-							);
-						} else if (props.action == "DELETE") {
-							return (
-								<p className={homeStyle.activityCardWords}>
-									{props.name} deleted <b>
-										{!props.subtopic ? "a topic" : props.subtopic}
-										</b> in <i>{props.caseName}</i>
-								</p>
-							);
-						} else if (props.action == "ADDTOPIC") {
-							return (
-								<p className={homeStyle.activityCardWords}>
-									{props.name} added a new topic to <i>{props.caseName}</i>
-								</p>
-							);
-						} else if (props.action == "ADDCASE") {
-							return (
-								<p className={homeStyle.activityCardWords}>
-									{props.name} added a new case summary <i>{props.caseName}</i>
-								</p>
-							);
-						} else if (props.action == "EDITCASENAME") {
-							return (
-								<p className={homeStyle.activityCardWords}>
-									{props.name} changed a case's name/citation from 
-									<i>{" " + props.prevName}</i> 
-									{" " + props.prevCitation.join("; ")} to <i>{props.caseName}</i>
-									{" " + props.currCitation.join("; ")}
-								</p>
-							);
-						} else if (props.action == "EDITISSUES") {
-							return (
-								<p className={homeStyle.activityCardWords}>
-									{props.name} edited the issues in
-									<i>{` ${props.caseName}`}</i>
-								</p>
-							);
-						}
-					})()}
-				</Card.Body>
+						);
+					} else if (props.action == "ADDTOPIC") {
+						return (
+							<p className={homeStyle.activityCardWords}>
+								<b>{props.name}</b> added a new topic to <i>{props.caseName}</i>
+							</p>
+						);
+					} else if (props.action == "ADDCASE") {
+						return (
+							<p className={homeStyle.activityCardWords}>
+								<b>{props.name}</b> added a new case summary <i>{props.caseName}</i>
+							</p>
+						);
+					} else if (props.action == "EDITCASENAME") {
+						return (
+							<p className={homeStyle.activityCardWords}>
+								<b>{props.name}</b> changed a case's name/citation from 
+								<i>{" " + props.prevName}</i> 
+								{" " + props.prevCitation.join("; ")} to <i>{props.caseName}</i>
+								{" " + props.currCitation.join("; ")}
+							</p>
+						);
+					} else if (props.action == "EDITISSUES") {
+						return (
+							<p className={homeStyle.activityCardWords}>
+								<b>{props.name}</b> edited the issues in
+								<i>{` ${props.caseName}`}</i>
+							</p>
+						);
+					}
+				})()}
 				<ArrowRightShort 
 					className={homeStyle.activityCardArrow} 
-					size="30" 
+					size="25" 
 					onClick={() => {
 						window.location.href=`/case/${props.caseId}`;
 					}}
 				/>
-			</Card>
+			</div>
 			<div className={homeStyle.activityTimeStamp}>
 				{timeStamp}
 			</div>

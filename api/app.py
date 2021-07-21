@@ -21,7 +21,7 @@ mongo = PyMongo(app)
 
 # Initialize recent edits deque
 # Activity is stored as {"id": , "case_name": , "action": , "subtopic": , "time": }
-recent_edits = deque(maxlen=5)
+recent_edits = deque(maxlen=10)
 
 # Initialize dictionary to store categories and their corresponding number of cases
 # key: category

@@ -28,16 +28,29 @@ const caseEditPage = () => {
                     // Remember visit to this case edit for RecentEditCard
                     let recentEdits = localStorage.getItem("recentEdits");
                     const recentEditInfo = {
+                        "caseId": id,
                         "caseName": res.data.name,
-                        "caseId": id
+                        "caseCitation": res.data.citation
                     }
                     if (recentEdits) {
                         let recents = JSON.parse(recentEdits);
-                        if (!recents.some(elem => elem.caseId == id)) {
+                        var removeAtIndex;
+                        let historyContains = recents.some((element, index) => {
+                            if (element.caseId == id) {
+                                removeAtIndex = index;
+                                return true;
+                            }
+                            return false;
+                        })
+                        if (!historyContains) {
                             recents.push(recentEditInfo);
                             if (recents.length > MAX_RECENT_EDITS) {
                                 recents.splice(0, 1);
                             }
+                            localStorage.setItem("recentEdits", JSON.stringify(recents));
+                        } else {
+                            recents.splice(removeAtIndex, 1);
+                            recents.push(recentEditInfo);
                             localStorage.setItem("recentEdits", JSON.stringify(recents));
                         }
                     } else {

@@ -1,6 +1,8 @@
 import navbarStyles from '../../styles/Navbar.module.css';
 import { Search } from 'react-bootstrap-icons';
 
+// Not in use
+
 const CaseSearch = () => {
 
 	// Handles search functionality: Redirects to search page

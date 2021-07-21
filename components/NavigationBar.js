@@ -23,9 +23,6 @@ const NavigationBar = (props) => {
                 <Nav.Link href='/about'>About</Nav.Link>
             </Nav>
             <Nav classname="justify-content-end">
-                <Nav.Item className={navbarStyles.navSearchContainer}>
-                    <CaseSearch />
-                </Nav.Item>
                 <Nav.Item className={navbarStyles.button}>
                     <Button variant="light" onClick={props.addCase}>Add case</Button>
                 </Nav.Item>

@@ -2,25 +2,36 @@ import categoriesStyle from '../../styles/Categories.module.css'
 import Item from '../../components/categories/Item'
 import { apiRoot } from '../../config'
 import axios from 'axios'
+import { useEffect, useState } from 'react'
 
 const categories = (props) => {
+  // State to store data
+  const [data, setData] = useState();
+
+  useEffect(() => {
+    axios.get(apiRoot + '/categories')
+      .then(res => {
+        setData(res.data);
+      });
+  }, []);
+
+
+  if (data) {
     return (
         <div>
             <h1 className={categoriesStyle.header}>Categories</h1>
-            {props.entries.map( (entry) => (
+            {data.map( (entry) => (
                 <Item key = {entry[0]} tag = {entry[0]} count = {entry[1]}/>
             ))}
         </div>
-    )
-}
-
-export const getStaticProps = async() => {
-  const res = await axios.get(apiRoot + '/categories')
-  const entries = res.data
-  return {
-    props: {
-      entries
-    }
+    );
+  } else {
+    return (
+      <div>
+        <h1 className={categoriesStyle.header}>Categories</h1>
+        Loading...
+      </div>
+    );
   }
 }
 

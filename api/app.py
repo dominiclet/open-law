@@ -144,7 +144,7 @@ def edit_sub_topic(caseId, category, index):
     mongo.db.case_summaries.replace_one(query, data, True)
 
     # Update recent edit queue
-    recent_edits.append({
+    mongo.db.activity_log.insert({
         "id": caseId,
         "name": get_jwt_identity(),
         "case_name": data["name"],
@@ -181,7 +181,7 @@ def edit_case_identifiers(caseId):
     mongo.db.case_summaries.replace_one(query, data, True)
 
     # Update recent edit queue
-    recent_edits.append({
+    mongo.db.activity_log.insert({
         "id": caseId,
         "name": get_jwt_identity(),
         "action": "EDITCASENAME",
@@ -219,7 +219,7 @@ def add_new_topic(caseId, category):
     mongo.db.case_summaries.replace_one(query, data, True)
 
     # Update recent activity queue
-    recent_edits.append({
+    mongo.db.activity_log.insert({
         "id": caseId,
         "name": get_jwt_identity(),
         "case_name": data["name"],
@@ -251,7 +251,7 @@ def delete_topic(caseId, category, index):
     mongo.db.case_summaries.replace_one(query, data, True)
 
     # Update recent activity queue
-    recent_edits.append({
+    mongo.db.activity_log.insert({
         "id": caseId,
         "name": get_jwt_identity(),
         "case_name": data["name"],
@@ -280,7 +280,7 @@ def update_issues(caseId):
     mongo.db.case_summaries.replace_one(query, data, True)
 
     # Update recent activity queue
-    recent_edits.append({
+    mongo.db.activity_log.insert({
         "id": caseId,
         "name": get_jwt_identity(),
         "case_name": data["name"],
@@ -296,7 +296,8 @@ Returns the list of recent activities currently in the queue
 @app.route("/recentActivity", methods=['GET'])
 @jwt_required()
 def recent_activity():
-    return json.dumps(list(recent_edits))
+    activity = mongo.db.activity_log.find().sort("_id", -1).limit(10)
+    return JSONEncoder().encode(list(activity))
 
 """
 Returns the list of cases for each tag with given limit
@@ -353,7 +354,7 @@ def add_new_case():
     _id = mongo.db.case_summaries.insert(new_doc)
 
     # Update recent activity queue
-    recent_edits.append({
+    mongo.db.activity_log.insert({
         "id": str(_id),
         "name": get_jwt_identity(),
         "case_name": new_doc["name"],

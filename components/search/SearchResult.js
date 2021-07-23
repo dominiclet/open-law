@@ -1,6 +1,6 @@
 import { Card, Badge } from "react-bootstrap"
 import searchResultStyle from "../../styles/SearchResult.module.css";
-import Link from 'next/Link';
+import Link from 'next/link';
 
 const SearchResult = (props) => {
 	// props.resultInfo: Search result relating to this particular case

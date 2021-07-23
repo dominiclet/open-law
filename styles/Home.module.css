@@ -6,12 +6,30 @@
 	overflow-x: hidden;
 }
 
+/* Hide certain elements when viewport is scaled below a certain value */
+@media only screen and (max-width: 1140px) {
+	.container1 {
+		flex-direction: column;
+	}
+
+	.recentEditsOuterContainer {
+		order: 1;
+		width: 100% !important;
+	}
+
+	.activityOuterContainer {
+		order: 1;
+		width: 100% !important;
+	}
+}
+
 /* Recent edits styling */
 .recentEditsOuterContainer {
 	display: flex;
 	flex-direction: column;
 	width: 300px;
 	flex-wrap: wrap;
+	margin-bottom: 20px;
 }
 
 .recentEditsInnerContainer {
@@ -62,6 +80,7 @@
 	display: flex;
 	flex-direction: column;
 	width: 300px;
+	margin-bottom: 20px;
 }
 
 .activityCard {
@@ -107,12 +126,18 @@
 /* Search bar styling */
 .searchContainer {
 	display: flex;
+	height: 300px;
+	justify-content: center;
+	position: relative;
+	width: 100%;
+	max-width: 600px;
+	align-self: center;
 }
 
 .searchBar {
 	font-size: 1rem;
 	padding: 8px 32px 8px 15px;
-	width: 600px;
+	width: 100%;
 	align-self: flex-start;
 	border-radius: 25px;
 	border-color: grey;
@@ -128,6 +153,6 @@
 
 .searchIcon {
 	position: absolute;
-	margin-top: 163px;
-	margin-left: 570px;
+	right: 2%;
+	top: 54.5%;
 }

@@ -11,7 +11,7 @@ from datetime import timedelta
 from werkzeug.security import generate_password_hash, check_password_hash
 import json
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder='.next', static_url_path='')
 # To allow Cross-origin resource sharing
 app.config["CORS_HEADERS"] = "Content-Type"
 cors = CORS(app, origins=["http://localhost:3000"], supports_credentials=True)

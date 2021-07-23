@@ -17,10 +17,9 @@ const NavigationBar = (props) => {
     return (
         <Navbar bg="dark" variant="dark">
             <Navbar.Toggle aria-controls="navbarScroll" />
-            <Navbar.Brand href="/">Lawmology</Navbar.Brand>
+            <Navbar.Brand href="/">[Placeholder]</Navbar.Brand>
             <Nav className="mr-auto">
                 <Nav.Link href='/categories'>Categories</Nav.Link>
-                <Nav.Link href='/about'>About</Nav.Link>
             </Nav>
             <Nav classname="justify-content-end">
                 <Nav.Item className={navbarStyles.button}>

@@ -76,7 +76,7 @@ const Home = (props) => {
   return (
     <div className={homeStyle.container1}>
       <Head>
-        <title>David</title>
+          <title>[Placeholder]</title>
       </Head>
       <div className={homeStyle.recentEditsOuterContainer}>
         <h5>Recent edits</h5>

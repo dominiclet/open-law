@@ -39,7 +39,7 @@ const loginPage = () => {
 	return (
 		<div className={loginStyle.loginContainer}>
 			<div className={loginStyle.logoContainer}>
-				Login to Pornhub
+				[Placeholder]
 			</div>
 			<div className={loginStyle.inputContainer}>
 				<input 

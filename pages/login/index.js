@@ -2,11 +2,31 @@ import axios from "axios";
 import { apiRoot } from "../../config";
 import { useRouter } from 'next/router';
 import loginStyle from '../../styles/Login.module.css';
+import { useEffect } from "react";
 
 
 const loginPage = () => {
 	const router = useRouter();
 
+	// Check if already logged in
+	useEffect(() => {
+		const token = localStorage.getItem("jwt-token");
+		if (token) {
+			axios.post(apiRoot + "/token/ping", {}, {
+				headers: {'Authorization': 'Bearer ' + token}
+			}).then(res => {
+				if (res.status == 200) {
+					router.push("/");
+				}
+			}).catch(e => {
+				if (e.response.status == 401) {
+					localStorage.removeItem("jwt-token");
+				}
+			})
+		}
+	}, []);
+
+	// Submit functionality
 	const handleSubmit = () => {
 		const data = {
 			username: document.getElementById("username").value,

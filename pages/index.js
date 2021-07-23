@@ -6,7 +6,6 @@ import { apiRoot } from '../config';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
-import { Search } from 'react-bootstrap-icons';
 import LargeCaseSearch from '../components/search/LargeCaseSearch';
 
 const Home = (props) => {

@@ -11,10 +11,10 @@ from datetime import timedelta
 from werkzeug.security import generate_password_hash, check_password_hash
 import json
 
-app = Flask(__name__, static_folder='.next', static_url_path='')
+app = Flask(__name__)
 # To allow Cross-origin resource sharing
 app.config["CORS_HEADERS"] = "Content-Type"
-cors = CORS(app, origins=["http://localhost:3000"], supports_credentials=True)
+cors = CORS(app, origins=["http://localhost:3000", "https://lawmologyapi.herokuapp.com"], supports_credentials=True)
 # MongoDB setup
 app.config["MONGO_URI"] = "mongodb+srv://dominic:HY3JRkvfL2T5pstz@cluster0.avlfw.mongodb.net/open_law?retryWrites=true&w=majority"
 mongo = PyMongo(app)

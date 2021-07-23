@@ -6,6 +6,8 @@ import { apiRoot } from '../config';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
+import { Search } from 'react-bootstrap-icons';
+import LargeCaseSearch from '../components/search/LargeCaseSearch';
 
 const Home = (props) => {
   const router = useRouter();
@@ -38,8 +40,14 @@ const Home = (props) => {
     recentEditsBuilder.push("No recently edited cases.");
   } else {
     recentEdits.forEach(elem => {
-      recentEditsBuilder.push(<RecentEditCard caseName={elem.caseName} caseId={elem.caseId} />)
-    })
+      recentEditsBuilder.push(
+        <RecentEditCard 
+          caseName={elem.caseName} 
+          caseId={elem.caseId} 
+          caseCitation={elem.caseCitation}
+        />
+      );
+    });
   }
   
   // Recent activity component
@@ -70,11 +78,17 @@ const Home = (props) => {
       <Head>
         <title>David</title>
       </Head>
-      <h4>Your recent edits</h4>
-      {recentEditsBuilder}
-      <br/>
-      <h4>Recent activity</h4>
-      {recentActivityBuilder}
+      <div className={homeStyle.recentEditsOuterContainer}>
+        <h5>Recent edits</h5>
+        <div className={homeStyle.recentEditsInnerContainer}>
+          {recentEditsBuilder}
+        </div>
+      </div>
+      <LargeCaseSearch />
+      <div className={homeStyle.activityOuterContainer}>
+        <h5>Recent activity</h5>
+        {recentActivityBuilder}
+      </div>
     </div>
   )
 }

@@ -15,16 +15,21 @@ const Layout = (props) => {
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
 
+
     const router = useRouter();
 
     // Handles submitting new case
     const handleSubmit = () => {
         const caseName = document.getElementById("caseName").value;
+        const caseCitation = document.getElementById("caseCitation").value;
         if (caseName.length < 3) {
             alert("Enter a valid case name!");
+        } else if (!caseCitation) {
+            alert("Please enter 1 case citation");
         } else {
             const data = {
                 caseName: caseName,
+                caseCitation: caseCitation,
                 time: new Date()
             };
             
@@ -38,6 +43,8 @@ const Layout = (props) => {
                         if (res.status == 200) {
                             // Redirect to the newly created case's edit page
                             handleClose();
+                            // Need to use this instead of router.push
+                            // Push does not work if you are on an edit page already
                             window.location.href = `/case/${res.data}/edit`;
                         } 
                     }).catch(e => {
@@ -72,6 +79,21 @@ const Layout = (props) => {
                                     }
                                 }}
                             />
+                        </Form.Group>
+                        <Form.Group>
+                            <Form.Label>Case citation</Form.Label>
+                            <Form.Control 
+                                type="text" 
+                                className={styles.citationInput}
+                                size="sm" 
+                                placeholder="Enter 1 case citation" 
+                                id="caseCitation"
+                                onKeyDown={(e) => {
+                                    if (e.key == "Enter") {
+                                        e.preventDefault();
+                                    }
+                                }}
+                                />
                         </Form.Group>
                     </Modal.Body>
                     <Modal.Footer>

@@ -1,29 +1,103 @@
+/* Overall containers and styling */
 .container1 {
 	display: flex;
 	width: 100%;
-	max-width: 1000px;
+	justify-content: space-between;
+	overflow-x: hidden;
+}
+
+/* Hide certain elements when viewport is scaled below a certain value */
+@media only screen and (max-width: 1140px) {
+	.container1 {
+		flex-direction: column;
+	}
+
+	.recentEditsOuterContainer {
+		order: 1;
+		width: 100% !important;
+	}
+
+	.activityOuterContainer {
+		order: 1;
+		width: 100% !important;
+	}
+}
+
+/* Recent edits styling */
+.recentEditsOuterContainer {
+	display: flex;
 	flex-direction: column;
+	width: 300px;
+	flex-wrap: wrap;
+	margin-bottom: 20px;
+}
+
+.recentEditsInnerContainer {
+	display: flex;
+	flex-direction: column-reverse;
+	width: 100%;
+}
+
+.caseIdentifierContainer {
+	margin-bottom: 0;
+}
+
+.caseName {
+	font-weight: 500;
+	margin-bottom: 5px;
+}
+
+.caseCitation {
+	margin-bottom: 0;
 }
 
 .cardContainer {
 	margin-bottom: 0.5rem;
+	font-size: 0.8rem;
+	display: flex;
+	justify-content: space-between;
+	border-bottom: 1px solid rgb(196, 194, 194);
+	padding-top: 5px;
+	padding-bottom: 5px;
+}
+
+.editSign {
+	align-self: center;
+	padding-right: 0.4rem;
+	padding-left: 0.4rem;
+	transition-duration: 0.4s;
+	overflow: visible;
+}
+
+.editSign:hover {
+	cursor: pointer;
+	transition-duration: 0.4s;
+	filter: drop-shadow(0 0 0.1rem black);
+}
+
+/* Recent activity styling */
+.activityOuterContainer {
+	display: flex;
+	flex-direction: column;
+	width: 300px;
+	margin-bottom: 20px;
 }
 
 .activityCard {
 	display: flex;
 	padding: 0;
+	flex-direction: column;
+	margin-bottom: 0.5rem;
+	font-size: 0.8rem;
+	border-bottom: 1px solid rgb(196, 194, 194);
+	padding-top: 5px;
+	padding-bottom: 5px;
+}
+
+.activityInnerContainer {
+	display: flex;
 	flex-direction: row;
-}
-
-.activityCardHeader {
-	font-size: 1rem;
-	padding: 0.5rem;
-}
-
-.activityCardBody {
-	font-size: 1rem;
-	padding: 0.5rem;
-	padding-left: 1rem;
+	justify-content: space-between;
 }
 
 .activityCardWords {
@@ -32,29 +106,53 @@
 
 .activityTimeStamp {
 	color: #BABCBD;
-	font-size: 0.80rem;
-	float: right;
+	font-size: 0.7rem;
+	text-align: right;
 }
 
 .activityCardArrow {
 	align-self: center;
 	transition-duration: 0.4s;
+	overflow: visible;
 }
 
 .activityCardArrow:hover {
 	cursor: pointer;
 	transition-duration: 0.4s; 
-	filter: drop-shadow(0 0 0.1rem white);
+	filter: drop-shadow(0 0 0.1rem black);
 }
 
-.editSign {
+
+/* Search bar styling */
+.searchContainer {
+	display: flex;
+	height: 300px;
+	justify-content: center;
+	position: relative;
+	width: 100%;
+	max-width: 600px;
 	align-self: center;
-	padding-right: 0.4rem;
-	transition-duration: 0.4s;
 }
 
-.editSign:hover {
-	cursor: pointer;
-	transition-duration: 0.4s;
-	filter: drop-shadow(0 0 0.1rem white);
+.searchBar {
+	font-size: 1rem;
+	padding: 8px 32px 8px 15px;
+	width: 100%;
+	align-self: flex-start;
+	border-radius: 25px;
+	border-color: grey;
+	border-style: solid;
+	border-width: 1px;
+	margin-top: 150px;
+}
+
+.searchBar:focus {
+	box-shadow: 0 0 5px grey;
+	outline: none;
+}
+
+.searchIcon {
+	position: absolute;
+	right: 2%;
+	top: 54.5%;
 }

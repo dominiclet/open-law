@@ -114,6 +114,8 @@ const registerPage = () => {
 				}).catch(e => {
 					if (e.response.status == 401) {
 						alert("Wrong registration token!");
+					} else if (e.response.status == 409) {
+						document.getElementById("usernameNote").innerHTML = "Username taken!";
 					} else {
 						throw e;
 					}

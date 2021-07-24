@@ -96,6 +96,10 @@ def register():
     data = request.json
     if data.get("token") != REGISTER_TOKEN:
         return "Bad token", 401
+    # Check if username already exists
+    user = mongo.db.users.find_one({"username": data.get("username")})
+    if user:
+        return "Username taken", 409
     new_user = {
         "name": data.get("name"),
         "year": data.get("year"),

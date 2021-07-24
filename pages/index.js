@@ -7,6 +7,7 @@ import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import LargeCaseSearch from '../components/search/LargeCaseSearch';
+import { Spinner } from 'react-bootstrap';
 
 const Home = (props) => {
   const router = useRouter();
@@ -53,7 +54,7 @@ const Home = (props) => {
   let recentActivityBuilder = [];
 
   if (!dataLoaded) {
-    recentActivityBuilder.push(<div>Loading...</div>);
+    recentActivityBuilder.push(<Spinner animation="border" className={homeStyle.loadingSpinner} />);
   } else {
     // Build recent activity
     pageData.map((activity) => {

@@ -122,6 +122,10 @@
 	filter: drop-shadow(0 0 0.1rem black);
 }
 
+.loadingSpinner {
+	align-self: center;
+	margin-top: 30px;
+}
 
 /* Search bar styling */
 .searchContainer {

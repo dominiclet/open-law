@@ -2,11 +2,15 @@ import axios from "axios";
 import { apiRoot } from "../../config";
 import { useRouter } from 'next/router';
 import loginStyle from '../../styles/Login.module.css';
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { Spinner } from "react-bootstrap";
 
 
 const loginPage = () => {
 	const router = useRouter();
+
+	// State tracks if login is in loading state
+	const [loading, setLoading] = useState(false);
 
 	// Check if already logged in
 	useEffect(() => {
@@ -28,6 +32,9 @@ const loginPage = () => {
 
 	// Submit functionality
 	const handleSubmit = () => {
+		// Display loading spinner
+		setLoading(true);
+
 		const data = {
 			username: document.getElementById("username").value,
 			password: document.getElementById("password").value
@@ -45,7 +52,10 @@ const loginPage = () => {
 					document.getElementById("password").style.borderColor = "red";
 					document.getElementById("warning").innerHTML = "Wrong username or password";
 					console.error("Bad username or password");
+				} else {
+					throw e;
 				}
+				setLoading(false);
 			});
 	};
 
@@ -80,7 +90,10 @@ const loginPage = () => {
 				/>
 			</div>
 			<div id="warning" className={loginStyle.warning}></div>
-			<button className={loginStyle.submit} onClick={handleSubmit}>LOGIN</button>
+			{(() => {
+				return (loading ? <Spinner animation="border" className={loginStyle.loadingSpinner}/>
+				: <button className={loginStyle.submit} onClick={handleSubmit} id="loginButton">LOGIN</button>);
+			})()}
 		</div>
 	);
 }

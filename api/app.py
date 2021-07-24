@@ -36,6 +36,9 @@ app.config["JWT_SECRET_KEY"] = "ivanlikesgayporn"
 app.config["JWT_ACCESS_TOKEN_EXPIRES"] = TOKEN_EXPIRY
 jwt = JWTManager(app)
 
+# Token for registration
+REGISTER_TOKEN = "ilovesummitfood"
+
 """
 Handles login
 """
@@ -88,6 +91,8 @@ Handles registration of user
 @app.route("/register", methods=['POST'])
 def register():
     data = request.json
+    if data.get("token") != REGISTER_TOKEN:
+        return "Bad token", 401
     new_user = {
         "name": data.get("name"),
         "year": data.get("year"),

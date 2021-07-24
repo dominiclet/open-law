@@ -12,10 +12,15 @@ import { Spinner } from 'react-bootstrap';
 const Home = (props) => {
   const router = useRouter();
 
-  // State to store page data
-  const [pageData, setPageData] = useState();
-  // State to check if data has loaded
-  const [dataLoaded, setDataLoaded] = useState(false);
+  // State to store activity data
+  const [activityData, setActivityData] = useState();
+  // State to check if activity data has loaded
+  const [activityDataLoaded, setActivityDataLoaded] = useState(false);
+
+  //  State to store recent edits data 
+  const [recentEditsData, setRecentEditsData] = useState();
+  // State to check if recent edits data has loaded
+  const [recentEditsDataLoaded, setRecentEditsDataLoaded] = useState(false);
 
   // Fetch page data
   useEffect(() => {
@@ -24,22 +29,30 @@ const Home = (props) => {
       console.error("No login token!");
       router.push("/login");
     } else {
+      // Fetch recent activity 
       axios.get(apiRoot + "/recentActivity", {
         headers: {'Authorization': 'Bearer ' + token}
       }).then(res => {
-          setPageData(res.data);
-          setDataLoaded(true);
-        }).catch(err => console.log(err));
+          setActivityData(res.data);
+          setActivityDataLoaded(true);
+      }).catch(err => console.log(err));
+
+      // Fetch recent edits
+      axios.get(apiRoot + "/recentEdits", {
+        headers: {'Authorization': 'Bearer ' + token}
+      }).then(res => {
+        setRecentEditsData(res.data);
+        setRecentEditsDataLoaded(true);
+      }).catch(err => console.error(err));
     }
   }, []);
 
   // Build recent edits component
   let recentEditsBuilder = [];
-  const recentEdits = JSON.parse(localStorage.getItem("recentEdits"));
-  if (!recentEdits) {
-    recentEditsBuilder.push("No recently edited cases.");
+  if (!recentEditsDataLoaded) {
+    recentEditsBuilder.push(<Spinner animation="border" className={homeStyle.loadingSpinner} />);
   } else {
-    recentEdits.forEach(elem => {
+    recentEditsData.forEach(elem => {
       recentEditsBuilder.push(
         <RecentEditCard 
           caseName={elem.caseName} 
@@ -53,11 +66,11 @@ const Home = (props) => {
   // Recent activity component
   let recentActivityBuilder = [];
 
-  if (!dataLoaded) {
+  if (!activityDataLoaded) {
     recentActivityBuilder.push(<Spinner animation="border" className={homeStyle.loadingSpinner} />);
   } else {
     // Build recent activity
-    pageData.map((activity) => {
+    activityData.map((activity) => {
       recentActivityBuilder.push(<ActivityCard 
         caseId={activity.id}
         name={activity.name}

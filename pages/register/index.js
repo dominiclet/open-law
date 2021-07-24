@@ -61,7 +61,7 @@ const registerPage = () => {
 		}
 		if (username.value.includes(" ")) {
 			// Do not allow spaces in username
-			document.getElementById("usernameNote").innerHTML = "No spaces in username.";
+			document.getElementById("usernameNote").innerHTML = "No spaces are allowed in username.";
 			noError = false;
 		}
 		if (username.value.length > 30) {
@@ -72,6 +72,11 @@ const registerPage = () => {
 		if (email.value.length == 0) {
 			// Check that email is not empty
 			document.getElementById("emailNote").innerHTML = "Email is required";
+			noError = false;
+		}
+		if (email.value.includes(" ")) {
+			// Do not allow spaces in email
+			document.getElementById("emailNote").innerHTML = "No spaces in email."
 			noError = false;
 		}
 		if (password.value.length < 8) {

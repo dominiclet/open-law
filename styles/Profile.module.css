@@ -1,0 +1,41 @@
+.outerContainer {
+	width: 100%;
+	max-width: 1000px;
+	display: flex;
+	flex-direction: column;
+}
+
+.rowContainer {
+	display: flex;
+	width: 100%;
+	justify-content: space-between;
+}
+
+.profileIcon {
+	width: 250px;
+	display: flex;
+	justify-content: center;
+}
+
+.userInfoContainer {
+	display: flex;
+	width: 250px;
+	justify-content: space-between;
+	margin-top: 20px;
+	margin-bottom: 20px;
+}
+
+.labelContainer {
+	font-size: 1rem;
+	font-weight: 500;
+}
+
+.userDataContainer {
+	font-size: 1rem;
+	text-align: right;
+}
+
+.userStatsContainer {
+	font-size: 1rem;
+	width: 400px;
+}

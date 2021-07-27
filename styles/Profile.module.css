@@ -5,10 +5,16 @@
 	flex-direction: column;
 }
 
-.rowContainer {
+.row1Container {
 	display: flex;
 	width: 100%;
 	justify-content: space-between;
+}
+
+.row2Container {
+	display: flex;
+	width: 100%;
+	justify-content: flex-end;
 }
 
 .profileIcon {
@@ -36,6 +42,30 @@
 }
 
 .userStatsContainer {
-	font-size: 1rem;
-	width: 400px;
+	width: 600px;
+	display: flex;
+	justify-content: space-around;
+}
+
+.statData {
+	text-align: center;
+	font-size: 2rem;
+}
+
+.spinner {
+	margin-right: 300px;
+}
+
+.recentEdits {
+	width: 600px;
+}
+
+.recentEditsHeader {
+	text-align: center;
+}
+
+.recentEditsContainer {
+	width: 100%;
+	max-width: 400px;
+	margin: auto;
 }

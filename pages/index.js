@@ -58,6 +58,7 @@ const Home = (props) => {
           caseName={elem.caseName} 
           caseId={elem.caseId} 
           caseCitation={elem.caseCitation}
+          toEdit={true}
         />
       );
     });

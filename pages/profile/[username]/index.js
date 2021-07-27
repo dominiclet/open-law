@@ -1,9 +1,11 @@
 import axios from 'axios';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
+import { Spinner } from 'react-bootstrap';
 import { PersonCircle } from 'react-bootstrap-icons';
 import { apiRoot } from '../../../config';
 import styles from '../../../styles/Profile.module.css';
+import RecentEditCard from '../../../components/home/RecentEditCard';
 
 const profilePage = () => {
 	const router = useRouter();
@@ -28,12 +30,27 @@ const profilePage = () => {
 		}
 	}, [router.isReady]);
 
+	// Prep the recent edits component
+	let recentEditsBuilder = [];
+	if (dataLoaded) {
+		userData["recent_edits"].forEach(elem => {
+			recentEditsBuilder.push(
+				<RecentEditCard
+					caseName={elem.caseName}
+					caseId={elem.caseId}
+					caseCitation={elem.caseCitation}
+					toEdit={false}
+				/>
+			);
+		})
+	}
+
 	return (
 		<div className={styles.outerContainer}>
 			<div className={styles.profileIcon}>
 				<PersonCircle size="200" />
 			</div>
-			<div className={styles.rowContainer}>
+			<div className={styles.row1Container}>
 				<div className={styles.userInfoContainer}>
 					<div className={styles.labelContainer}>
 						Username <br/>
@@ -46,10 +63,43 @@ const profilePage = () => {
 						{dataLoaded ? userData.class : ""} <br/> 
 					</div>
 				</div>
+				{dataLoaded ?
 				<div className={styles.userStatsContainer}>
-					This user has 0 edits!
+					<div>
+						<h5>Cases created</h5>
+						<div className={styles.statData}>
+							{userData.stats.casesCreated}
+						</div>
+					</div>
+					<div>
+						<h5>Expert in</h5>
+						<div className={styles.statData}>
+							{(() => {
+								let maxValue = 0;
+								let mostContributed;
+								const contributions = userData.stats.contributions;
+								for (const key in contributions) {
+									if (contributions[key] >= maxValue) {
+										mostContributed = key;
+									}
+								}
+								return mostContributed;
+							})()}
+						</div>
+					</div>
+				</div>
+				: <Spinner animation="border" className={styles.spinner}/>}
+			</div>
+			{dataLoaded ?
+			<div className={styles.row2Container}>
+				<div className={styles.recentEdits}>
+					<h5 className={styles.recentEditsHeader}>Recently edited cases</h5>
+					<div className={styles.recentEditsContainer}>
+						{recentEditsBuilder}
+					</div>
 				</div>
 			</div>
+			: null}
 		</div>
 	);
 }

@@ -21,10 +21,6 @@ app.config["MONGO_URI"] = "mongodb://localhost:27017/open_law"
 # app.config["MONGO_URI"] = os.environ.get("MONGO_URI")
 mongo = PyMongo(app)
 
-# Initialize recent edits deque
-# Activity is stored as {"id": , "case_name": , "action": , "subtopic": , "time": }
-recent_edits = deque(maxlen=10)
-
 # Initialize dictionary to store categories and their corresponding number of cases
 # key: category
 # value: [list of cases in category]

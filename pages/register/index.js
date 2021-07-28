@@ -120,7 +120,11 @@ const registerPage = () => {
 					if (e.response.status == 401) {
 						alert("Wrong registration token!");
 					} else if (e.response.status == 409) {
-						document.getElementById("usernameNote").innerHTML = "Username taken!";
+						if (e.response.data == "Username taken") {
+							document.getElementById("usernameNote").innerHTML = "Username taken!";
+						} else if (e.response.data == "Email in use") {
+							document.getElementById("emailNote").innerHTML = "Email already in use.";
+						}
 					} else {
 						throw e;
 					}
@@ -130,7 +134,7 @@ const registerPage = () => {
 
 	return (
 		<div className={styles.formContainer}>
-			<h4>Register</h4>
+			<h4 style={{textAlign: 'center'}}>Register</h4>
 			<Form onSubmit={handleSubmit}>
 				<Form.Group controlId="name">
 					<Form.Label>Full name</Form.Label>

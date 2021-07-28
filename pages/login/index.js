@@ -4,6 +4,7 @@ import { useRouter } from 'next/router';
 import loginStyle from '../../styles/Login.module.css';
 import { useEffect, useState } from "react";
 import { Spinner } from "react-bootstrap";
+import Link from 'next/link';
 
 
 const loginPage = () => {
@@ -94,6 +95,9 @@ const loginPage = () => {
 				return (loading ? <Spinner animation="border" className={loginStyle.loadingSpinner}/>
 				: <button className={loginStyle.submit} onClick={handleSubmit} id="loginButton">LOGIN</button>);
 			})()}
+			<div className={loginStyle.registerContainer}>
+				<Link href="/register">Register</Link>
+			</div>
 		</div>
 	);
 }

@@ -101,6 +101,12 @@ def register():
     user = mongo.db.users.find_one({"username": data.get("username")})
     if user:
         return "Username taken", 409
+    
+    # Check if user with this email exists
+    user = mongo.db.users.find_one({"email": data.get("email")})
+    if user: 
+        return "Email in use", 409
+    
     new_user = {
         "name": data.get("name"),
         "class": data.get("class"),

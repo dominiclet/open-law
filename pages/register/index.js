@@ -40,12 +40,14 @@ const registerPage = () => {
 		const password = document.getElementById("password");
 		const confirmPw = document.getElementById("confirmpw");
 		const email = document.getElementById("email");
+		const registerToken = document.getElementById("registerToken");
 
 		document.getElementById("fullNameNote").innerHTML = null;
 		document.getElementById("usernameNote").innerHTML = null;
 		document.getElementById("passwordNote").innerHTML = null;
 		document.getElementById("confirmpwNote").innerHTML = null;
 		document.getElementById("emailNote").innerHTML = null;
+		document.getElementById("tokenNote").innerHTML = null;
 		let noError = true;
 		if (name.value.length == 0) {
 			// Check that full name is not empty
@@ -59,7 +61,7 @@ const registerPage = () => {
 		}
 		if (username.value.includes(" ")) {
 			// Do not allow spaces in username
-			document.getElementById("usernameNote").innerHTML = "No spaces in username.";
+			document.getElementById("usernameNote").innerHTML = "No spaces are allowed in username.";
 			noError = false;
 		}
 		if (username.value.length > 30) {
@@ -72,6 +74,11 @@ const registerPage = () => {
 			document.getElementById("emailNote").innerHTML = "Email is required";
 			noError = false;
 		}
+		if (email.value.includes(" ")) {
+			// Do not allow spaces in email
+			document.getElementById("emailNote").innerHTML = "No spaces in email."
+			noError = false;
+		}
 		if (password.value.length < 8) {
 			// Check that password is at least 8 characters long
 			document.getElementById("passwordNote").innerHTML = "Password must be at least 8 characters long.";
@@ -82,6 +89,11 @@ const registerPage = () => {
 			document.getElementById("confirmpwNote").innerHTML = "Password does not match.";
 			noError = false;
 		}
+		if (registerToken.value.length == 0) {
+			// Check that register token is not empty
+			document.getElementById("tokenNote").innerHTML = "Get registration token from Ivan.";
+			noError = false;
+		}
 
 		if (noError) {
 			const data = {
@@ -89,7 +101,8 @@ const registerPage = () => {
 				"year": document.getElementById("academicYear").value,
 				"username": username.value,
 				"email": email.value,
-				"password": password.value
+				"password": password.value,
+				"token": registerToken.value
 			}
 
 			axios.post(apiRoot + "/register", data)
@@ -99,7 +112,13 @@ const registerPage = () => {
 						router.push("/login");
 					}
 				}).catch(e => {
-					console.error(e);
+					if (e.response.status == 401) {
+						alert("Wrong registration token!");
+					} else if (e.response.status == 409) {
+						document.getElementById("usernameNote").innerHTML = "Username taken!";
+					} else {
+						throw e;
+					}
 				});
 		}
 	}
@@ -148,6 +167,11 @@ const registerPage = () => {
 					<Form.Label>Confirm password</Form.Label>
 					<Form.Control type="password" placeholder="Enter password again" id="confirmpw" onChange={handleEnterPassword} />
 					<Form.Text id="confirmpwNote" style={warningStyle}></Form.Text>
+				</Form.Group>
+				<Form.Group controlId="registerToken">
+					<Form.Label>Token</Form.Label>
+					<Form.Control type="password" placeholder="Enter registration token" />
+					<Form.Text id="tokenNote" style={warningStyle}></Form.Text>
 				</Form.Group>
 				<Button type="submit">Submit</Button>
 			</Form>

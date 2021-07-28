@@ -31,7 +31,10 @@ const OuterCase = (props) => {
             <InnerCase name="Issues" content = {props.entry.issues}/>
             <InnerCase name="Holding" content = {props.entry.holding}/>
             <p className={caseEditStyle.editTimeStamp}>
-                Last edited by {props.entry.lastEditBy} at {date.toLocaleTimeString("en-SG")} on {date.toLocaleDateString("en-SG")}
+                {props.entry.lastEdit ? 
+                    `Last edited by ${props.entry.lastEditBy} at ${date.toLocaleTimeString("en-SG")} on ${date.toLocaleDateString("en-SG")}`
+                    : "Newly added case"
+                }
             </p>
         </Card>
     );

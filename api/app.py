@@ -16,6 +16,7 @@ app = Flask(__name__)
 app.config["CORS_HEADERS"] = "Content-Type"
 cors = CORS(app, origins=["http://localhost:3000", "https://lawmology.herokuapp.com"], supports_credentials=True)
 # MongoDB setup
+# app.config["MONGO_URI"] = "mongodb://localhost:27017/open_law"
 app.config["MONGO_URI"] = "mongodb+srv://dominic:HY3JRkvfL2T5pstz@cluster0.avlfw.mongodb.net/open_law?retryWrites=true&w=majority"
 mongo = PyMongo(app)
 
@@ -30,9 +31,16 @@ categories_dict = {}
 
 #### Authentication setup ####
 # Set this as an environment variable (here temporarily for testing)
+TOKEN_EXPIRY = timedelta(days=1)
 app.config["JWT_SECRET_KEY"] = "ivanlikesgayporn"
+app.config["JWT_ACCESS_TOKEN_EXPIRES"] = TOKEN_EXPIRY
 jwt = JWTManager(app)
-# TOKEN_EXPIRY = timedelta(minutes=15)
+
+# Token for registration
+REGISTER_TOKEN = "ilovesummitfood"
+
+# Maximum allowed number of recent edits
+MAX_RECENT_EDITS = 5
 
 """
 Handles login
@@ -86,12 +94,19 @@ Handles registration of user
 @app.route("/register", methods=['POST'])
 def register():
     data = request.json
+    if data.get("token") != REGISTER_TOKEN:
+        return "Bad token", 401
+    # Check if username already exists
+    user = mongo.db.users.find_one({"username": data.get("username")})
+    if user:
+        return "Username taken", 409
     new_user = {
         "name": data.get("name"),
         "year": data.get("year"),
         "username": data.get("username"),
         "email": data.get("email"),
-        "password": generate_password_hash(data.get("password"))
+        "password": generate_password_hash(data.get("password")),
+        "recent_edits": []
     }
     _id = mongo.db.users.insert(new_user)
     return str(_id), 200
@@ -141,14 +156,21 @@ def edit_sub_topic(caseId, category, index):
     data["lastEditBy"] = get_jwt_identity()
     mongo.db.case_summaries.replace_one(query, data, True)
 
-    # Update recent edit queue
-    recent_edits.append({
+    # Update recent activity queue
+    mongo.db.activity_log.insert({
         "id": caseId,
         "name": get_jwt_identity(),
         "case_name": data["name"],
         "action": "EDIT",
         "subtopic": updated_data["data"]["topic"],
         "time": updated_data["data"]["time"]
+    })
+
+    # Update recent edits for this user
+    update_database_recent_edits(get_jwt_identity(), {
+        "caseId": caseId,
+        "caseName": data["name"],
+        "caseCitation": data["citation"]
     })
     return "", 200
 
@@ -178,8 +200,8 @@ def edit_case_identifiers(caseId):
     data["lastEditBy"] = get_jwt_identity()
     mongo.db.case_summaries.replace_one(query, data, True)
 
-    # Update recent edit queue
-    recent_edits.append({
+    # Update recent activity queue
+    mongo.db.activity_log.insert({
         "id": caseId,
         "name": get_jwt_identity(),
         "action": "EDITCASENAME",
@@ -188,6 +210,13 @@ def edit_case_identifiers(caseId):
         "prevCitation": prev_citation,
         "case_name": data["name"],
         "currCitation": data["citation"]
+    })
+
+    # Update recent edits
+    update_database_recent_edits(get_jwt_identity(), {
+        "caseId": caseId,
+        "caseName": data["name"],
+        "caseCitation": data["citation"]
     })
 
     return "", 200
@@ -217,13 +246,21 @@ def add_new_topic(caseId, category):
     mongo.db.case_summaries.replace_one(query, data, True)
 
     # Update recent activity queue
-    recent_edits.append({
+    mongo.db.activity_log.insert({
         "id": caseId,
         "name": get_jwt_identity(),
         "case_name": data["name"],
         "action": "ADDTOPIC",
         "time": data["lastEdit"]
     })
+
+    # Update recent edits
+    update_database_recent_edits(get_jwt_identity(), {
+        "caseId": caseId,
+        "caseName": data["name"],
+        "caseCitation": data["citation"]
+    })
+
     return empty_entry, 200
 
 
@@ -249,13 +286,21 @@ def delete_topic(caseId, category, index):
     mongo.db.case_summaries.replace_one(query, data, True)
 
     # Update recent activity queue
-    recent_edits.append({
+    mongo.db.activity_log.insert({
         "id": caseId,
         "name": get_jwt_identity(),
         "case_name": data["name"],
         "action": "DELETE",
         "time": data["lastEdit"]
     })
+
+    # Update recent edits
+    update_database_recent_edits(get_jwt_identity(), {
+        "caseId": caseId,
+        "caseName": data["name"],
+        "caseCitation": data["citation"]
+    })
+
     return json.dumps(data[category]), 200
 
 """
@@ -278,23 +323,41 @@ def update_issues(caseId):
     mongo.db.case_summaries.replace_one(query, data, True)
 
     # Update recent activity queue
-    recent_edits.append({
+    mongo.db.activity_log.insert({
         "id": caseId,
         "name": get_jwt_identity(),
         "case_name": data["name"],
         "action": "EDITISSUES",
         "time": data["lastEdit"]
     })
+
+    # Update recent edits
+    update_database_recent_edits(get_jwt_identity(), {
+        "caseId": caseId,
+        "caseName": data["name"],
+        "caseCitation": data["citation"]
+    })
+
     return json.dumps(data["issues"]), 200
 
 
 """
-Returns the list of recent activities currently in the queue
+Returns the list of recent activities currently in the database queue
 """
 @app.route("/recentActivity", methods=['GET'])
 @jwt_required()
 def recent_activity():
-    return json.dumps(list(recent_edits))
+    activity = mongo.db.activity_log.find().sort("_id", -1).limit(10)
+    return JSONEncoder().encode(list(activity))
+
+"""
+Returns the recent edits of this user
+"""
+@app.route("/recentEdits", methods=['GET'])
+@jwt_required()
+def recent_edits():
+    data = mongo.db.users.find_one_or_404({"username": get_jwt_identity()})
+    return jsonify(data.get("recent_edits"))
 
 """
 Returns the list of cases for each tag with given limit
@@ -351,13 +414,14 @@ def add_new_case():
     _id = mongo.db.case_summaries.insert(new_doc)
 
     # Update recent activity queue
-    recent_edits.append({
+    mongo.db.activity_log.insert({
         "id": str(_id),
         "name": get_jwt_identity(),
         "case_name": new_doc["name"],
         "action": "ADDCASE",
         "time": post_data["time"]
     })
+
     return str(_id), 200
 
 """
@@ -413,6 +477,40 @@ def search():
         "score": {"$meta": "textScore"}
     }).sort([("score", {"$meta": "textScore"})]).limit(10)
     return JSONEncoder().encode(list(cursor))
+
+"""
+Helper function to update user database for recently edited case
+"""
+def update_database_recent_edits(username, new_case):
+    data = mongo.db.users.find_one_or_404({"username": username})
+    new_recent_edits = update_recent_edits(data.get("recent_edits"), new_case)
+    data["recent_edits"] = new_recent_edits
+    mongo.db.users.replace_one({"username": username}, data, True)
+    return
+
+"""
+Helper function to update the list of recent_edits
+Note that this function might augment old_lst
+old_lst: The previously stored list in database
+new_case: The info of the new case that is being inserted
+returns: An updated list of recently edited cases
+"""
+def update_recent_edits(old_lst, new_case):
+    history_contains = False
+    index = 0
+    for i, case_info in enumerate(old_lst):
+        if case_info.get("caseId") == new_case.get("caseId"):
+            index = i
+            history_contains = True
+    if history_contains:
+        old_lst.pop(index)
+        old_lst.append(new_case)
+        return old_lst
+    else:
+        old_lst.append(new_case)
+        if len(old_lst) > MAX_RECENT_EDITS:
+            old_lst.pop(0)
+        return old_lst
 
 """
 Helper class

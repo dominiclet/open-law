@@ -122,6 +122,10 @@
 	filter: drop-shadow(0 0 0.1rem black);
 }
 
+.loadingSpinner {
+	align-self: center;
+	margin-top: 30px;
+}
 
 /* Search bar styling */
 .searchContainer {
@@ -131,7 +135,6 @@
 	position: relative;
 	width: 100%;
 	max-width: 600px;
-	align-self: center;
 }
 
 .searchBar {

@@ -3,12 +3,11 @@ import React from 'react';
 import caseEditStyle from '../../../styles/CaseEdit.module.css';
 import Badge from 'react-bootstrap/Badge';
 import { Trash } from 'react-bootstrap-icons';
+import { allTags } from '../../../config';
 
 const TagEditor = (props) => {
     // props.tags: Array of tags
     // props.updateTags: Callback function to update parent state of tags
-
-    var allTags = ["Tort", "Contract", "Equity", "Evidence"];
 
     // State to store search term entered in input text box
     const [searchTag, setSearchTag] = useState("");

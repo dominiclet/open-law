@@ -12,6 +12,7 @@ import Tabs from 'react-bootstrap/Tabs';
 import Tab from 'react-bootstrap/Tab';
 import Nav from 'react-bootstrap/Nav';
 import { PencilSquare } from 'react-bootstrap-icons';
+import { Spinner } from 'react-bootstrap';
 
 const caseDisplayPage = () => {
     const router = useRouter();
@@ -35,7 +36,7 @@ const caseDisplayPage = () => {
     }, [router.isReady]);
 
     if (!dataLoaded) {
-        return (<span>Loading...</span>)
+        return (<Spinner animation="border" />);
     } else {
         // Handle edit data button
         const handleEditButton = () => {

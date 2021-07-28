@@ -72,7 +72,7 @@ const profilePage = () => {
 						</div>
 					</div>
 					<div>
-						<h5>Expert in</h5>
+						<h5>Most contributions</h5>
 						<div className={styles.statData}>
 							{(() => {
 								let maxValue = 0;

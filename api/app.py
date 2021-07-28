@@ -10,6 +10,7 @@ from collections import deque
 from datetime import timedelta
 from werkzeug.security import generate_password_hash, check_password_hash
 import json
+import os
 
 app = Flask(__name__)
 # To allow Cross-origin resource sharing
@@ -17,7 +18,7 @@ app.config["CORS_HEADERS"] = "Content-Type"
 cors = CORS(app, origins=["http://localhost:3000", "https://lawmology.herokuapp.com"], supports_credentials=True)
 # MongoDB setup
 app.config["MONGO_URI"] = "mongodb://localhost:27017/open_law"
-# app.config["MONGO_URI"] = "mongodb+srv://dominic:HY3JRkvfL2T5pstz@cluster0.avlfw.mongodb.net/open_law?retryWrites=true&w=majority"
+# app.config["MONGO_URI"] = os.environ.get("MONGO_URI")
 mongo = PyMongo(app)
 
 # Initialize recent edits deque
@@ -32,12 +33,12 @@ categories_dict = {}
 #### Authentication setup ####
 # Set this as an environment variable (here temporarily for testing)
 TOKEN_EXPIRY = timedelta(days=1)
-app.config["JWT_SECRET_KEY"] = "ivanlikesgayporn"
+app.config["JWT_SECRET_KEY"] = os.environ.get("JWT_KEY")
 app.config["JWT_ACCESS_TOKEN_EXPIRES"] = TOKEN_EXPIRY
 jwt = JWTManager(app)
 
 # Token for registration
-REGISTER_TOKEN = "ilovesummitfood"
+REGISTER_TOKEN = os.environ.get("REGISTER_TOKEN")
 
 # Maximum allowed number of recent edits
 MAX_RECENT_EDITS = 5
@@ -115,7 +116,8 @@ def register():
         "stats": {
             "contributions": None,
             "casesCreated": 0,
-            "topReplied": []
+            "topReplied": [],
+            "forumCount": 0
         },
         "badges": []
     }
@@ -128,7 +130,7 @@ Get user data
 @app.route("/user/<username>", methods=['GET'])
 @jwt_required()
 def user_data(username):
-    query = {"username": username}
+    query = {"username": get_jwt_identity()} if username == "self" else {"username": username} 
     data = mongo.db.users.find_one_or_404(query)
     return JSONEncoder().encode(data)
 

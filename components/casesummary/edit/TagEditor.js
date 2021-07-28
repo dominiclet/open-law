@@ -42,7 +42,14 @@ const TagEditor = (props) => {
                 type="text" 
                 placeholder="Tags" 
                 value={searchTag}
-                onChange={(event) => {setSearchTag(event.target.value)}} 
+                onChange={(event) => {
+                    event.target.nextSibling.style.display = "block";
+                    event.stopPropagation();
+                    document.addEventListener('click', () => {
+                        event.target.nextSibling.style.display = "none";
+                    }, {once: true})
+                    setSearchTag(event.target.value);
+                }} 
                 onClick={(event) => {
                     event.target.nextSibling.style.display = "block";
                     event.stopPropagation();
@@ -50,17 +57,32 @@ const TagEditor = (props) => {
                         event.target.nextSibling.style.display = "none";
                     }, {once: true})
                 }}
+                onKeyPress={(event) => {
+                    if (event.key == 'Enter') {
+                        var enteredTag = event.target.nextSibling.children.item(0);
+                        if (enteredTag) {
+                            if (!props.tags.includes(enteredTag.innerHTML)) {
+                                let newSelectedTags = props.tags.concat();
+                                newSelectedTags.push(enteredTag.innerHTML);
+                                props.updateTags(newSelectedTags);
+                                event.target.nextSibling.style.display = "none";
+                            }
+                        }
+                    }
+                }}
             />
             <div className={caseEditStyle.dropdownContent}>
                 {allTags.filter((tag) => 
                     tag.toLowerCase().startsWith(searchTag.toLowerCase())
-                ).map((tag) => <a onClick={() => {
-                    if (!props.tags.includes(tag)) {
-                        let newSelectedTags = props.tags.concat();
-                        newSelectedTags.push(tag);
-                        props.updateTags(newSelectedTags);
-                    }
-                }}>{tag}</a>)}
+                ).map((tag) => {
+                    return (<a onClick={() => {
+                        if (!props.tags.includes(tag)) {
+                            let newSelectedTags = props.tags.concat();
+                            newSelectedTags.push(tag);
+                            props.updateTags(newSelectedTags);
+                        }
+                    }}>{tag}</a>);
+                })}
             </div>
         </div>
     );

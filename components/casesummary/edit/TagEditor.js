@@ -47,7 +47,7 @@ const TagEditor = (props) => {
                     event.stopPropagation();
                     document.addEventListener('click', () => {
                         event.target.nextSibling.style.display = "none";
-                    }, {once: true})
+                    }, {once: true});
                     setSearchTag(event.target.value);
                 }} 
                 onClick={(event) => {
@@ -55,7 +55,7 @@ const TagEditor = (props) => {
                     event.stopPropagation();
                     document.addEventListener('click', () => {
                         event.target.nextSibling.style.display = "none";
-                    }, {once: true})
+                    }, {once: true});
                 }}
                 onKeyPress={(event) => {
                     if (event.key == 'Enter') {

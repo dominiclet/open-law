@@ -46,6 +46,7 @@ const NavigationBar = (props) => {
                         <a onClick={() => {
                             router.push("/profile/self");
                         }}>Profile</a>
+                        <a onClick={() => {router.push("/changepw")}}>Change password</a>
                         <a onClick={handleLogout}>Logout</a>
                     </div>
                 </Nav.Item>

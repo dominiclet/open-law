@@ -17,7 +17,7 @@ app.config["CORS_HEADERS"] = "Content-Type"
 cors = CORS(app, origins=["http://localhost:3000", "https://lawmology.herokuapp.com"], supports_credentials=True)
 # MongoDB setup
 # app.config["MONGO_URI"] = "mongodb://localhost:27017/open_law"
-app.config["MONGO_URI"] = "mongodb+srv://dominic:HY3JRkvfL2T5pstz@cluster0.avlfw.mongodb.net/open_law?retryWrites=true&w=majority"
+app.config["MONGO_URI"] =  "mongodb+srv://dominic:HY3JRkvfL2T5pstz@cluster0.avlfw.mongodb.net/open_law?retryWrites=true&w=majority"
 mongo = PyMongo(app)
 
 # Initialize recent edits deque
@@ -431,8 +431,12 @@ Only loops through tags of all cases when categories_dict is empty.
 @app.route("/categories", methods=['GET'])
 def getcategories():
     if not categories_dict:
+        categories_dict["Untagged Cases"] = []
         data = mongo.db.case_summaries.find()
         for case in data:
+            if not case["tag"]:
+                categories_dict["Untagged Cases"].append(case)
+                continue
             for tag in case["tag"]:
                 if tag not in categories_dict:
                     categories_dict[tag] = [case]

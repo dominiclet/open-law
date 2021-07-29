@@ -59,3 +59,9 @@
 .loadingSpinner {
 	justify-self: center;
 }
+
+.registerContainer {
+	font-size: 1rem;
+	text-align: center;
+	margin-top: 15px;
+}

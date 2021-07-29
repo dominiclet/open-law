@@ -1,6 +1,7 @@
 import Card from 'react-bootstrap/Card';
 import homeStyle from '../../styles/Home.module.css';
 import { ArrowRightShort } from 'react-bootstrap-icons';
+import Link from 'next/link';
 
 const ActivityCard = (props) => {
 	// props.caseId: unique case ID
@@ -41,7 +42,7 @@ const ActivityCard = (props) => {
 					if (props.action == "EDIT") {
 						return (
 							<p className={homeStyle.activityCardWords}>
-							<b>{props.name}</b> edited <b>
+							<b><Link href={`/profile/${props.name}`}>{props.name}</Link></b> edited <b>
 								{props.subtopic ? props.subtopic : "the case name/citation"}
 							</b> in <i>{props.caseName}</i>
 						</p>
@@ -49,7 +50,7 @@ const ActivityCard = (props) => {
 					} else if (props.action == "DELETE") {
 						return (
 							<p className={homeStyle.activityCardWords}>
-								<b>{props.name}</b> deleted <b>
+								<b><Link href={`/profile/${props.name}`}>{props.name}</Link></b> deleted <b>
 									{!props.subtopic ? "a topic" : props.subtopic}
 									</b> in <i>{props.caseName}</i>
 							</p>
@@ -57,19 +58,19 @@ const ActivityCard = (props) => {
 					} else if (props.action == "ADDTOPIC") {
 						return (
 							<p className={homeStyle.activityCardWords}>
-								<b>{props.name}</b> added a new topic to <i>{props.caseName}</i>
+								<b><Link href={`/profile/${props.name}`}>{props.name}</Link></b> added a new topic to <i>{props.caseName}</i>
 							</p>
 						);
 					} else if (props.action == "ADDCASE") {
 						return (
 							<p className={homeStyle.activityCardWords}>
-								<b>{props.name}</b> added a new case summary <i>{props.caseName}</i>
+								<b><Link href={`/profile/${props.name}`}>{props.name}</Link></b> added a new case summary <i>{props.caseName}</i>
 							</p>
 						);
 					} else if (props.action == "EDITCASENAME") {
 						return (
 							<p className={homeStyle.activityCardWords}>
-								<b>{props.name}</b> changed a case's name/citation from 
+								<b><Link href={`/profile/${props.name}`}>{props.name}</Link></b> changed a case's name/citation from 
 								<i>{" " + props.prevName}</i> 
 								{" " + props.prevCitation.join("; ")} to <i>{props.caseName}</i>
 								{" " + props.currCitation.join("; ")}
@@ -78,7 +79,7 @@ const ActivityCard = (props) => {
 					} else if (props.action == "EDITISSUES") {
 						return (
 							<p className={homeStyle.activityCardWords}>
-								<b>{props.name}</b> edited the issues in
+								<b><Link href={`/profile/${props.name}`}>{props.name}</Link></b> edited the issues in
 								<i>{` ${props.caseName}`}</i>
 							</p>
 						);

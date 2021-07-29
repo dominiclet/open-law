@@ -10,6 +10,7 @@ from collections import deque
 from datetime import timedelta
 from werkzeug.security import generate_password_hash, check_password_hash
 import json
+import os
 
 app = Flask(__name__)
 # To allow Cross-origin resource sharing
@@ -17,12 +18,10 @@ app.config["CORS_HEADERS"] = "Content-Type"
 cors = CORS(app, origins=["http://localhost:3000", "https://lawmology.herokuapp.com"], supports_credentials=True)
 # MongoDB setup
 # app.config["MONGO_URI"] = "mongodb://localhost:27017/open_law"
-app.config["MONGO_URI"] =  "mongodb+srv://dominic:HY3JRkvfL2T5pstz@cluster0.avlfw.mongodb.net/open_law?retryWrites=true&w=majority"
-mongo = PyMongo(app)
 
-# Initialize recent edits deque
-# Activity is stored as {"id": , "case_name": , "action": , "subtopic": , "time": }
-recent_edits = deque(maxlen=10)
+app.config["MONGO_URI"] = os.environ.get("MONGO_URI")
+
+mongo = PyMongo(app)
 
 # Initialize dictionary to store categories and their corresponding number of cases
 # key: category
@@ -32,12 +31,12 @@ categories_dict = {}
 #### Authentication setup ####
 # Set this as an environment variable (here temporarily for testing)
 TOKEN_EXPIRY = timedelta(days=1)
-app.config["JWT_SECRET_KEY"] = "ivanlikesgayporn"
+app.config["JWT_SECRET_KEY"] = os.environ.get("JWT_KEY")
 app.config["JWT_ACCESS_TOKEN_EXPIRES"] = TOKEN_EXPIRY
 jwt = JWTManager(app)
 
 # Token for registration
-REGISTER_TOKEN = "ilovesummitfood"
+REGISTER_TOKEN = os.environ.get("REGISTER_TOKEN")
 
 # Maximum allowed number of recent edits
 MAX_RECENT_EDITS = 5
@@ -100,16 +99,44 @@ def register():
     user = mongo.db.users.find_one({"username": data.get("username")})
     if user:
         return "Username taken", 409
+    
+    # Check if user with this email exists
+    user = mongo.db.users.find_one({"email": data.get("email")})
+    if user: 
+        return "Email in use", 409
+    
     new_user = {
         "name": data.get("name"),
-        "year": data.get("year"),
+        "class": data.get("class"),
         "username": data.get("username"),
         "email": data.get("email"),
         "password": generate_password_hash(data.get("password")),
-        "recent_edits": []
+        "recent_edits": [],
+        "permissions": {
+            "edit": 1,
+            "admin": 0,
+            "mod": 0
+        },
+        "stats": {
+            "contributions": None,
+            "casesCreated": 0,
+            "topReplied": [],
+            "forumCount": 0
+        },
+        "badges": []
     }
     _id = mongo.db.users.insert(new_user)
     return str(_id), 200
+
+"""
+Get user data
+"""
+@app.route("/user/<username>", methods=['GET'])
+@jwt_required()
+def user_data(username):
+    query = {"username": get_jwt_identity()} if username == "self" else {"username": username} 
+    data = mongo.db.users.find_one_or_404(query)
+    return JSONEncoder().encode(data)
 
 """
 Allows pinging of backend to verify JWT
@@ -171,7 +198,7 @@ def edit_sub_topic(caseId, category, index):
         "caseId": caseId,
         "caseName": data["name"],
         "caseCitation": data["citation"]
-    })
+    }, data["tag"])
     return "", 200
 
 
@@ -212,12 +239,12 @@ def edit_case_identifiers(caseId):
         "currCitation": data["citation"]
     })
 
-    # Update recent edits
+    # Update recent edits and contribution stats
     update_database_recent_edits(get_jwt_identity(), {
         "caseId": caseId,
         "caseName": data["name"],
         "caseCitation": data["citation"]
-    })
+    }, data["tag"])
 
     return "", 200
 
@@ -254,12 +281,12 @@ def add_new_topic(caseId, category):
         "time": data["lastEdit"]
     })
 
-    # Update recent edits
+    # Update recent edits and contribution stats
     update_database_recent_edits(get_jwt_identity(), {
         "caseId": caseId,
         "caseName": data["name"],
         "caseCitation": data["citation"]
-    })
+    }, data["tag"])
 
     return empty_entry, 200
 
@@ -294,12 +321,12 @@ def delete_topic(caseId, category, index):
         "time": data["lastEdit"]
     })
 
-    # Update recent edits
+    # Update recent edits and contributions stats
     update_database_recent_edits(get_jwt_identity(), {
         "caseId": caseId,
         "caseName": data["name"],
         "caseCitation": data["citation"]
-    })
+    }, data["tag"])
 
     return json.dumps(data[category]), 200
 
@@ -331,12 +358,12 @@ def update_issues(caseId):
         "time": data["lastEdit"]
     })
 
-    # Update recent edits
+    # Update recent edits and contribution stats
     update_database_recent_edits(get_jwt_identity(), {
         "caseId": caseId,
         "caseName": data["name"],
         "caseCitation": data["citation"]
-    })
+    }, data["tag"])
 
     return json.dumps(data["issues"]), 200
 
@@ -422,6 +449,11 @@ def add_new_case():
         "time": post_data["time"]
     })
 
+    # Update number of cases added in users database
+    user_data = mongo.db.users.find_one_or_404({"username": get_jwt_identity()})
+    user_data["stats"]["casesCreated"] += 1
+    mongo.db.users.replace_one({"username": get_jwt_identity()}, user_data, True)
+
     return str(_id), 200
 
 """
@@ -484,11 +516,27 @@ def search():
 
 """
 Helper function to update user database for recently edited case
+as well as update the user contributions statistics 
+username: username of current user
+new_case: mini case info of the case that was recently edited
+tags: tags of the case 
+void function
 """
-def update_database_recent_edits(username, new_case):
+def update_database_recent_edits(username, new_case, tags):
     data = mongo.db.users.find_one_or_404({"username": username})
     new_recent_edits = update_recent_edits(data.get("recent_edits"), new_case)
     data["recent_edits"] = new_recent_edits
+    if not data["stats"]["contributions"]:
+        contributions = {}
+        for tag in tags:
+            contributions[tag] = 1
+        data["stats"]["contributions"] = contributions
+    else:
+        for tag in tags:
+            if tag in data["stats"]["contributions"]:
+                data["stats"]["contributions"][tag] += 1
+            else:
+                data["stats"]["contributions"][tag] = 1
     mongo.db.users.replace_one({"username": username}, data, True)
     return
 
@@ -509,13 +557,11 @@ def update_recent_edits(old_lst, new_case):
     if history_contains:
         old_lst.pop(index)
         old_lst.append(new_case)
-        return old_lst
     else:
         old_lst.append(new_case)
         if len(old_lst) > MAX_RECENT_EDITS:
             old_lst.pop(0)
-        return old_lst
-
+    return old_lst
 """
 Helper class
 """

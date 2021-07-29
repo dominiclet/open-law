@@ -58,6 +58,7 @@ const Home = (props) => {
           caseName={elem.caseName} 
           caseId={elem.caseId} 
           caseCitation={elem.caseCitation}
+          toEdit={true}
         />
       );
     });
@@ -83,7 +84,6 @@ const Home = (props) => {
         currCitation={activity.currCitation}
       />);
     })
-    recentActivityBuilder.reverse();
   }
 
   return (
@@ -92,14 +92,14 @@ const Home = (props) => {
           <title>[Placeholder]</title>
       </Head>
       <div className={homeStyle.recentEditsOuterContainer}>
-        <h5>Recent edits</h5>
+        <h5 style={{"textAlign": "center"}}>Recent edits</h5>
         <div className={homeStyle.recentEditsInnerContainer}>
           {recentEditsBuilder}
         </div>
       </div>
       <LargeCaseSearch />
       <div className={homeStyle.activityOuterContainer}>
-        <h5>Recent activity</h5>
+        <h5 style={{"textAlign": "center"}}>Recent activity</h5>
         {recentActivityBuilder}
       </div>
     </div>

@@ -3,6 +3,7 @@ import Item from '../../components/categories/Item'
 import { apiRoot } from '../../config'
 import axios from 'axios'
 import { useEffect, useState } from 'react'
+import { Spinner } from 'react-bootstrap'
 
 const categories = (props) => {
   // State to store data
@@ -29,7 +30,7 @@ const categories = (props) => {
     return (
       <div>
         <h1 className={categoriesStyle.header}>Categories</h1>
-        Loading...
+        <Spinner animation="border" className={categoriesStyle.loadingSpinner}/>
       </div>
     );
   }

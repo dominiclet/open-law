@@ -4,6 +4,7 @@ import axios from 'axios';
 import { apiRoot } from "../../config";
 import SearchResult from "../../components/search/SearchResult";
 import searchResultStyle from "../../styles/SearchResult.module.css";
+import { Spinner } from "react-bootstrap";
 
 const searchPage = () => {
 	const router = useRouter();
@@ -24,7 +25,7 @@ const searchPage = () => {
 	if (!dataLoaded) {
 		return (
 			<div>
-				Loading...
+				<Spinner animation="border" />
 			</div>
 		);
 	} else {

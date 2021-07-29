@@ -40,12 +40,14 @@ const registerPage = () => {
 		const password = document.getElementById("password");
 		const confirmPw = document.getElementById("confirmpw");
 		const email = document.getElementById("email");
+		const registerToken = document.getElementById("registerToken");
 
 		document.getElementById("fullNameNote").innerHTML = null;
 		document.getElementById("usernameNote").innerHTML = null;
 		document.getElementById("passwordNote").innerHTML = null;
 		document.getElementById("confirmpwNote").innerHTML = null;
 		document.getElementById("emailNote").innerHTML = null;
+		document.getElementById("tokenNote").innerHTML = null;
 		let noError = true;
 		if (name.value.length == 0) {
 			// Check that full name is not empty
@@ -59,7 +61,7 @@ const registerPage = () => {
 		}
 		if (username.value.includes(" ")) {
 			// Do not allow spaces in username
-			document.getElementById("usernameNote").innerHTML = "No spaces in username.";
+			document.getElementById("usernameNote").innerHTML = "No spaces are allowed in username.";
 			noError = false;
 		}
 		if (username.value.length > 30) {
@@ -72,6 +74,11 @@ const registerPage = () => {
 			document.getElementById("emailNote").innerHTML = "Email is required";
 			noError = false;
 		}
+		if (email.value.includes(" ")) {
+			// Do not allow spaces in email
+			document.getElementById("emailNote").innerHTML = "No spaces in email."
+			noError = false;
+		}
 		if (password.value.length < 8) {
 			// Check that password is at least 8 characters long
 			document.getElementById("passwordNote").innerHTML = "Password must be at least 8 characters long.";
@@ -82,14 +89,25 @@ const registerPage = () => {
 			document.getElementById("confirmpwNote").innerHTML = "Password does not match.";
 			noError = false;
 		}
+		if (registerToken.value.length == 0) {
+			// Check that register token is not empty
+			document.getElementById("tokenNote").innerHTML = "Get registration token from Ivan.";
+			noError = false;
+		}
+		if (document.getElementById("class").value == 0) {
+			// Check that class is selected
+			document.getElementById("classNote").innerHTML = "Class must be specified.";
+			noError = false;
+		}
 
 		if (noError) {
 			const data = {
 				"name": name.value,
-				"year": document.getElementById("academicYear").value,
+				"class": document.getElementById("class").value,
 				"username": username.value,
 				"email": email.value,
-				"password": password.value
+				"password": password.value,
+				"token": registerToken.value
 			}
 
 			axios.post(apiRoot + "/register", data)
@@ -99,31 +117,40 @@ const registerPage = () => {
 						router.push("/login");
 					}
 				}).catch(e => {
-					console.error(e);
+					if (e.response.status == 401) {
+						alert("Wrong registration token!");
+					} else if (e.response.status == 409) {
+						if (e.response.data == "Username taken") {
+							document.getElementById("usernameNote").innerHTML = "Username taken!";
+						} else if (e.response.data == "Email in use") {
+							document.getElementById("emailNote").innerHTML = "Email already in use.";
+						}
+					} else {
+						throw e;
+					}
 				});
 		}
 	}
 
 	return (
 		<div className={styles.formContainer}>
-			<h4>Register</h4>
+			<h4 style={{textAlign: 'center'}}>Register</h4>
 			<Form onSubmit={handleSubmit}>
 				<Form.Group controlId="name">
 					<Form.Label>Full name</Form.Label>
 					<Form.Control type="text" placeholder="Enter full name" />
 					<Form.Text id="fullNameNote" style={warningStyle}></Form.Text>
 				</Form.Group>
-				<Form.Group controlId="academicYear">
-					<Form.Label>Academic year</Form.Label>
+				<Form.Group controlId="class">
+					<Form.Label>Class of</Form.Label>
 					<Form.Control as="select">
-						<option>1</option>
-						<option>2</option>
-						<option>3</option>
-						<option>4</option>
-						<option>5</option>
+						<option value={0}>Select class</option>
+						<option value={"2022"}>2022 (Matriculated 2018)</option>
+						<option value={"2023"}>2023 (Matriculated 2019)</option>
+						<option value={"2024"}>2024 (Matriculated 2020)</option>
+						<option value={"2025"}>2025 (Matriculated 2021)</option>
 					</Form.Control>
-					<Form.Text className="text-muted" style={mutedTextStyle}>
-						Based on academic year 2021/2022
+					<Form.Text id="classNote" style={warningStyle}>
 					</Form.Text>
 				</Form.Group>
 				<Form.Group controlId="username">
@@ -148,6 +175,11 @@ const registerPage = () => {
 					<Form.Label>Confirm password</Form.Label>
 					<Form.Control type="password" placeholder="Enter password again" id="confirmpw" onChange={handleEnterPassword} />
 					<Form.Text id="confirmpwNote" style={warningStyle}></Form.Text>
+				</Form.Group>
+				<Form.Group controlId="registerToken">
+					<Form.Label>Token</Form.Label>
+					<Form.Control type="password" placeholder="Enter registration token" />
+					<Form.Text id="tokenNote" style={warningStyle}></Form.Text>
 				</Form.Group>
 				<Button type="submit">Submit</Button>
 			</Form>

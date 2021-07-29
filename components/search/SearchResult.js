@@ -37,10 +37,11 @@ const SearchResult = (props) => {
 				</Card.Text>
 			</Card.Body>
 			<Card.Footer className={searchResultStyle.searchResultFooter}>
-				<small className="text-muted">{
+				<small className="text-muted">{ props.resultInfo.lastEdit ?
 					`Last edited by ${props.resultInfo.lastEditBy} on 
 					${date.toLocaleDateString("en-SG")} at 
-					${date.toLocaleTimeString("en-SG")}`
+					${date.toLocaleTimeString("en-SG")}` :
+					"No edits yet"
 				}</small>
 			</Card.Footer>
 		</Card>

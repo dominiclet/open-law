@@ -5,6 +5,7 @@ import axios from 'axios';
 import { apiRoot } from '../../../../config';
 import { useEffect, useState } from 'react';
 import EditorBuilder from '../../../../components/casesummary/edit/EditorBuilder';
+import { Spinner } from 'react-bootstrap';
 
 const caseEditPage = () => {
     const router = useRouter();
@@ -77,7 +78,7 @@ const caseEditPage = () => {
 
     if (!dataLoaded) {
         // If data is not loaded yet, display "loading"
-        return (<span>Loading...</span>);
+        return (<Spinner animation="border" />);
     } else {
         const date = new Date(caseData.lastEdit);
 

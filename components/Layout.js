@@ -8,7 +8,6 @@ import axios from 'axios';
 import { apiRoot } from '../config';
 import { useRouter } from 'next/router';
 import withAuth from '../helpers/withAuth';
-import Head from 'next/head';
 
 const Layout = (props) => {
     // States to handle add case modal

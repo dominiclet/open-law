@@ -2,16 +2,14 @@ import { useRouter } from 'next/router';
 import axios from 'axios';
 import { apiRoot } from '../../../config';
 import { useEffect, useState } from 'react';
-import Link from 'next/link';
 import caseStyle from '../../../styles/Case.module.css';
 import OuterCase from '../../../components/casesummary/OuterCase';
 import RelatedCases from '../../../components/casesummary/RelatedCases';
-import Forum from '../../../components/casesummary/Forum';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import Tabs from 'react-bootstrap/Tabs';
 import Tab from 'react-bootstrap/Tab';
 import Nav from 'react-bootstrap/Nav';
 import { PencilSquare } from 'react-bootstrap-icons';
+import { Spinner } from 'react-bootstrap';
 
 const caseDisplayPage = () => {
     const router = useRouter();
@@ -29,13 +27,12 @@ const caseDisplayPage = () => {
                 .then(res => {
                     setCaseData(res.data);
                     setdataLoaded(true);
-                })
-                .catch(error => console.log(error));
+                }).catch(error => console.log(error));
         } else return;
     }, [router.isReady]);
 
     if (!dataLoaded) {
-        return (<span>Loading...</span>)
+        return (<Spinner animation="border" />);
     } else {
         // Handle edit data button
         const handleEditButton = () => {

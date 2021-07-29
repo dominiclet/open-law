@@ -1,0 +1,71 @@
+.outerContainer {
+	width: 100%;
+	max-width: 1000px;
+	display: flex;
+	flex-direction: column;
+}
+
+.row1Container {
+	display: flex;
+	width: 100%;
+	justify-content: space-between;
+}
+
+.row2Container {
+	display: flex;
+	width: 100%;
+	justify-content: flex-end;
+}
+
+.profileIcon {
+	width: 250px;
+	display: flex;
+	justify-content: center;
+}
+
+.userInfoContainer {
+	display: flex;
+	width: 250px;
+	justify-content: space-between;
+	margin-top: 20px;
+	margin-bottom: 20px;
+}
+
+.labelContainer {
+	font-size: 1rem;
+	font-weight: 500;
+}
+
+.userDataContainer {
+	font-size: 1rem;
+	text-align: right;
+}
+
+.userStatsContainer {
+	width: 600px;
+	display: flex;
+	justify-content: space-around;
+}
+
+.statData {
+	text-align: center;
+	font-size: 2rem;
+}
+
+.spinner {
+	margin-right: 300px;
+}
+
+.recentEdits {
+	width: 600px;
+}
+
+.recentEditsHeader {
+	text-align: center;
+}
+
+.recentEditsContainer {
+	width: 100%;
+	max-width: 400px;
+	margin: auto;
+}

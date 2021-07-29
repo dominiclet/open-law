@@ -40,7 +40,7 @@
 	border: none;
 	border-radius: 30px;
 	box-shadow: 0 5px 20px 0 rgb(0 0 0 / 10%);
-	color: #5f6361;
+	background-color: #9ca09e;
 	transition-duration: 0.3s;
 }
 
@@ -54,4 +54,14 @@
 	color: red;
 	font-size: 0.8rem;
 	justify-self: center;
+}
+
+.loadingSpinner {
+	justify-self: center;
+}
+
+.registerContainer {
+	font-size: 1rem;
+	text-align: center;
+	margin-top: 15px;
 }

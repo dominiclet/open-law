@@ -58,7 +58,7 @@ const categoryPage = () => {
                                         {entry.name}
                                     </Link>
                                 </td>
-                                <td>{entry.citation}</td>
+                                <td>{entry.citation.join("; ")}</td>
                                 <td>{convertDate(entry.lastEdit)}</td>
                             </tr>
                         ))}

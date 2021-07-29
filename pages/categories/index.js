@@ -30,7 +30,7 @@ const categories = (props) => {
     return (
       <div>
         <h1 className={categoriesStyle.header}>Categories</h1>
-        <Spinner animation="border" />
+        <Spinner animation="border" className={categoriesStyle.loadingSpinner}/>
       </div>
     );
   }

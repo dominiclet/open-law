@@ -1,6 +1,7 @@
 .header {
   display: flex;
   justify-content: center;
+  margin-bottom: 40px;
 }
 
 .body {
@@ -9,4 +10,44 @@
 
 .button {
   float: right;
+  height: 10%;
+}
+
+.card {
+  margin-bottom: 0.5rem;
+  font-size: 0.8rem;
+  display: flex;
+  border-bottom: 1px solid rgb(196, 194, 194);
+  padding-top: 5px;
+  padding-bottom: 5px;
+  width: 700px;
+  flex-direction: column;
+}
+
+.outerContainer {
+  display: flex;
+  flex-direction: row;
+  width: 700px;
+  justify-content: space-between;
+}
+
+.innerContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.cardHeader {
+  margin-bottom: 10px;
+  font-weight: 500;
+  font-size: 1.25rem;
+}
+
+.cardWords {
+  margin: 0px;
+}
+
+.loadingSpinner {
+  margin-left: 35%;
+  margin-top: 30px;
 }

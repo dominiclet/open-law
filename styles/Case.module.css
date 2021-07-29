@@ -20,7 +20,7 @@
 }
 
 .casesummary {
-  width: 60%;
+  width: 100%;
 }
 
 .header {
@@ -126,4 +126,19 @@
 /* Overall styling for content of display box */
 .contentContainer {
   display: flex;
+  width: 100%;
+  max-width: 1000px;
+}
+
+.tabPane {
+  width: 100%;
+  max-width: 1000px;
+}
+
+/* Behaviour when viewport is scaled down */
+@media only screen and (max-width: 1140px) {
+  /* Hide the two side columns */
+  .navContainer {
+    display: none;
+  }
 }

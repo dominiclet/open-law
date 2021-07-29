@@ -1,6 +1,6 @@
 import homeStyle from '../../styles/Home.module.css';
 import { Search } from 'react-bootstrap-icons';
-
+import Image from 'next/image';
 
 const LargeCaseSearch = () => {
 	// Handles enter functionality: Searches case with query
@@ -15,6 +15,9 @@ const LargeCaseSearch = () => {
 
 	return (
       <div className={homeStyle.searchContainer}>
+		 <div className={homeStyle.imageContainer}>
+			<Image src="/big_brain_boi_2.png" alt="Smiley face" width={250} height={250} />
+		 </div>
         <input 
           placeholder="Search cases"
 		  id="largeSearchQ"

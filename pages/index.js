@@ -89,7 +89,7 @@ const Home = (props) => {
   return (
     <div className={homeStyle.container1}>
       <Head>
-          <title>[Placeholder]</title>
+          <title>Law Notes</title>
       </Head>
       <div className={homeStyle.recentEditsOuterContainer}>
         <h5 style={{"textAlign": "center"}}>Recent edits</h5>

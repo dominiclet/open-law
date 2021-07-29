@@ -94,11 +94,16 @@ const registerPage = () => {
 			document.getElementById("tokenNote").innerHTML = "Get registration token from Ivan.";
 			noError = false;
 		}
+		if (document.getElementById("class").value == 0) {
+			// Check that class is selected
+			document.getElementById("classNote").innerHTML = "Class must be specified.";
+			noError = false;
+		}
 
 		if (noError) {
 			const data = {
 				"name": name.value,
-				"year": document.getElementById("academicYear").value,
+				"class": document.getElementById("class").value,
 				"username": username.value,
 				"email": email.value,
 				"password": password.value,
@@ -115,7 +120,11 @@ const registerPage = () => {
 					if (e.response.status == 401) {
 						alert("Wrong registration token!");
 					} else if (e.response.status == 409) {
-						document.getElementById("usernameNote").innerHTML = "Username taken!";
+						if (e.response.data == "Username taken") {
+							document.getElementById("usernameNote").innerHTML = "Username taken!";
+						} else if (e.response.data == "Email in use") {
+							document.getElementById("emailNote").innerHTML = "Email already in use.";
+						}
 					} else {
 						throw e;
 					}
@@ -125,24 +134,23 @@ const registerPage = () => {
 
 	return (
 		<div className={styles.formContainer}>
-			<h4>Register</h4>
+			<h4 style={{textAlign: 'center'}}>Register</h4>
 			<Form onSubmit={handleSubmit}>
 				<Form.Group controlId="name">
 					<Form.Label>Full name</Form.Label>
 					<Form.Control type="text" placeholder="Enter full name" />
 					<Form.Text id="fullNameNote" style={warningStyle}></Form.Text>
 				</Form.Group>
-				<Form.Group controlId="academicYear">
-					<Form.Label>Academic year</Form.Label>
+				<Form.Group controlId="class">
+					<Form.Label>Class of</Form.Label>
 					<Form.Control as="select">
-						<option>1</option>
-						<option>2</option>
-						<option>3</option>
-						<option>4</option>
-						<option>5</option>
+						<option value={0}>Select class</option>
+						<option value={"2022"}>2022 (Matriculated 2018)</option>
+						<option value={"2023"}>2023 (Matriculated 2019)</option>
+						<option value={"2024"}>2024 (Matriculated 2020)</option>
+						<option value={"2025"}>2025 (Matriculated 2021)</option>
 					</Form.Control>
-					<Form.Text className="text-muted" style={mutedTextStyle}>
-						Based on academic year 2021/2022
+					<Form.Text id="classNote" style={warningStyle}>
 					</Form.Text>
 				</Form.Group>
 				<Form.Group controlId="username">

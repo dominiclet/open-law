@@ -1,15 +1,14 @@
 
 import dynamic from 'next/dynamic';
-import ToggleButton from 'react-bootstrap/ToggleButton';
-import ButtonGroup from 'react-bootstrap/ButtonGroup';
 import Form from 'react-bootstrap/Form';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import caseEditStyle from '../../../styles/CaseEdit.module.css';
 import TagEditor from './TagEditor';
 import { apiRoot } from '../../../config';
 import axios from 'axios';
 import { PlusLg, Trash, Upload } from 'react-bootstrap-icons';
 import { useRouter } from 'next/router';
+import { Button, Modal } from 'react-bootstrap';
 
 // ReactQuill is only imported at client side 
 // due to issues with next's server-side rendering
@@ -27,6 +26,8 @@ const HoldingEditor = (props) => {
     // props.caseId: The unique case ID of this case
 
     const router = useRouter();
+    // Package for diff comparison
+    const Diff = require("diff");
     
     // Width needs to be fixed otherwise text causes DOM elements to resize
     const styling = {
@@ -35,7 +36,9 @@ const HoldingEditor = (props) => {
     }
 
     // State to store the holding info internally
-    const [holding, setHolding] = useState(props.data);
+    const [holding, setHolding] = useState(JSON.parse(JSON.stringify(props.data)));
+    // State to control display of diff modal
+    const [showDiffModal, setShowDiffModal] = useState(false);
 
     var holdingBuilder = [];
 
@@ -153,9 +156,26 @@ const HoldingEditor = (props) => {
         );
     }
 
-    // Function to handle submit 
-    const handleSubmit = () => {
+    // Handle add topic
+    const handleAddTopic = () => {
+        let newHolding = holding.concat();
+        newHolding.push({
+            "title": "",
+            "content": "",
+            "tag": [],
+            "ratio": 2
+        });
+        setHolding(newHolding);
+        document.getElementById("holdingUpload").style.color = "red";
+    }
 
+    // Function to handle submit (this does not actually submit, but merely brings up the diff comparison modal)
+    const handleSubmit = () => {
+        setShowDiffModal(true);
+    }
+
+    // Handles the actual submit functionality. This is the submit button on the diff comparison modal. 
+    const handleActualSubmit = () => {
         const data = {
             holdingData: holding,
             time: new Date().toJSON()
@@ -170,25 +190,79 @@ const HoldingEditor = (props) => {
                 headers: {'Authorization': 'Bearer ' + accessToken}
             }).then(res => {
                 if (res.status == 200) {
-                    document.getElementById("holdingUpload").style.color = "red";
+                    document.getElementById("holdingUpload").style.color = "black";
+                    // Update the parent data
+                    props.setData(JSON.parse(JSON.stringify(holding)));
+                    // Close modal
+                    setShowDiffModal(false);
                 }
             }).catch(e => {
                 throw e;
             });
     }
 
-    // Handle add topic
-    const handleAddTopic = () => {
-        let newHolding = holding.concat();
-        newHolding.push({
-            "title": "",
-            "content": "",
-            "tag": [],
-            "ratio": 2
-        });
-        setHolding(newHolding);
-        document.getElementById("holdingUpload").style.color = "red";
-    }
+    // Ensures that this only runs when modal component is mounted onto DOM
+    useEffect(() => {
+        if (showDiffModal) {
+            let span = null;
+            const display = document.getElementById("modalHoldingContent");
+            
+            for (let i = 0; i < Math.max(props.data.length, holding.length); i++) {
+                // Compare title
+                let originalTitle = i < props.data.length ? props.data[i].title : "";
+                let changedTitle = i < holding.length ? holding[i].title : "";
+                
+                const diffTitle = Diff.diffWords(originalTitle, changedTitle);
+                const divTitle = document.createElement("h5");
+                
+                diffTitle.forEach(part => {
+                    const color = part.added ? 'green' : 
+                    part.removed ? 'red' : 'grey';
+                    span = document.createElement('span');
+                    span.style.color = color;
+                    span.appendChild(document.createTextNode(part.value));
+                    divTitle.appendChild(span);
+                });
+                display.appendChild(divTitle);
+
+                // Compare content
+                let originalContent = i < props.data.length ? props.data[i].content : "";
+                let changedContent = i < holding.length ? holding[i].content : "";
+
+                const diffContent = Diff.diffWords(originalContent, changedContent);
+                const divContent = document.createElement("div");
+
+                diffContent.forEach(part => {
+                    const color = part.added ? 'green' : 
+                        part.removed ? 'red' : 'grey';
+                    span = document.createElement('span');
+                    span.style.color = color;
+                    span.appendChild(document.createTextNode(part.value));
+                    divContent.appendChild(span);
+                });
+                display.appendChild(divContent);
+
+                // Compare tags
+                let originalTags = i < props.data.length ? props.data[i].tag.join("; ") : "";
+                let changedTags = i < holding.length ? holding[i].tag.join("; ") : "";
+                
+                const diffTags = Diff.diffWords(originalTags, changedTags);
+                const divTags = document.createElement("div");
+                divTags.style.fontStyle = "italic";
+                divTags.style.textAlign = "right";
+
+                diffTags.forEach(part => {
+                    const color = part.added ? 'green' : 
+                        part.removed ? 'red' : 'grey';
+                    span = document.createElement('span');
+                    span.style.color = color;
+                    span.appendChild(document.createTextNode(part.value));
+                    divTags.appendChild(span);
+                });
+                display.appendChild(divTags);
+            }
+        }
+    }, [showDiffModal]);
 
 
     return (
@@ -207,6 +281,21 @@ const HoldingEditor = (props) => {
                 className={caseEditStyle.editorSubmitButton}
                 onClick={handleSubmit}
             />
+            <Modal
+                show={showDiffModal}
+                onHide={() => setShowDiffModal(false)}
+                dialogClassName={caseEditStyle.modalContainer}
+            >
+                <Modal.Header closeButton>
+                    <Modal.Title>Confirm changes to holding</Modal.Title>
+                </Modal.Header>
+                <Modal.Body id="modalHoldingContent"></Modal.Body>
+                <Modal.Footer>
+                    <Button onClick={handleActualSubmit}>
+                        Submit
+                    </Button>
+                </Modal.Footer>
+            </Modal>
         </div>
     );
 }

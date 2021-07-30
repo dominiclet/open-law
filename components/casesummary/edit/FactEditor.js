@@ -131,12 +131,12 @@ const FactEditor = (props) => {
             });
     }
 
-    // Ensures that this only runs when modal is up
+    // Ensures that this only runs when modal is mounted onto DOM
     useEffect(() => {
         // Run diff algorithm to check changes
         if (showDiffModal) {
             let span = null;
-            const display = document.getElementById("modalContent");
+            const display = document.getElementById("modalFactContent");
 
             for (let i = 0; i < Math.max(props.data.length, factData.length); i++) {
                 // Compare title
@@ -144,14 +144,13 @@ const FactEditor = (props) => {
                 let changedTitle = i < factData.length ? factData[i].title : "";
                 
                 const diffTitle = Diff.diffWords(originalTitle, changedTitle);
-                const divTitle = document.createElement("div");
+                const divTitle = document.createElement("h5");
                 
                 diffTitle.forEach(part => {
                     const color = part.added ? 'green' :
-                    part.removed ? 'red' : 'grey';
+                        part.removed ? 'red' : 'grey';
                     span = document.createElement('span');
                     span.style.color = color;
-                    span.style.fontWeight = "500";
                     span.appendChild(document.createTextNode(part.value));
                     divTitle.appendChild(span);
                 });
@@ -166,7 +165,7 @@ const FactEditor = (props) => {
 
                 diffContent.forEach(part => {
                     const color = part.added ? 'green' :
-                    part.removed ? 'red' : 'grey';
+                        part.removed ? 'red' : 'grey';
                     span = document.createElement('span');
                     span.style.color = color;
                     span.appendChild(document.createTextNode(part.value));
@@ -198,9 +197,9 @@ const FactEditor = (props) => {
                 dialogClassName={caseEditStyle.modalContainer}
             >
                 <Modal.Header closeButton>
-                    <Modal.Title>Confirm fact changes</Modal.Title>
+                    <Modal.Title>Confirm changes to facts</Modal.Title>
                 </Modal.Header>
-                <Modal.Body id="modalContent">
+                <Modal.Body id="modalFactContent">
                 </Modal.Body>
                 <Modal.Footer>
                     <Button onClick={handleActualSubmit}>

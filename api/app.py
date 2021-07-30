@@ -51,6 +51,10 @@ def login():
     if not data or not check_password_hash(data.get("password"), password):
         return jsonify({"msg": "Bad username or password"}), 401
     else:
+        # Update last login
+        data["lastLogin"] = request.json.get("dateTime")
+        mongo.db.users.replace_one({"username": username}, data, True)
+        # Create access token and return 
         access_token = create_access_token(identity=username)
         return jsonify(access_token=access_token)
 
@@ -122,7 +126,8 @@ def register():
             "topReplied": [],
             "forumCount": 0
         },
-        "badges": []
+        "badges": [],
+        "lastLogin": ""
     }
     _id = mongo.db.users.insert(new_user)
     return str(_id), 200

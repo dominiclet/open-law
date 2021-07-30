@@ -39,7 +39,8 @@ const loginPage = () => {
 
 		const data = {
 			username: document.getElementById("username").value,
-			password: document.getElementById("password").value
+			password: document.getElementById("password").value,
+			dateTime: new Date().toJSON()
 		};
 
 		axios.post(apiRoot + "/login", data)

@@ -74,7 +74,7 @@ const FactEditor = (props) => {
         }
 
         factBuilder.push(
-            <form className={caseEditStyle.editor}>
+            <form className={caseEditStyle.editor} key={"factEditor" + i}>
                 <Trash size="25" className={caseEditStyle.deleteTopicButton} onClick={handleDeleteSubTopic} />
                 <input id={"factTitle"+i} className={caseEditStyle.subTopic} value={factData[i].title} 
                 type="text" onChange={handleTopicChange} placeholder="Subtopic title" />

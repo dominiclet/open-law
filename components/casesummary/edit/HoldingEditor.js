@@ -1,4 +1,3 @@
-
 import dynamic from 'next/dynamic';
 import Form from 'react-bootstrap/Form';
 import { useEffect, useState } from 'react';
@@ -62,11 +61,14 @@ const HoldingEditor = (props) => {
         }
 
         // Handle change of editor contents
-        const handleEditorChange = (value) => {
+        const handleEditorChange = (content, delta, source, editor) => {
             let newHolding = holding.concat();
-            newHolding[i].content = value;
+            newHolding[i].content = content;
             setHolding(newHolding);
-            document.getElementById("holdingUpload").style.color = "red";
+            // Conditional required to circumvent issue where button appears read on mount
+            if (source != "api") {
+                document.getElementById("holdingUpload").style.color = "red";
+            }
         }
 
         // Handle update tags
@@ -103,10 +105,10 @@ const HoldingEditor = (props) => {
         }
 
         holdingBuilder.push(
-            <div className={caseEditStyle.editor}>
+            <form className={caseEditStyle.editor} key={"holdingEditor" + i}>
                 <Trash size="25" className={caseEditStyle.deleteTopicButton} onClick={handleDeleteSubTopic} />
                 <input id={"holdingTitle"+i} className={caseEditStyle.subTopic} value={holding[i].title} type="text" 
-                onChange={handleTopicChange} placeholder="Subtopic title" />
+                    onChange={handleTopicChange} placeholder="Subtopic title" />
                 <div id={"holding"+props.index}>
                     <ReactQuill 
                         theme="bubble" 
@@ -152,7 +154,7 @@ const HoldingEditor = (props) => {
                         </Form>
                     </div>
                 </div>
-            </div>
+            </form>
         );
     }
 
@@ -220,6 +222,9 @@ const HoldingEditor = (props) => {
                     part.removed ? 'red' : 'grey';
                     span = document.createElement('span');
                     span.style.color = color;
+                    if (color == 'red') {
+                        span.style.textDecoration = "line-through";
+                    }
                     span.appendChild(document.createTextNode(part.value));
                     divTitle.appendChild(span);
                 });
@@ -230,16 +235,61 @@ const HoldingEditor = (props) => {
                 let changedContent = i < holding.length ? holding[i].content : "";
 
                 const diffContent = Diff.diffWords(originalContent, changedContent);
+                
                 const divContent = document.createElement("div");
 
-                diffContent.forEach(part => {
-                    const color = part.added ? 'green' : 
-                        part.removed ? 'red' : 'grey';
-                    span = document.createElement('span');
-                    span.style.color = color;
-                    span.appendChild(document.createTextNode(part.value));
-                    divContent.appendChild(span);
-                });
+                // Algorithm to group block deletes and block additions together.
+                // BufferQueue stores additions temporarily, unloads when we reach
+                // an unchanged word
+                let bufferQueue = [];
+                let current;
+                let prevAdded;
+
+                for (let j = 0; j < diffContent.length; j++) {
+                    current = diffContent[j];
+                    const color = current.added ? 'green' :
+                        current.removed ? 'red' : 'grey';
+                    if (color == 'green' && j != 0 && diffContent[j - 1].removed) {
+                        bufferQueue.push(current);
+                    } else if (color == 'grey' && current.value != " " && bufferQueue.length != 0) {
+                        bufferQueue.forEach(part => {
+                            const color = part.added ? 'green' : 
+                                part.removed ? 'red' : 'grey';
+                            span = document.createElement('span');
+                            span.style.color = color;
+                            span.appendChild(document.createTextNode(part.value + " "));
+                            divContent.appendChild(span);
+                            prevAdded = part;
+                        });
+                        bufferQueue = [];
+                    } else if (color == 'green') {
+                        bufferQueue.forEach(part => {
+                            const color = part.added ? 'green' : 
+                                part.removed ? 'red' : 'grey';
+                            span = document.createElement('span');
+                            span.style.color = color;
+                            span.appendChild(document.createTextNode(part.value + " "));
+                            divContent.appendChild(span);
+                            prevAdded = part;
+                        });
+                        bufferQueue = [];
+                        span = document.createElement('span');
+                        span.style.color = color;
+                        span.appendChild(document.createTextNode(current.value));
+                        divContent.appendChild(span);
+                        prevAdded = current;
+                    } else {
+                        span = document.createElement('span');
+                        span.style.color = color;
+                        if (color == 'red' || (color == 'grey' && prevAdded && prevAdded.removed)) {
+                            span.style.textDecoration = "line-through";
+                        }
+                        span.appendChild(document.createTextNode(current.value));
+                        divContent.appendChild(span);
+                        prevAdded = current;
+                    }
+                }
+
                 display.appendChild(divContent);
 
                 // Compare tags
@@ -247,6 +297,7 @@ const HoldingEditor = (props) => {
                 let changedTags = i < holding.length ? holding[i].tag.join("; ") : "";
                 
                 const diffTags = Diff.diffWords(originalTags, changedTags);
+
                 const divTags = document.createElement("div");
                 divTags.style.fontStyle = "italic";
                 divTags.style.textAlign = "right";
@@ -256,6 +307,9 @@ const HoldingEditor = (props) => {
                         part.removed ? 'red' : 'grey';
                     span = document.createElement('span');
                     span.style.color = color;
+                    if (color == 'red') {
+                        span.style.textDecoration = "line-through";
+                    }
                     span.appendChild(document.createTextNode(part.value));
                     divTags.appendChild(span);
                 });

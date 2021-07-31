@@ -171,3 +171,29 @@
 	display: flex;
 	justify-content: center;
 }
+
+.bigBrainImage {
+	position: relative !important;
+	display: block !important;
+	margin-right: 0 !important;
+	animation: popUp 1s,
+				spin 4s linear infinite;
+	animation-delay: 0.5s;
+	animation-fill-mode: forwards;
+	top: -250px;
+}
+
+.bigBrainImage:hover {
+	animation-play-state: paused;
+	animation-fill-mode: forwards;
+}
+
+@keyframes popUp {
+	from {top: 0px;}
+	to {top: -250px;}
+}
+
+@keyframes spin {
+	50% {transform: rotate(180deg);}
+	100% {transform: rotate(360deg);}
+}

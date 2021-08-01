@@ -281,7 +281,7 @@ const HoldingEditor = (props) => {
                     } else {
                         span = document.createElement('span');
                         span.style.color = color;
-                        if (color == 'red' || (color == 'grey' && prevAdded && prevAdded.removed)) {
+                        if (color == 'red' || (color == 'grey' && prevAdded && prevAdded.removed && current.value == " ")) {
                             span.style.textDecoration = "line-through";
                         }
                         span.appendChild(document.createTextNode(current.value));

@@ -178,7 +178,7 @@
 	margin-right: 0 !important;
 	animation: popUp 1s,
 				spin 4s linear infinite;
-	animation-delay: 0.5s;
+	animation-delay: 0s;
 	animation-fill-mode: forwards;
 	top: -250px;
 }

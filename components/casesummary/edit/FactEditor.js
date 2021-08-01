@@ -161,16 +161,61 @@ const FactEditor = (props) => {
                 let changedContent = i < factData.length ? factData[i].content : "";
 
                 const diffContent = Diff.diffWords(originalContent, changedContent);
+                
                 const divContent = document.createElement("div");
 
-                diffContent.forEach(part => {
-                    const color = part.added ? 'green' :
-                        part.removed ? 'red' : 'grey';
-                    span = document.createElement('span');
-                    span.style.color = color;
-                    span.appendChild(document.createTextNode(part.value));
-                    divContent.appendChild(span);
-                });
+                // Algorithm to group block deletes and block additions together.
+                // BufferQueue stores additions temporarily, unloads when we reach
+                // an unchanged word
+                let bufferQueue = [];
+                let current;
+                let prevAdded;
+
+                for (let j = 0; j < diffContent.length; j++) {
+                    current = diffContent[j];
+                    const color = current.added ? 'green' :
+                        current.removed ? 'red' : 'grey';
+                    if (color == 'green' && j != 0 && diffContent[j - 1].removed) {
+                        bufferQueue.push(current);
+                    } else if (color == 'grey' && current.value != " " && bufferQueue.length != 0) {
+                        bufferQueue.forEach(part => {
+                            const color = part.added ? 'green' : 
+                                part.removed ? 'red' : 'grey';
+                            span = document.createElement('span');
+                            span.style.color = color;
+                            span.appendChild(document.createTextNode(part.value + " "));
+                            divContent.appendChild(span);
+                            prevAdded = part;
+                        });
+                        bufferQueue = [];
+                    } else if (color == 'green') {
+                        bufferQueue.forEach(part => {
+                            const color = part.added ? 'green' : 
+                                part.removed ? 'red' : 'grey';
+                            span = document.createElement('span');
+                            span.style.color = color;
+                            span.appendChild(document.createTextNode(part.value + " "));
+                            divContent.appendChild(span);
+                            prevAdded = part;
+                        });
+                        bufferQueue = [];
+                        span = document.createElement('span');
+                        span.style.color = color;
+                        span.appendChild(document.createTextNode(current.value));
+                        divContent.appendChild(span);
+                        prevAdded = current;
+                    } else {
+                        span = document.createElement('span');
+                        span.style.color = color;
+                        if (color == 'red' || (color == 'grey' && prevAdded && prevAdded.removed && current.value == " ")) {
+                            span.style.textDecoration = "line-through";
+                        }
+                        span.appendChild(document.createTextNode(current.value));
+                        divContent.appendChild(span);
+                        prevAdded = current;
+                    }
+                }
+
                 display.appendChild(divContent);
             }
         }

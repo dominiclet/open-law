@@ -5,7 +5,9 @@
 }
 
 .body {
-  width: 800px;
+  width: 100%;;
+  max-width: 800px;
+  font-size: 1rem;
 }
 
 .button {
@@ -50,4 +52,28 @@
 .loadingSpinner {
   margin-left: 35%;
   margin-top: 30px;
+}
+
+.caseName {
+  font-weight: 500;
+}
+
+.caseContainer {
+	display: flex;
+	padding: 0;
+	flex-direction: column;
+	margin-bottom: 0.5rem;
+	border-bottom: 1px solid rgb(196, 194, 194);
+	padding-top: 5px;
+	padding-bottom: 5px;
+}
+
+.citations {
+  font-size: 0.9rem;
+}
+
+.timeStamp {
+  color: grey;
+  font-size: 0.7rem;
+  text-align: right;
 }

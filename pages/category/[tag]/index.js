@@ -31,7 +31,6 @@ const categoryPage = () => {
                 .then(res => {
                     setCaseData(res.data);
                     setdataLoaded(true);
-                    console.log(res.data);
                 })
                 .catch(error => console.log(error));
         } else return;

@@ -11,8 +11,8 @@
 }
 
 .button {
-  float: right;
-  height: 10%;
+  align-self: center;
+  height: 40px;
 }
 
 .card {
@@ -22,14 +22,15 @@
   border-bottom: 1px solid rgb(196, 194, 194);
   padding-top: 5px;
   padding-bottom: 5px;
-  width: 700px;
+  width: 100%;
+  max-width: 800px;
   flex-direction: column;
 }
 
 .outerContainer {
   display: flex;
   flex-direction: row;
-  width: 700px;
+  width: 100%;
   justify-content: space-between;
 }
 

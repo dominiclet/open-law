@@ -19,19 +19,19 @@ const categories = (props) => {
 
   if (data) {
     return (
-        <div>
+        <>
             <h1 className={categoriesStyle.header}>Categories</h1>
             {data.map( (entry) => (
                 <Item key = {entry[0]} tag = {entry[0]} count = {entry[1]}/>
             ))}
-        </div>
+        </>
     );
   } else {
     return (
-      <div>
+      <>
         <h1 className={categoriesStyle.header}>Categories</h1>
         <Spinner animation="border" className={categoriesStyle.loadingSpinner}/>
-      </div>
+      </>
     );
   }
 }

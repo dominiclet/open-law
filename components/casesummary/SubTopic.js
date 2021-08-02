@@ -2,6 +2,7 @@ import caseStyle from '../../styles/Case.module.css'
 import Card from 'react-bootstrap/Card'
 import Accordion from 'react-bootstrap/Accordion'
 import CaseTag from './CaseTag'
+import { useEffect } from 'react'
 
 // props: name, content 
 const SubTopic = (props) => {
@@ -18,7 +19,11 @@ const SubTopic = (props) => {
         return props.name == "Holding";
     }
 
-    const { htmlToText } = require("html-to-text");
+    // Populate the card with innerHTML once rendered
+    useEffect(() => {
+        const populateCard = document.getElementById(isHolding() ? "holding" + props.index : "fact" + props.index);
+        populateCard.innerHTML = props.content.content;
+    }, []);
 
     return (
         <Accordion defaultActiveKey="Facts">
@@ -32,8 +37,7 @@ const SubTopic = (props) => {
                     }
                 </Accordion.Toggle>
                 <Accordion.Collapse eventKey={props.name}>
-                    <Card.Body className={caseStyle.subtopic}>
-                        {htmlToText(props.content.content)}
+                    <Card.Body className={caseStyle.subtopic} id={isHolding() ? "holding" + props.index : "fact" + props.index}>
                     </Card.Body>
                 </Accordion.Collapse>
             </Card>

@@ -51,8 +51,8 @@ const InnerCase = (props) => {
     return (
         <Card style={cardStyle}>
             <Card.Title className={caseStyle.innerCaseTitle}>{props.name}</Card.Title>
-                {props.content.map((subTopic) => ( // Maps over each sub-topic in the case content
-                    <SubTopic name = {props.name} content = {subTopic} />
+                {props.content.map((subTopic, index) => ( // Maps over each sub-topic in the case content
+                    <SubTopic name = {props.name} content = {subTopic} index={index} />
                 ))}
         </Card>
     );

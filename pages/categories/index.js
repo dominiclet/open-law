@@ -16,7 +16,6 @@ const categories = (props) => {
       });
   }, []);
 
-
   if (data) {
     return (
         <>

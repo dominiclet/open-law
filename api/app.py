@@ -485,8 +485,21 @@ def getcategories():
 Returns individual case information
 """
 @app.route("/cases/<caseId>", methods=['GET'])
+@jwt_required()
 def getcase(caseId):
-    data = mongo.db.case_summaries.find_one_or_404({"_id": ObjectId(caseId)})
+    data = mongo.db.case_summaries.find_one({"_id": ObjectId(caseId)})
+    # If data does not exist, then delete it if it exists in recent edits
+    if not data:
+        user_data = mongo.db.users.find_one({"username": get_jwt_identity()})
+        recent_edits = user_data.get("recent_edits")
+        for i, case in enumerate(recent_edits.copy()):
+            if case.get("caseId") == caseId:
+                recent_edits.pop(i)
+                user_data["recent_edits"] = recent_edits
+                mongo.db.users.replace_one({"username": get_jwt_identity()}, user_data, True)
+                break
+        return "Case not found", 404
+                
     return JSONEncoder().encode(data)
 
 """

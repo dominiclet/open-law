@@ -20,6 +20,7 @@
     min-width: 510px;
     display: flex;
     flex-direction: column;
+    margin-bottom: 10px;
 }
 
 /* For the red glow */
@@ -28,6 +29,12 @@
     border-radius: 0.2em;
     box-shadow: 0px 0px 4px red;
     transition-duration: 0.2s;
+}
+
+/* Fact and holding styling */
+.topicOuterContainer {
+    display: flex;
+    flex-direction: column;
 }
 
 .editorSubmitButton {
@@ -39,7 +46,7 @@
 .editorSubmitButton:hover {
     cursor: pointer;
     transition-duration: 0.5s;
-    filter: drop-shadow(0 0 0.1rem black);
+    filter: drop-shadow(0 0 0.1rem currentColor);
 }
 
 .center {
@@ -234,4 +241,10 @@
 .dropdownContent a:hover {
     background-color: #f1f1f1;
     cursor: pointer;
+}
+
+/* Styling for edit diff comparison modal */
+.modalContainer {
+    width: 100%;
+    max-width: 1100px;
 }

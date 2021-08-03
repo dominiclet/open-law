@@ -55,7 +55,7 @@ const caseDisplayPage = () => {
                         </Nav.Item>
                     </Nav>
                     <Tab.Content className={caseStyle.contentContainer}>
-                        <Tab.Pane eventKey="case">
+                        <Tab.Pane eventKey="case" className={caseStyle.tabPane}>
                             <OuterCase entry={caseData} />
                             <PencilSquare className={caseStyle.editIcon} onClick={handleEditButton} />
                         </Tab.Pane>

@@ -76,6 +76,7 @@ const TitleEditor = (props) => {
                 onChange={handleCitationChange}
                 className={caseEditStyle.citation}
                 placeholder="Citation"
+                key={"citationEditor" + i}
             />
         );
 
@@ -92,6 +93,7 @@ const TitleEditor = (props) => {
         citeEdit.push(<Trash
             className={caseEditStyle.deleteCitation}
             onClick={handleDeleteCite}
+            key={"trash" + i}
         />)
     }
 

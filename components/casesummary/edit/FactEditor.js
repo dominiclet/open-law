@@ -1,11 +1,12 @@
 import dynamic from 'next/dynamic';
 import Button from 'react-bootstrap/Button';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import caseEditStyle from '../../../styles/CaseEdit.module.css';
 import { apiRoot } from '../../../config';
 import axios from 'axios';
-import { Upload } from 'react-bootstrap-icons';
+import { PlusLg, Trash, Upload } from 'react-bootstrap-icons';
 import { useRouter } from 'next/router';
+import { Modal } from 'react-bootstrap';
 
 // ReactQuill is only imported at client side 
 // due to issues with next's server-side rendering
@@ -13,63 +14,27 @@ const ReactQuill = dynamic(
     import('react-quill'),
     {
         ssr: false,
-        loading: () => <p>Loading (Replace with spin animation)</p>
+        loading: () => <p>Loading...</p>
     }
 );
 
 const FactEditor = (props) => {
+    // props.data: data of all facts
+    // props.setData: Call back function to change state of facts in parent
+    // props.caseId: Unique ID of case
 
+    const Diff = require('diff');
     const router = useRouter();
+
+    // State to track the changes to fact data internally
+    const [factData, setFactData] = useState(JSON.parse(JSON.stringify(props.data)));
+    // State to control showing diff modal
+    const [showDiffModal, setShowDiffModal] = useState(false);
     
     // Width needs to be fixed otherwise text causes DOM elements to resize
     const styling = {
         "width": "100%",
         "margin": "auto"
-    }
-
-    // State stores the contents of the textbox
-    const [content, setContent] = useState(props.content);
-    // State stores the sub-topic title
-    const [subTopic, setSubTopic] = useState(props.subTopic);
-
-    // Function to handle submit button for editor
-    const handleSubmit = () => {
-        const data = {
-            topic: subTopic,
-            text: content,
-            time: new Date().toJSON()
-        };
-
-        // Retrieve token from local storage
-        const accessToken = localStorage.getItem("jwt-token");
-
-        // Sends a POST request to the server
-        axios.post(apiRoot + `/editSubTopic/${props.caseId}/facts/${props.index}`, 
-        { data }, {
-            headers: {'Authorization': 'Bearer ' + accessToken}
-        }).then(res => {
-            if (res.status == 200) {
-                document.getElementById("factUpload").style.color = "black";
-            }
-        }).catch(e => {
-            console.error(e);
-            if (accessToken) {
-                localStorage.removeItem("jwt-token");
-            }
-            router.push("/login");
-        })
-    }
-
-    // Function to handle change of sub-topic title
-    const handleTopicChange = (event) => {
-        setSubTopic(event.target.value);
-        document.getElementById("factUpload").style.color = "red";
-    }
-
-    // Function to handle change of quill editor
-    const handleEditorChange = (value) => {
-        setContent(value);
-        document.getElementById("factUpload").style.color = "red";
     }
 
     // Set quill toolbar functionalities
@@ -81,28 +46,213 @@ const FactEditor = (props) => {
         ]
     }
 
+    var factBuilder = [];
+
+    for (let i = 0; i < factData.length; i++) {
+        // Function to handle change of sub-topic title
+        const handleTopicChange = (event) => {
+            let newFactData = factData.concat();
+            newFactData[i].title = event.target.value;
+            setFactData(newFactData);
+            document.getElementById("factsUpload").style.color = "red";
+        }
+
+        // Function to handle change of sub-topic contents
+        const handleEditorChange = (value) => {
+            let newFactData = factData.concat();
+            newFactData[i].content = value;
+            setFactData(newFactData);
+            document.getElementById("factsUpload").style.color = "red";
+        }
+
+        // Handle delete subtopic
+        const handleDeleteSubTopic = (event) => {
+            let newFactData = factData.concat();
+            newFactData.splice(i, 1);
+            setFactData(newFactData);
+            document.getElementById("factsUpload").style.color = "red";
+        }
+
+        factBuilder.push(
+            <form className={caseEditStyle.editor} key={"factEditor" + i}>
+                <Trash size="25" className={caseEditStyle.deleteTopicButton} onClick={handleDeleteSubTopic} />
+                <input id={"factTitle"+i} className={caseEditStyle.subTopic} value={factData[i].title} 
+                type="text" onChange={handleTopicChange} placeholder="Subtopic title" />
+                <div id={"fact"+props.index}>
+                    <ReactQuill 
+                        theme="bubble" 
+                        modules={modules}
+                        format={formats} 
+                        value={factData[i].content} 
+                        onChange={handleEditorChange} 
+                        style={styling} 
+                        placeholder="Enter content here"
+                    />
+                </div>
+            </form>
+        );
+    }
+
+    // Handle add topic functionality
+    const handleAddTopic = (event) => {
+        let newFactData = factData.concat();
+        newFactData.push({
+            "title": "",
+            "content": ""
+        });
+        setFactData(newFactData);
+        document.getElementById("factsUpload").style.color = "red";
+    }
+
+    // Handle upload functionality: shows the confirm changes modal
+    const handleSubmit = (event) => {
+        setShowDiffModal(true);
+    }
+
+    // Handles the submit functionality, after confirm changes is shown
+    const handleActualSubmit = (event) => {
+        const data = {
+            factData: factData,
+            time: new Date().toJSON()
+        }
+        axios.post(apiRoot + `/editSubTopic/${props.caseId}/facts`,
+            data, {
+                headers: {'Authorization': 'Bearer ' + localStorage.getItem("jwt-token")}
+            }).then(res => {
+                if (res.status == 200) {
+                   document.getElementById("factsUpload").style.color = "black";
+                   // Update the parent data
+                   props.setData(JSON.parse(JSON.stringify(factData)));
+                   // Close modal
+                   setShowDiffModal(false);
+                }
+            }).catch(e => {
+                throw e;
+            });
+    }
+
+    // Ensures that this only runs when modal is mounted onto DOM
+    useEffect(() => {
+        // Run diff algorithm to check changes
+        if (showDiffModal) {
+            let span = null;
+            const display = document.getElementById("modalFactContent");
+
+            for (let i = 0; i < Math.max(props.data.length, factData.length); i++) {
+                // Compare title
+                let originalTitle = i < props.data.length ? props.data[i].title : "";
+                let changedTitle = i < factData.length ? factData[i].title : "";
+                
+                const diffTitle = Diff.diffWords(originalTitle, changedTitle);
+                const divTitle = document.createElement("h5");
+                
+                diffTitle.forEach(part => {
+                    const color = part.added ? 'green' :
+                        part.removed ? 'red' : 'grey';
+                    span = document.createElement('span');
+                    span.style.color = color;
+                    span.appendChild(document.createTextNode(part.value));
+                    divTitle.appendChild(span);
+                });
+                display.appendChild(divTitle);
+
+                // Compare content
+                let originalContent = i < props.data.length ? props.data[i].content : "";
+                let changedContent = i < factData.length ? factData[i].content : "";
+
+                const diffContent = Diff.diffWords(originalContent, changedContent);
+                
+                const divContent = document.createElement("div");
+
+                // Algorithm to group block deletes and block additions together.
+                // BufferQueue stores additions temporarily, unloads when we reach
+                // an unchanged word
+                let bufferQueue = [];
+                let current;
+                let prevAdded;
+
+                for (let j = 0; j < diffContent.length; j++) {
+                    current = diffContent[j];
+                    const color = current.added ? 'green' :
+                        current.removed ? 'red' : 'grey';
+                    if (color == 'green' && j != 0 && diffContent[j - 1].removed) {
+                        bufferQueue.push(current);
+                    } else if (color == 'grey' && current.value != " " && bufferQueue.length != 0) {
+                        bufferQueue.forEach(part => {
+                            const color = part.added ? 'green' : 
+                                part.removed ? 'red' : 'grey';
+                            span = document.createElement('span');
+                            span.style.color = color;
+                            span.appendChild(document.createTextNode(part.value + " "));
+                            divContent.appendChild(span);
+                            prevAdded = part;
+                        });
+                        bufferQueue = [];
+                    } else if (color == 'green') {
+                        bufferQueue.forEach(part => {
+                            const color = part.added ? 'green' : 
+                                part.removed ? 'red' : 'grey';
+                            span = document.createElement('span');
+                            span.style.color = color;
+                            span.appendChild(document.createTextNode(part.value + " "));
+                            divContent.appendChild(span);
+                            prevAdded = part;
+                        });
+                        bufferQueue = [];
+                        span = document.createElement('span');
+                        span.style.color = color;
+                        span.appendChild(document.createTextNode(current.value));
+                        divContent.appendChild(span);
+                        prevAdded = current;
+                    } else {
+                        span = document.createElement('span');
+                        span.style.color = color;
+                        if (color == 'red' || (color == 'grey' && prevAdded && prevAdded.removed && current.value == " ")) {
+                            span.style.textDecoration = "line-through";
+                        }
+                        span.appendChild(document.createTextNode(current.value));
+                        divContent.appendChild(span);
+                        prevAdded = current;
+                    }
+                }
+
+                display.appendChild(divContent);
+            }
+        }
+    }, [showDiffModal])
+
     return (
-        <form className={caseEditStyle.editor}>
-            <input id={"factTitle"+props.index} className={caseEditStyle.subTopic} value={subTopic} 
-            type="text" onChange={handleTopicChange} placeholder="Subtopic title" />
-            <div id={"fact"+props.index}>
-                <ReactQuill 
-                    theme="bubble" 
-                    modules={modules}
-                    format={formats} 
-                    value={content} 
-                    onChange={handleEditorChange} 
-                    style={styling} 
-                    placeholder="Enter content here"
-                />
-            </div>
-            <Upload 
-                id="factUpload"
-                className={caseEditStyle.editorSubmitButton} 
-                size={30} 
-                onClick={handleSubmit} 
+        <div className={caseEditStyle.topicOuterContainer}>
+            {factBuilder}
+            <PlusLg 
+                className={caseEditStyle.addTopicButton} 
+                key="addTopic"
+                size="30"
+                onClick={handleAddTopic}
             />
-        </form>
+            <Upload
+                size="30"
+                id="factsUpload"
+                className={caseEditStyle.editorSubmitButton}
+                onClick={handleSubmit}
+            />
+            <Modal
+                show={showDiffModal}
+                onHide={() => setShowDiffModal(false)}
+                dialogClassName={caseEditStyle.modalContainer}
+            >
+                <Modal.Header closeButton>
+                    <Modal.Title>Confirm changes to facts</Modal.Title>
+                </Modal.Header>
+                <Modal.Body id="modalFactContent">
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button onClick={handleActualSubmit}>
+                        Submit
+                    </Button>
+                </Modal.Footer>
+            </Modal>
+        </div>
     );
 }
 

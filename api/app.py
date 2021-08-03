@@ -17,8 +17,8 @@ app = Flask(__name__)
 app.config["CORS_HEADERS"] = "Content-Type"
 cors = CORS(app, origins=["http://localhost:3000", "https://lawnotes.herokuapp.com"], supports_credentials=True)
 # MongoDB setup
-# app.config["MONGO_URI"] = "mongodb://localhost:27017/open_law"
-app.config["MONGO_URI"] = os.environ.get("MONGO_URI")
+app.config["MONGO_URI"] = "mongodb://localhost:27017/open_law"
+# app.config["MONGO_URI"] = os.environ.get("MONGO_URI")
 
 mongo = PyMongo(app)
 
@@ -51,6 +51,10 @@ def login():
     if not data or not check_password_hash(data.get("password"), password):
         return jsonify({"msg": "Bad username or password"}), 401
     else:
+        # Update last login
+        data["lastLogin"] = request.json.get("dateTime")
+        mongo.db.users.replace_one({"username": username}, data, True)
+        # Create access token and return 
         access_token = create_access_token(identity=username)
         return jsonify(access_token=access_token)
 
@@ -122,7 +126,8 @@ def register():
             "topReplied": [],
             "forumCount": 0
         },
-        "badges": []
+        "badges": [],
+        "lastLogin": ""
     }
     _id = mongo.db.users.insert(new_user)
     return str(_id), 200
@@ -153,31 +158,27 @@ caseId: Unique ID of the case
 category: facts/holding
 index: The index where the subtopic is located in the JSON array
 """
-@app.route("/editSubTopic/<caseId>/<category>/<index>", methods=['POST'])
+@app.route("/editSubTopic/<caseId>/<category>", methods=['POST'])
 @jwt_required()
-def edit_sub_topic(caseId, category, index):
+def edit_sub_topic(caseId, category):
     # Query by object ID of case
     query = {"_id": ObjectId(caseId)}
     # Fetch original data then update
     data = mongo.db.case_summaries.find_one_or_404(query)
     updated_data = json.loads(request.data)
-    # Update topic title
-    data[category][int(index)]["title"] = updated_data["data"]["topic"]
-    # Update text
-    data[category][int(index)]["content"] = updated_data["data"]["text"]
-    # Need to handle ratio and tags data if category is holding
-    if category == "holding":
-        data[category][int(index)]["ratio"] = updated_data["data"]["ratio"]
-        # Updates individual holding tag
-        data[category][int(index)]["tag"] = updated_data["data"]["tag"]
+    if category == "facts":
+        data["facts"] = updated_data.get("factData")
+    elif category == "holding":
+        # Update general holding data
+        data["holding"] = updated_data.get("holdingData")
         # Update the general tags of the case
         case_tags = set()
-        for holding in data[category]:
+        for holding in data["holding"]:
             for tag in holding["tag"]:
                 case_tags.add(tag)
         data["tag"] = list(case_tags)
     # Update last edited time
-    data["lastEdit"] = updated_data["data"]["time"]
+    data["lastEdit"] = updated_data["time"]
     # Update last edited person
     data["lastEditBy"] = get_jwt_identity()
     mongo.db.case_summaries.replace_one(query, data, True)
@@ -188,8 +189,8 @@ def edit_sub_topic(caseId, category, index):
         "name": get_jwt_identity(),
         "case_name": data["name"],
         "action": "EDIT",
-        "subtopic": updated_data["data"]["topic"],
-        "time": updated_data["data"]["time"]
+        "topic": category,
+        "time": updated_data["time"]
     })
 
     # Update recent edits for this user
@@ -198,6 +199,7 @@ def edit_sub_topic(caseId, category, index):
         "caseName": data["name"],
         "caseCitation": data["citation"]
     }, data["tag"])
+
     return "", 200
 
 
@@ -483,8 +485,21 @@ def getcategories():
 Returns individual case information
 """
 @app.route("/cases/<caseId>", methods=['GET'])
+@jwt_required()
 def getcase(caseId):
-    data = mongo.db.case_summaries.find_one_or_404({"_id": ObjectId(caseId)})
+    data = mongo.db.case_summaries.find_one({"_id": ObjectId(caseId)})
+    # If data does not exist, then delete it if it exists in recent edits
+    if not data:
+        user_data = mongo.db.users.find_one({"username": get_jwt_identity()})
+        recent_edits = user_data.get("recent_edits")
+        for i, case in enumerate(recent_edits.copy()):
+            if case.get("caseId") == caseId:
+                recent_edits.pop(i)
+                user_data["recent_edits"] = recent_edits
+                mongo.db.users.replace_one({"username": get_jwt_identity()}, user_data, True)
+                break
+        return "Case not found", 404
+                
     return JSONEncoder().encode(data)
 
 """

@@ -7,8 +7,6 @@ import { PencilSquare } from 'react-bootstrap-icons';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 const OuterCase = (props) => {
-    // To override min-width, make sure that case summary component is not too small
-    const width = {"min-width": "1000px"};
     const date = new Date(props.entry.lastEdit);
 
     // check if there is link to full case
@@ -17,7 +15,7 @@ const OuterCase = (props) => {
     }
 
     return(
-        <Card className={caseStyle.casesummary} style={width}>
+        <Card className={caseStyle.casesummary}>
             <Card.Title className={caseStyle.caseNameContainer}>
                 <div className={caseStyle.casename}>
                     {!missingLink() && <Link href={props.entry.link}>{props.entry.name}</Link>}

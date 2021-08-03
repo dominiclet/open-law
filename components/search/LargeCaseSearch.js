@@ -16,7 +16,7 @@ const LargeCaseSearch = () => {
 	return (
       <div className={homeStyle.searchContainer}>
 		 <div className={homeStyle.imageContainer}>
-			<Image src="/big_brain_boi_2.png" alt="Smiley face" width={250} height={250} />
+			<Image className={homeStyle.bigBrainImage} src="/big_brain_boi_2.png" alt="Smiley face" width={250} height={250} />
 		 </div>
         <input 
           placeholder="Search cases"

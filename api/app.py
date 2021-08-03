@@ -249,10 +249,9 @@ def edit_case_identifiers(caseId):
 
     return "", 200
 
-
+# NO LONGER IN USE
 """
-Add a new sub-topic entry
-"""
+# Add a new sub-topic entry
 @app.route("/addNewTopic/<caseId>/<category>", methods=['POST'])
 @jwt_required()
 def add_new_topic(caseId, category):
@@ -290,15 +289,15 @@ def add_new_topic(caseId, category):
     }, data["tag"])
 
     return empty_entry, 200
-
-
 """
-Delete a sub-topic entry
 
-caseId: Unique case ID
-category: facts/holding
-index: Index to identify the sub-topic entry that is deleted
+# NO LONGER IN USE
 """
+# Delete a sub-topic entry
+# 
+# caseId: Unique case ID
+# category: facts/holding
+# index: Index to identify the sub-topic entry that is deleted
 @app.route("/deleteTopic/<caseId>/<category>/<index>", methods=['DELETE'])
 @jwt_required()
 def delete_topic(caseId, category, index):
@@ -330,6 +329,7 @@ def delete_topic(caseId, category, index):
     }, data["tag"])
 
     return json.dumps(data[category]), 200
+"""
 
 """
 Updates issues

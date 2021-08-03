@@ -82,6 +82,7 @@ const Home = (props) => {
         prevName={activity.prevName}
         prevCitation={activity.prevCitation}
         currCitation={activity.currCitation}
+        topic={activity.topic}
       />);
     })
   }

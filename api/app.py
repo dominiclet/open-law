@@ -143,6 +143,15 @@ def user_data(username):
     return JSONEncoder().encode(data)
 
 """
+Get data for all users, for admin page
+"""
+@app.route("/admin/users", methods=['GET'])
+@jwt_required()
+def all_user_data():
+    data = mongo.db.users.find({})
+    return JSONEncoder().encode(list(data))
+
+"""
 Allows pinging of backend to verify JWT
 """
 @app.route("/token/ping", methods=['POST'])

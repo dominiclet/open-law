@@ -5,7 +5,6 @@ import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import categoriesStyle from '../../../styles/Categories.module.css'
 import 'bootstrap/dist/css/bootstrap.min.css'
-import Table from 'react-bootstrap/Table'
 import FactsPopover from '../../../components/categories/FactsPopover'
 
 const categoryPage = () => {
@@ -45,7 +44,7 @@ const categoryPage = () => {
                 <div className={categoriesStyle.body}>
                     {cases.map(entry => {
                         return (
-                            <div className={categoriesStyle.caseContainer}>
+                            <div key = {entry.name} className={categoriesStyle.caseContainer}>
                                 <Link href={`/case/${entry._id}`}>
                                     <a className={categoriesStyle.caseName}>
                                         {entry.name}

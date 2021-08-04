@@ -1,6 +1,6 @@
 import homeStyle from '../../styles/Home.module.css';
-import { Search } from 'react-bootstrap-icons';
-
+import { Discord, Search } from 'react-bootstrap-icons';
+import Image from 'next/image';
 
 const LargeCaseSearch = () => {
 	// Handles enter functionality: Searches case with query
@@ -15,6 +15,9 @@ const LargeCaseSearch = () => {
 
 	return (
       <div className={homeStyle.searchContainer}>
+		 <div className={homeStyle.imageContainer}>
+			<Image className={homeStyle.bigBrainImage} src="/big_brain_boi_2.png" alt="Smiley face" width={250} height={250} />
+		 </div>
         <input 
           placeholder="Search cases"
 		  id="largeSearchQ"
@@ -26,6 +29,15 @@ const LargeCaseSearch = () => {
           className={homeStyle.searchIcon} 
           size="17"
         />
+		<div className={homeStyle.iconsContainer}>
+			<Discord 
+				size="30" 
+				className={homeStyle.discordIcon} 
+				onClick={() => {
+					window.location.href = "https://discord.gg/4CDFxBWnH7";
+				}}
+			/>
+		</div>
       </div>
 	);
 }

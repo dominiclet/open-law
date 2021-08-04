@@ -15,7 +15,7 @@ const categoryPage = () => {
     // Convert iso date string to date representation
     const convertDate = (date) => {
         date = new Date(date)
-        return `${date.toLocaleTimeString("en-SG")} on ${date.toLocaleDateString("en-SG")}`
+        return `Last edited on ${date.toLocaleDateString("en-SG")} at ${date.toLocaleTimeString("en-SG")}`
     }
 
 
@@ -41,30 +41,26 @@ const categoryPage = () => {
     } else {
         return (
             <>
-                <h1>{tag}</h1>
-                <Table striped bordered className = {categoriesStyle.body}>
-                    <thead>
-                        <tr>
-                            <th>Case</th>
-                            <th>Citation</th>
-                            <th>Last Edited</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {cases.map( (entry) => (
-                            <tr>
-                                <td>
-                                    <Link href={`/case/${entry._id}`}>
+                <h4>{tag}</h4>
+                <div className={categoriesStyle.body}>
+                    {cases.map(entry => {
+                        return (
+                            <div className={categoriesStyle.caseContainer}>
+                                <Link href={`/case/${entry._id}`}>
+                                    <a className={categoriesStyle.caseName}>
                                         {entry.name}
-                                    </Link>
-                                </td>
-                                <td>{entry.citation.join("; ")}</td>
-                                <td>{convertDate(entry.lastEdit)}</td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </Table>
-                <br />
+                                    </a>
+                                </Link>
+                                <div className={categoriesStyle.citations}>
+                                    {entry.citation.join("; ")}
+                                </div>
+                                <div className={categoriesStyle.timeStamp}>
+                                    {convertDate(entry.lastEdit)}
+                                </div>
+                            </div>
+                        );
+                    })}
+                </div>
                 <Link href='/categories'>Go Back</Link>
             </>
         );

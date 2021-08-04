@@ -21,53 +21,14 @@ const caseEditPage = () => {
     useEffect( () => {
         if (router.isReady) {
             const {id} = router.query;
-            axios.get(apiRoot + `/cases/${id}`)
-                .then(res => {
+            axios.get(apiRoot + `/cases/${id}`, {
+                headers: {'Authorization': 'Bearer ' + localStorage.getItem("jwt-token")}
+            }).then(res => {
                     setCaseData(res.data);
                     setdataLoaded(true);
-
-                    // Remember visit to this case edit for RecentEditCard
-                    let recentEdits = localStorage.getItem("recentEdits");
-                    const recentEditInfo = {
-                        "caseId": id,
-                        "caseName": res.data.name,
-                        "caseCitation": res.data.citation
-                    }
-                    if (recentEdits) {
-                        let recents = JSON.parse(recentEdits);
-                        var removeAtIndex;
-                        let historyContains = recents.some((element, index) => {
-                            if (element.caseId == id) {
-                                removeAtIndex = index;
-                                return true;
-                            }
-                            return false;
-                        })
-                        if (!historyContains) {
-                            recents.push(recentEditInfo);
-                            if (recents.length > MAX_RECENT_EDITS) {
-                                recents.splice(0, 1);
-                            }
-                            localStorage.setItem("recentEdits", JSON.stringify(recents));
-                        } else {
-                            recents.splice(removeAtIndex, 1);
-                            recents.push(recentEditInfo);
-                            localStorage.setItem("recentEdits", JSON.stringify(recents));
-                        }
-                    } else {
-                        localStorage.setItem("recentEdits", JSON.stringify([recentEditInfo]));
-                    }
                 }).catch(error => {
                     if (error.response.status == 404) {
                         alert("Case is either deleted or does not exist. Redirecting back to home...");
-                        let recentEdits = JSON.parse(localStorage.getItem("recentEdits"));
-                        for (let i = 0; i < recentEdits.length; i++) {
-                            if (recentEdits[i].caseId === id) {
-                                recentEdits.splice(i, 1);
-                                break;
-                            }
-                        }
-                        localStorage.setItem("recentEdits", JSON.stringify(recentEdits));
                         router.push("/");
                     } else {
                         throw error;

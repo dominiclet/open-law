@@ -23,8 +23,9 @@ const caseDisplayPage = () => {
     useEffect(() => {
         if (router.isReady) {
             const { id } = router.query;
-            axios.get(apiRoot + `/cases/${id}`)
-                .then(res => {
+            axios.get(apiRoot + `/cases/${id}`, {
+                headers: {'Authorization': 'Bearer ' + localStorage.getItem("jwt-token")}
+            }).then(res => {
                     setCaseData(res.data);
                     setdataLoaded(true);
                 }).catch(error => console.log(error));
@@ -55,7 +56,7 @@ const caseDisplayPage = () => {
                         </Nav.Item>
                     </Nav>
                     <Tab.Content className={caseStyle.contentContainer}>
-                        <Tab.Pane eventKey="case">
+                        <Tab.Pane eventKey="case" className={caseStyle.tabPane}>
                             <OuterCase entry={caseData} />
                             <PencilSquare className={caseStyle.editIcon} onClick={handleEditButton} />
                         </Tab.Pane>

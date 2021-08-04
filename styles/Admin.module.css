@@ -1,0 +1,12 @@
+/* Loading page styling */
+.loadingSpinner {
+	margin-top: 50px;
+}
+
+.tableStyling {
+	font-size: 1rem;
+}
+
+.secretPasswordInput {
+	display: none;
+}

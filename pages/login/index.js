@@ -5,6 +5,7 @@ import loginStyle from '../../styles/Login.module.css';
 import { useEffect, useState } from "react";
 import { Spinner } from "react-bootstrap";
 import Link from 'next/link';
+import Image from 'next/image';
 
 
 const loginPage = () => {
@@ -38,7 +39,8 @@ const loginPage = () => {
 
 		const data = {
 			username: document.getElementById("username").value,
-			password: document.getElementById("password").value
+			password: document.getElementById("password").value,
+			dateTime: new Date().toJSON()
 		};
 
 		axios.post(apiRoot + "/login", data)
@@ -70,7 +72,12 @@ const loginPage = () => {
 	return (
 		<div className={loginStyle.loginContainer}>
 			<div className={loginStyle.logoContainer}>
-				[Placeholder]
+				<Image 
+					src="/big_brain_boi.png" 
+					width={300}
+					height={300}
+					alt="Smiley face" 
+				/>
 			</div>
 			<div className={loginStyle.inputContainer}>
 				<input 

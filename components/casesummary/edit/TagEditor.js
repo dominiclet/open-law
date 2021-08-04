@@ -16,8 +16,8 @@ const TagEditor = (props) => {
         if (props.tags.length == 0) {
             return "No tags added";
         } else {
-            return props.tags.map((tag) => (
-                <div className={caseEditStyle.indivTagContainer}>
+            return props.tags.map((tag, index) => (
+                <div className={caseEditStyle.indivTagContainer} key={"tagContainer" + index}>
                     <Badge pill variant="dark">{tag}</Badge>
                     <Trash 
                         className={caseEditStyle.deleteTag}
@@ -74,8 +74,8 @@ const TagEditor = (props) => {
             <div className={caseEditStyle.dropdownContent}>
                 {allTags.filter((tag) => 
                     tag.toLowerCase().startsWith(searchTag.toLowerCase())
-                ).map((tag) => {
-                    return (<a onClick={() => {
+                ).map((tag, index) => {
+                    return (<a key={"tag"+index} onClick={() => {
                         if (!props.tags.includes(tag)) {
                             let newSelectedTags = props.tags.concat();
                             newSelectedTags.push(tag);

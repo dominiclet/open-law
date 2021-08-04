@@ -11,6 +11,8 @@ from datetime import timedelta
 from werkzeug.security import generate_password_hash, check_password_hash
 import json
 import os
+import random
+import string
 
 app = Flask(__name__)
 # To allow Cross-origin resource sharing
@@ -51,6 +53,10 @@ def login():
     if not data or not check_password_hash(data.get("password"), password):
         return jsonify({"msg": "Bad username or password"}), 401
     else:
+        # Update last login
+        data["lastLogin"] = request.json.get("dateTime")
+        mongo.db.users.replace_one({"username": username}, data, True)
+        # Create access token and return 
         access_token = create_access_token(identity=username)
         return jsonify(access_token=access_token)
 
@@ -122,7 +128,8 @@ def register():
             "topReplied": [],
             "forumCount": 0
         },
-        "badges": []
+        "badges": [],
+        "lastLogin": ""
     }
     _id = mongo.db.users.insert(new_user)
     return str(_id), 200
@@ -136,6 +143,39 @@ def user_data(username):
     query = {"username": get_jwt_identity()} if username == "self" else {"username": username} 
     data = mongo.db.users.find_one_or_404(query)
     return JSONEncoder().encode(data)
+
+"""
+Get data for all users, for admin page
+(Requires admin privilege)
+"""
+@app.route("/admin/users", methods=['GET'])
+@jwt_required()
+def all_user_data():
+    # Validate admin rights of accessing user
+    access_user = mongo.db.users.find_one({"username": get_jwt_identity()})
+    if not access_user["permissions"]["admin"]:
+        return "Admin rights required", 403
+    data = mongo.db.users.find({})
+    return JSONEncoder().encode(list(data))
+
+"""
+Resets password for another user
+(Requires admin privilege)
+userId: Unique mongoDB database ID of user
+"""
+@app.route("/admin/resetpw", methods=['POST'])
+@jwt_required()
+def reset_pw():
+    # Validate admin rights of accessing user
+    access_user = mongo.db.users.find_one({"username": get_jwt_identity()})
+    if not access_user["permissions"]["admin"]:
+        return "Admin rights required", 403
+    query = {"_id": ObjectId(json.loads(request.data).get("userId"))}
+    user_data = mongo.db.users.find_one_or_404(query)
+    new_password = ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(8))
+    user_data["password"] = generate_password_hash(new_password)
+    mongo.db.users.replace_one(query, user_data, True)
+    return new_password, 200
 
 """
 Allows pinging of backend to verify JWT
@@ -153,31 +193,27 @@ caseId: Unique ID of the case
 category: facts/holding
 index: The index where the subtopic is located in the JSON array
 """
-@app.route("/editSubTopic/<caseId>/<category>/<index>", methods=['POST'])
+@app.route("/editSubTopic/<caseId>/<category>", methods=['POST'])
 @jwt_required()
-def edit_sub_topic(caseId, category, index):
+def edit_sub_topic(caseId, category):
     # Query by object ID of case
     query = {"_id": ObjectId(caseId)}
     # Fetch original data then update
     data = mongo.db.case_summaries.find_one_or_404(query)
     updated_data = json.loads(request.data)
-    # Update topic title
-    data[category][int(index)]["title"] = updated_data["data"]["topic"]
-    # Update text
-    data[category][int(index)]["content"] = updated_data["data"]["text"]
-    # Need to handle ratio and tags data if category is holding
-    if category == "holding":
-        data[category][int(index)]["ratio"] = updated_data["data"]["ratio"]
-        # Updates individual holding tag
-        data[category][int(index)]["tag"] = updated_data["data"]["tag"]
+    if category == "facts":
+        data["facts"] = updated_data.get("factData")
+    elif category == "holding":
+        # Update general holding data
+        data["holding"] = updated_data.get("holdingData")
         # Update the general tags of the case
         case_tags = set()
-        for holding in data[category]:
+        for holding in data["holding"]:
             for tag in holding["tag"]:
                 case_tags.add(tag)
         data["tag"] = list(case_tags)
     # Update last edited time
-    data["lastEdit"] = updated_data["data"]["time"]
+    data["lastEdit"] = updated_data["time"]
     # Update last edited person
     data["lastEditBy"] = get_jwt_identity()
     mongo.db.case_summaries.replace_one(query, data, True)
@@ -188,8 +224,8 @@ def edit_sub_topic(caseId, category, index):
         "name": get_jwt_identity(),
         "case_name": data["name"],
         "action": "EDIT",
-        "subtopic": updated_data["data"]["topic"],
-        "time": updated_data["data"]["time"]
+        "topic": category,
+        "time": updated_data["time"]
     })
 
     # Update recent edits for this user
@@ -198,6 +234,7 @@ def edit_sub_topic(caseId, category, index):
         "caseName": data["name"],
         "caseCitation": data["citation"]
     }, data["tag"])
+
     return "", 200
 
 
@@ -247,10 +284,9 @@ def edit_case_identifiers(caseId):
 
     return "", 200
 
-
+# NO LONGER IN USE
 """
-Add a new sub-topic entry
-"""
+# Add a new sub-topic entry
 @app.route("/addNewTopic/<caseId>/<category>", methods=['POST'])
 @jwt_required()
 def add_new_topic(caseId, category):
@@ -288,15 +324,15 @@ def add_new_topic(caseId, category):
     }, data["tag"])
 
     return empty_entry, 200
-
-
 """
-Delete a sub-topic entry
 
-caseId: Unique case ID
-category: facts/holding
-index: Index to identify the sub-topic entry that is deleted
+# NO LONGER IN USE
 """
+# Delete a sub-topic entry
+# 
+# caseId: Unique case ID
+# category: facts/holding
+# index: Index to identify the sub-topic entry that is deleted
 @app.route("/deleteTopic/<caseId>/<category>/<index>", methods=['DELETE'])
 @jwt_required()
 def delete_topic(caseId, category, index):
@@ -328,6 +364,7 @@ def delete_topic(caseId, category, index):
     }, data["tag"])
 
     return json.dumps(data[category]), 200
+"""
 
 """
 Updates issues
@@ -483,8 +520,21 @@ def getcategories():
 Returns individual case information
 """
 @app.route("/cases/<caseId>", methods=['GET'])
+@jwt_required()
 def getcase(caseId):
-    data = mongo.db.case_summaries.find_one_or_404({"_id": ObjectId(caseId)})
+    data = mongo.db.case_summaries.find_one({"_id": ObjectId(caseId)})
+    # If data does not exist, then delete it if it exists in recent edits
+    if not data:
+        user_data = mongo.db.users.find_one({"username": get_jwt_identity()})
+        recent_edits = user_data.get("recent_edits")
+        for i, case in enumerate(recent_edits.copy()):
+            if case.get("caseId") == caseId:
+                recent_edits.pop(i)
+                user_data["recent_edits"] = recent_edits
+                mongo.db.users.replace_one({"username": get_jwt_identity()}, user_data, True)
+                break
+        return "Case not found", 404
+                
     return JSONEncoder().encode(data)
 
 """

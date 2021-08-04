@@ -6,6 +6,7 @@ import navbarStyles from '../styles/Navbar.module.css';
 import CaseSearch from './search/CaseSearch';
 import { NavDropdown } from 'react-bootstrap';
 import { FileEarmarkPlus, PersonCircle } from 'react-bootstrap-icons';
+import Image from 'next/image';
 
 const NavigationBar = (props) => {
     const router = useRouter();
@@ -19,9 +20,12 @@ const NavigationBar = (props) => {
     return (
         <Navbar bg="dark" variant="dark">
             <Navbar.Toggle aria-controls="navbarScroll" />
-            <Navbar.Brand href="/">[Placeholder]</Navbar.Brand>
+            <Navbar.Brand href="/">
+                Law Notes
+            </Navbar.Brand>
             <Nav className="mr-auto">
                 <Nav.Link href='/categories'>Categories</Nav.Link>
+                <Nav.Link href="/readme">ReadMe</Nav.Link>
             </Nav>
             <Nav classname="justify-content-end">
                 <Nav.Item>

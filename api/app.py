@@ -11,6 +11,8 @@ from datetime import timedelta
 from werkzeug.security import generate_password_hash, check_password_hash
 import json
 import os
+import random
+import string
 
 app = Flask(__name__)
 # To allow Cross-origin resource sharing
@@ -144,12 +146,36 @@ def user_data(username):
 
 """
 Get data for all users, for admin page
+(Requires admin privilege)
 """
 @app.route("/admin/users", methods=['GET'])
 @jwt_required()
 def all_user_data():
+    # Validate admin rights of accessing user
+    access_user = mongo.db.users.find_one({"username": get_jwt_identity()})
+    if not access_user["permissions"]["admin"]:
+        return "Admin rights required", 403
     data = mongo.db.users.find({})
     return JSONEncoder().encode(list(data))
+
+"""
+Resets password for another user
+(Requires admin privilege)
+userId: Unique mongoDB database ID of user
+"""
+@app.route("/admin/resetpw", methods=['POST'])
+@jwt_required()
+def reset_pw():
+    # Validate admin rights of accessing user
+    access_user = mongo.db.users.find_one({"username": get_jwt_identity()})
+    if not access_user["permissions"]["admin"]:
+        return "Admin rights required", 403
+    query = {"_id": ObjectId(json.loads(request.data).get("userId"))}
+    user_data = mongo.db.users.find_one_or_404(query)
+    new_password = ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(8))
+    user_data["password"] = generate_password_hash(new_password)
+    mongo.db.users.replace_one(query, user_data, True)
+    return new_password, 200
 
 """
 Allows pinging of backend to verify JWT

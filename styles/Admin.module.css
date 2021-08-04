@@ -6,3 +6,7 @@
 .tableStyling {
 	font-size: 1rem;
 }
+
+.secretPasswordInput {
+	display: none;
+}

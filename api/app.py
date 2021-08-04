@@ -25,13 +25,12 @@ mongo = PyMongo(app)
 #### Authentication setup ####
 # Set this as an environment variable (here temporarily for testing)
 TOKEN_EXPIRY = timedelta(days=1)
-os.environ["JWT_KEY"] = "ivanlovesgayporn"
+
 app.config["JWT_SECRET_KEY"] = os.environ.get("JWT_KEY")
 app.config["JWT_ACCESS_TOKEN_EXPIRES"] = TOKEN_EXPIRY
 jwt = JWTManager(app)
 
 # Token for registration
-os.environ["REGISTER_TOKEN"] = "test"
 REGISTER_TOKEN = os.environ.get("REGISTER_TOKEN")
 
 # Maximum allowed number of recent edits

@@ -30,7 +30,13 @@ const LargeCaseSearch = () => {
           size="17"
         />
 		<div className={homeStyle.iconsContainer}>
-			<Discord size="30" />
+			<Discord 
+				size="30" 
+				className={homeStyle.discordIcon} 
+				onClick={() => {
+					window.location.href = "https://discord.gg/4CDFxBWnH7";
+				}}
+			/>
 		</div>
       </div>
 	);

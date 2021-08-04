@@ -197,3 +197,8 @@
 	50% {transform: rotate(180deg);}
 	100% {transform: rotate(360deg);}
 }
+
+.iconsContainer {
+	height: 50px;
+	margin-top: 10px;
+}

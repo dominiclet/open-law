@@ -8,6 +8,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import LargeCaseSearch from '../components/search/LargeCaseSearch';
 import { Spinner } from 'react-bootstrap';
+import { Discord } from 'react-bootstrap-icons';
 
 const Home = (props) => {
   const router = useRouter();

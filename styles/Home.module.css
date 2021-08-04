@@ -3,7 +3,6 @@
 	display: flex;
 	width: 100%;
 	justify-content: space-between;
-	overflow-x: hidden;
 }
 
 /* Hide certain elements when viewport is scaled below a certain value */

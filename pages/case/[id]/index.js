@@ -23,8 +23,9 @@ const caseDisplayPage = () => {
     useEffect(() => {
         if (router.isReady) {
             const { id } = router.query;
-            axios.get(apiRoot + `/cases/${id}`)
-                .then(res => {
+            axios.get(apiRoot + `/cases/${id}`, {
+                headers: {'Authorization': 'Bearer ' + localStorage.getItem("jwt-token")}
+            }).then(res => {
                     setCaseData(res.data);
                     setdataLoaded(true);
                 }).catch(error => console.log(error));

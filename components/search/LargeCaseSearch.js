@@ -1,5 +1,5 @@
 import homeStyle from '../../styles/Home.module.css';
-import { Search } from 'react-bootstrap-icons';
+import { Discord, Search } from 'react-bootstrap-icons';
 import Image from 'next/image';
 
 const LargeCaseSearch = () => {
@@ -29,6 +29,15 @@ const LargeCaseSearch = () => {
           className={homeStyle.searchIcon} 
           size="17"
         />
+		<div className={homeStyle.iconsContainer}>
+			<Discord 
+				size="30" 
+				className={homeStyle.discordIcon} 
+				onClick={() => {
+					window.location.href = "https://discord.gg/4CDFxBWnH7";
+				}}
+			/>
+		</div>
       </div>
 	);
 }

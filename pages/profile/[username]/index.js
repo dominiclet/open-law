@@ -75,11 +75,10 @@ const profilePage = () => {
 						<h5>Most contributions</h5>
 						<div className={styles.statData}>
 							{(() => {
-								let maxValue = 0;
-								let mostContributed;
+								let mostContributed = 0;
 								const contributions = userData.stats.contributions;
 								for (const key in contributions) {
-									if (contributions[key] >= maxValue) {
+									if (contributions[key] >= mostContributed) {
 										mostContributed = key;
 									}
 								}

@@ -42,29 +42,15 @@ const ActivityCard = (props) => {
 					if (props.action == "EDIT") {
 						return (
 							<p className={homeStyle.activityCardWords}>
-							<b><Link href={`/profile/${props.name}`}>{props.name}</Link></b> edited <b>
-								{props.subtopic ? props.subtopic : "the case name/citation"}
+							<b><Link href={`/profile/${props.name}`}>{props.name}</Link></b> edited the <b>
+								{props.topic}
 							</b> in <i>{props.caseName}</i>
 						</p>
-						);
-					} else if (props.action == "DELETE") {
-						return (
-							<p className={homeStyle.activityCardWords}>
-								<b><Link href={`/profile/${props.name}`}>{props.name}</Link></b> deleted <b>
-									{!props.subtopic ? "a topic" : props.subtopic}
-									</b> in <i>{props.caseName}</i>
-							</p>
-						);
-					} else if (props.action == "ADDTOPIC") {
-						return (
-							<p className={homeStyle.activityCardWords}>
-								<b><Link href={`/profile/${props.name}`}>{props.name}</Link></b> added a new topic to <i>{props.caseName}</i>
-							</p>
 						);
 					} else if (props.action == "ADDCASE") {
 						return (
 							<p className={homeStyle.activityCardWords}>
-								<b><Link href={`/profile/${props.name}`}>{props.name}</Link></b> added a new case summary <i>{props.caseName}</i>
+								<b><Link href={`/profile/${props.name}`}>{props.name}</Link></b> added a new case: <i>{props.caseName}</i>
 							</p>
 						);
 					} else if (props.action == "EDITCASENAME") {

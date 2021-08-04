@@ -197,3 +197,19 @@
 	50% {transform: rotate(180deg);}
 	100% {transform: rotate(360deg);}
 }
+
+.iconsContainer {
+	display: flex;
+	height: 50px;
+	margin-top: 20px;
+	justify-content: center;
+}
+
+.discordIcon {
+	transition-duration: 0.4s;
+}
+
+.discordIcon:hover {
+	cursor: pointer;
+	transition-duration: 0.4s; 
+}

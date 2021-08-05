@@ -19,8 +19,8 @@ app = Flask(__name__)
 app.config["CORS_HEADERS"] = "Content-Type"
 cors = CORS(app, origins=["http://localhost:3000", "https://lawnotes.herokuapp.com"], supports_credentials=True)
 # MongoDB setup
-# app.config["MONGO_URI"] = "mongodb://localhost:27017/open_law"
-app.config["MONGO_URI"] = os.environ.get("MONGO_URI")
+app.config["MONGO_URI"] = "mongodb://localhost:27017/open_law"
+# app.config["MONGO_URI"] = os.environ.get("MONGO_URI")
 
 mongo = PyMongo(app)
 
@@ -529,7 +529,6 @@ def add_new_case():
 Populates categories collection (should only run once when collection is newly created)
 """
 @app.route("/fill_categories_collection", methods=['GET', 'POST'])
-@jwt_required()
 def add_categories():
     case_data = mongo.db.case_summaries.find()
     new_category = {

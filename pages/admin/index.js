@@ -11,7 +11,7 @@ const adminPage = () => {
 	// State stores loading vs loaded state
 	const [loaded, setLoaded] = useState(false);
 	// State stores whether user is authenticated
-	const [isAuthenticated, setIsAuthenticated] = useState(true);
+	const [isAuthenticated, setIsAuthenticated] = useState(false);
 	// State stores loaded user data
 	const [data, setData] = useState();
 	

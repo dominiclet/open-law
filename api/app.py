@@ -664,7 +664,7 @@ def search():
         "lastEdit": 1,
         "lastEditBy": 1,
         "score": {"$meta": "textScore"}
-    }).sort([("score", {"$meta": "textScore"})]).limit(10)
+    }).sort([("score", {"$meta": "textScore"})]).limit(20)
     return JSONEncoder().encode(list(cursor))
 
 """

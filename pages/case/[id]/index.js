@@ -60,8 +60,8 @@ const caseDisplayPage = () => {
                             <OuterCase entry={caseData} />
                             <PencilSquare className={caseStyle.editIcon} onClick={handleEditButton} />
                         </Tab.Pane>
-                        <Tab.Pane eventKey="relatedCases">
-                            <RelatedCases entry={caseData}/>
+                        <Tab.Pane eventKey="relatedCases" className={caseStyle.relatedCases}>
+                            <RelatedCases  entry={caseData}/>
                         </Tab.Pane>
                     </Tab.Content>
                 </Tab.Container>

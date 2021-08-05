@@ -24,11 +24,6 @@ app.config["MONGO_URI"] = "mongodb://localhost:27017/open_law"
 
 mongo = PyMongo(app)
 
-# Initialize dictionary to store categories and their corresponding number of cases
-# key: category
-# value: [list of cases in category]
-categories_dict = {}
-
 #### Authentication setup ####
 # Set this as an environment variable (here temporarily for testing)
 TOKEN_EXPIRY = timedelta(days=1)
@@ -228,6 +223,7 @@ caseId: Unique ID of the case
 category: facts/holding
 index: The index where the subtopic is located in the JSON array
 """
+
 @app.route("/editSubTopic/<caseId>/<category>", methods=['POST'])
 @jwt_required()
 def edit_sub_topic(caseId, category):
@@ -239,6 +235,11 @@ def edit_sub_topic(caseId, category):
     if category == "facts":
         data["facts"] = updated_data.get("factData")
     elif category == "holding":
+        # Get original tags to compare with new tags
+        original_tag_arr = set()
+        for holding in data["holding"]:
+            for tag in holding["tag"]:
+                original_tag_arr.add(tag)
         # Update general holding data
         data["holding"] = updated_data.get("holdingData")
         # Update the general tags of the case
@@ -247,6 +248,37 @@ def edit_sub_topic(caseId, category):
             for tag in holding["tag"]:
                 case_tags.add(tag)
         data["tag"] = list(case_tags)
+
+        # Find difference between original and new tag lists
+        common_tags = case_tags & original_tag_arr
+        to_remove = common_tags ^ original_tag_arr
+        to_add = common_tags ^ case_tags
+        # Handle untagged cases
+        if not original_tag_arr:
+            to_remove.add("Untagged")
+        if not case_tags:
+            to_add.add("Untagged")
+        # Remove and add based on differences between original and new lists
+        for tag in to_remove:
+            mongo.db.categories.update(
+                {"category" : tag},
+                {"$pull" : {"cases" : {"id" : data["_id"]}}}
+            )
+        for tag in to_add:
+            if not mongo.db.categories.find_one({"category": tag}):
+                new_category = {
+                    "category" : tag,
+                    "cases" : []
+                }
+                mongo.db.categories.insert(new_category)
+            new_case = {
+                "name" : data["name"],
+                "id" : data["_id"],
+                "citation" : data["citation"],
+                "lastEdit" : data["lastEdit"]
+            }
+            mongo.db.categories.update({"category": tag}, {'$push': {"cases": new_case}}) 
+
     # Update last edited time
     data["lastEdit"] = updated_data["time"]
     # Update last edited person
@@ -461,21 +493,24 @@ def recent_edits():
 Returns the list of cases for each tag with given limit
 """
 @app.route("/casesTag/<queryTag>/<limit>", methods=['GET'])
+@jwt_required()
 def get_cases_by_tag(queryTag, limit=10):
-    try:
-        categories_dict[queryTag]
-    except KeyError:
-        getcategories()
-    finally:
-        limit = int(limit)
-        if limit > len(categories_dict[queryTag]):
-            limit = len(categories_dict[queryTag])
-        return JSONEncoder().encode(categories_dict[queryTag][:limit])
+    category_cases = mongo.db.categories.find_one_or_404({"category" : queryTag})
+    cases = []
+    for case in category_cases["cases"]:
+        cases.append(mongo.db.case_summaries.find_one({"_id" : case["id"]}))
+    # dont know which is faster
+    # data = mongo.db.case_summaries.find({"tag" : queryTag})
+    limit = int(limit)
+    if limit > len(cases):
+        limit = len(cases)
+    return JSONEncoder().encode(cases[:limit])
 
 """
 Returns all related cases for a given case based on matching tags
 """
 @app.route("/relatedCases/<caseId>", methods=['GET'])
+@jwt_required()
 def get_related_cases(caseId):
     # get tags of input case
     tags = mongo.db.case_summaries.find_one_or_404({"_id": ObjectId(caseId)})["tag"]
@@ -487,8 +522,6 @@ def get_related_cases(caseId):
             if j not in related_cases and j["_id"] != ObjectId(caseId):
                 related_cases.append(j)
     return JSONEncoder().encode(related_cases)
-
-
 
 """
 Adds a new case with mostly empty data.
@@ -528,28 +561,58 @@ def add_new_case():
     return str(_id), 200
 
 """
+Populates categories collection (should only run once when collection is newly created)
+"""
+@app.route("/fill_categories_collection", methods=['GET', 'POST'])
+@jwt_required()
+def add_categories():
+    case_data = mongo.db.case_summaries.find()
+    new_category = {
+        "category" : "Untagged",
+        "cases" : []
+    }
+    mongo.db.categories.insert(new_category)
+
+    for case in case_data:
+        if not case["tag"]:
+            new_case = {
+                "name" : case["name"],
+                "id" : case["_id"],
+                "citation" : case["citation"],
+                "lastEdit" : case["lastEdit"]
+            }
+            mongo.db.categories.update({"category": "Untagged"}, {'$push': {"cases": new_case}})
+            
+        for tag in case["tag"]:
+            if not mongo.db.categories.find_one({"category": tag}):
+                new_category = {
+                    "category" : tag,
+                    "cases" : []
+                }
+                mongo.db.categories.insert(new_category)
+            new_case = {
+                "name" : case["name"],
+                "id" : case["_id"],
+                "citation" : case["citation"],
+                "lastEdit" : case["lastEdit"]
+            }
+            mongo.db.categories.update({"category": tag}, {'$push': {"cases": new_case}})
+    return "Cases updated", 200
+
+"""
 Returns list of categories with corresponding number of cases in each category.
-Only loops through tags of all cases when categories_dict is empty.
 """
 @app.route("/categories", methods=['GET'])
+@jwt_required()
 def getcategories():
-    if not categories_dict:
-        categories_dict["Untagged Cases"] = []
-        data = mongo.db.case_summaries.find()
-        for case in data:
-            if not case["tag"]:
-                categories_dict["Untagged Cases"].append(case)
-                continue
-            for tag in case["tag"]:
-                if tag not in categories_dict:
-                    categories_dict[tag] = [case]
-                else:
-                    categories_dict[tag].append(case)
+    data = mongo.db.categories.find()
+    # Populate categories collection if it is empty
+    if not data:
+        add_categories()
     categories = []
-    for tag in categories_dict:
-        categories.append([tag, len(categories_dict[tag])])
+    for category in data:
+        categories.append([category["category"], len(category["cases"])])
     return JSONEncoder().encode(categories)
-
 
 """
 Returns individual case information

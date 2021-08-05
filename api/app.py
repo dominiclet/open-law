@@ -19,8 +19,8 @@ app = Flask(__name__)
 app.config["CORS_HEADERS"] = "Content-Type"
 cors = CORS(app, origins=["http://localhost:3000", "https://lawnotes.herokuapp.com"], supports_credentials=True)
 # MongoDB setup
-# app.config["MONGO_URI"] = "mongodb://localhost:27017/open_law"
-app.config["MONGO_URI"] = os.environ.get("MONGO_URI")
+app.config["MONGO_URI"] = "mongodb://localhost:27017/open_law"
+# app.config["MONGO_URI"] = os.environ.get("MONGO_URI")
 
 mongo = PyMongo(app)
 
@@ -171,6 +171,41 @@ def reset_pw():
     user_data["password"] = generate_password_hash(new_password)
     mongo.db.users.replace_one(query, user_data, True)
     return new_password, 200
+
+"""
+Toggles edit privilege for user
+"""
+@app.route("/admin/toggleEdit", methods=['POST'])
+@jwt_required()
+def toggle_edit():
+    # Validate admin rights of accessing user
+    access_user = mongo.db.users.find_one({"username": get_jwt_identity()})
+    if not access_user["permissions"]["admin"]:
+        return "Admin rights required", 403
+    query = {"_id": ObjectId(json.loads(request.data).get("userId"))}
+    user_data = mongo.db.users.find_one_or_404(query)
+    user_data["permissions"]["edit"] = 0 if user_data["permissions"]["edit"] else 1
+    mongo.db.users.replace_one(query, user_data, True)
+    return f'Edit privileges for {user_data["username"]} {"enabled" if user_data["permissions"]["edit"] else "disabled"}', \
+    200
+
+"""
+Disables/Enables edit privileges for all users
+"""
+@app.route("/admin/edit/<action>", methods=['POST'])
+@jwt_required()
+def edit_all_edit_privileges(action):
+    # Validate admin rights of accessing user
+    access_user = mongo.db.users.find_one({"username": get_jwt_identity()})
+    if not access_user["permissions"]["admin"]:
+        return "Admin rights required", 403
+    mongo.db.users.update_many({}, {
+        '$set': {
+            'permissions.edit': 1 if int(action) else 0
+        }
+    })
+    return ""
+    
 
 """
 Allows pinging of backend to verify JWT
@@ -581,14 +616,17 @@ def getcategories():
 
 """
 Returns individual case information
+caseId: Unique ID of case
+action: Either "read" or "write". "write" checks for edit permission of user
 """
-@app.route("/cases/<caseId>", methods=['GET'])
+@app.route("/cases/<caseId>/<action>", methods=['GET'])
 @jwt_required()
-def getcase(caseId):
+def getcase(caseId, action):
     data = mongo.db.case_summaries.find_one({"_id": ObjectId(caseId)})
-    # If data does not exist, then delete it if it exists in recent edits
+    user_data = mongo.db.users.find_one({"username": get_jwt_identity()})
+    # If data does not exist, then delete it if it exists in recent edits 
+    # (since user probably navigated to it via recent edits)
     if not data:
-        user_data = mongo.db.users.find_one({"username": get_jwt_identity()})
         recent_edits = user_data.get("recent_edits")
         for i, case in enumerate(recent_edits.copy()):
             if case.get("caseId") == caseId:
@@ -597,6 +635,10 @@ def getcase(caseId):
                 mongo.db.users.replace_one({"username": get_jwt_identity()}, user_data, True)
                 break
         return "Case not found", 404
+    
+    # If case data is fetched for edit page, check if user has edit privileges
+    if action == "write" and not user_data["permissions"]["edit"]:
+        return "This account does not have edit permission", 403
                 
     return JSONEncoder().encode(data)
 

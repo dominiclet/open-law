@@ -526,11 +526,26 @@ def get_related_cases(caseId):
 """
 Adds a new case with mostly empty data.
 Case name must be provided.
+checked: 1 indicates that duplicate checking was done, 0 indicates otherwise
 """
-@app.route("/addNewCase", methods=['POST'])
+@app.route("/addNewCase/<checked>", methods=['POST'])
 @jwt_required()
-def add_new_case():
+def add_new_case(checked):
     post_data = json.loads(request.data)
+
+    # If manual user duplicate check was not done yet, check for cases with similar names
+    if not int(checked):
+        cursor = mongo.db.case_summaries.find({"$text": {"$search": post_data["caseName"]}}, {
+            "name": 1,
+            "citation": 1,
+            "score": {"$meta": "textScore"}
+        }).sort([("score", {"$meta": "textScore"})]).limit(5)
+        similar_cases = list(cursor)
+        # Only return similar case data with a 202 status if the similarity score is high,
+        # otherwise just add the case
+        print(similar_cases)
+        if similar_cases[0].get("score") >= 1:
+            return JSONEncoder().encode(similar_cases), 202
 
     new_doc = {
         "name": post_data["caseName"],

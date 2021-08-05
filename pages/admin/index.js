@@ -22,7 +22,6 @@ const adminPage = () => {
 			if (res.status == 200) {
 				setData(res.data);
 				setLoaded(true);
-				console.log(res.data);
 			}
 		}).catch(err => {
 			if (err.response.status == 401) {

@@ -25,6 +25,7 @@ const NavigationBar = (props) => {
             </Navbar.Brand>
             <Nav className="mr-auto">
                 <Nav.Link href='/categories'>Categories</Nav.Link>
+                <Nav.Link href="/readme">ReadMe</Nav.Link>
             </Nav>
             <Nav classname="justify-content-end">
                 <Nav.Item>

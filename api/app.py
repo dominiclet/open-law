@@ -154,6 +154,7 @@ caseId: Unique ID of the case
 category: facts/holding
 index: The index where the subtopic is located in the JSON array
 """
+
 @app.route("/editSubTopic/<caseId>/<category>", methods=['POST'])
 @jwt_required()
 def edit_sub_topic(caseId, category):
@@ -165,6 +166,11 @@ def edit_sub_topic(caseId, category):
     if category == "facts":
         data["facts"] = updated_data.get("factData")
     elif category == "holding":
+        # Get original tags to compare with new tags
+        original_tag_arr = set()
+        for holding in data["holding"]:
+            for tag in holding["tag"]:
+                original_tag_arr.add(tag)
         # Update general holding data
         data["holding"] = updated_data.get("holdingData")
         # Update the general tags of the case
@@ -172,24 +178,40 @@ def edit_sub_topic(caseId, category):
         for holding in data["holding"]:
             for tag in holding["tag"]:
                 case_tags.add(tag)
-
-                # Check if case is in category
-                category_cases = mongo.db.categories.find_one({"category" : tag})
-                add_case = True
-                for case in category_cases["cases"]:
-                    if ObjectId(caseId) == case["id"]:
-                        add_case = False
-                        break
-                if add_case:
-                    new_case = {
-                        "name" : data["name"],
-                        "id" : data["_id"],
-                        "citation" : data["citation"],
-                        "lastEdit" : data["lastEdit"]
-                    }
-                    mongo.db.categories.update({"category": tag}, {'$push': {"cases": new_case}})
-
         data["tag"] = list(case_tags)
+
+        # Find difference between original and new tag lists
+        common_tags = case_tags & original_tag_arr
+        to_remove = common_tags ^ original_tag_arr
+        to_add = common_tags ^ case_tags
+        # Handle untagged cases
+        if not original_tag_arr:
+            to_remove.add("Untagged")
+        if not case_tags:
+            to_add.add("Untagged")
+        # Remove and add based on differences between original and new lists
+        for tag in to_remove:
+            mongo.db.categories.update(
+                {"category" : tag},
+                {"$pull" : {"cases" : {"id" : data["_id"]}}}
+            )
+        for tag in to_add:
+            if not mongo.db.categories.find_one({"category": tag}):
+                new_category = {
+                    "category" : tag,
+                    "cases" : []
+                }
+                mongo.db.categories.insert(new_category)
+            new_case = {
+                "name" : data["name"],
+                "id" : data["_id"],
+                "citation" : data["citation"],
+                "lastEdit" : data["lastEdit"]
+            }
+            mongo.db.categories.update({"category": tag}, {'$push': {"cases": new_case}}) 
+                    mongo.db.categories.update({"category": tag}, {'$push': {"cases": new_case}})
+            mongo.db.categories.update({"category": tag}, {'$push': {"cases": new_case}}) 
+
     # Update last edited time
     data["lastEdit"] = updated_data["time"]
     # Update last edited person
@@ -516,7 +538,6 @@ def getcategories():
     # Populate categories collection if it is empty
     if not data:
         add_categories()
-
     categories = []
     for category in data:
         categories.append([category["category"], len(category["cases"])])

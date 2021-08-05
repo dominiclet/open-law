@@ -423,6 +423,7 @@ def recent_edits():
 Returns the list of cases for each tag with given limit
 """
 @app.route("/casesTag/<queryTag>/<limit>", methods=['GET'])
+@jwt_required()
 def get_cases_by_tag(queryTag, limit=10):
     category_cases = mongo.db.categories.find_one_or_404({"category" : queryTag})
     cases = []
@@ -439,6 +440,7 @@ def get_cases_by_tag(queryTag, limit=10):
 Returns all related cases for a given case based on matching tags
 """
 @app.route("/relatedCases/<caseId>", methods=['GET'])
+@jwt_required()
 def get_related_cases(caseId):
     # get tags of input case
     tags = mongo.db.case_summaries.find_one_or_404({"_id": ObjectId(caseId)})["tag"]
@@ -492,6 +494,7 @@ def add_new_case():
 Populates categories collection (should only run once when collection is newly created)
 """
 @app.route("/fill_categories_collection", methods=['GET', 'POST'])
+@jwt_required()
 def add_categories():
     case_data = mongo.db.case_summaries.find()
     new_category = {
@@ -530,6 +533,7 @@ def add_categories():
 Returns list of categories with corresponding number of cases in each category.
 """
 @app.route("/categories", methods=['GET'])
+@jwt_required()
 def getcategories():
     data = mongo.db.categories.find()
     # Populate categories collection if it is empty

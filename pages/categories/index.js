@@ -10,8 +10,9 @@ const categories = (props) => {
   const [data, setData] = useState();
 
   useEffect(() => {
-    axios.get(apiRoot + '/categories')
-      .then(res => {
+    axios.get(apiRoot + '/categories', { 
+      headers: {'Authorization': 'Bearer ' + localStorage.getItem("jwt-token")}
+    }).then(res => {
         setData(res.data);
       });
   }, []);

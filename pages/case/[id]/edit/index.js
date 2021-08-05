@@ -21,7 +21,7 @@ const caseEditPage = () => {
     useEffect( () => {
         if (router.isReady) {
             const {id} = router.query;
-            axios.get(apiRoot + `/cases/${id}`, {
+            axios.get(apiRoot + `/cases/${id}/write`, {
                 headers: {'Authorization': 'Bearer ' + localStorage.getItem("jwt-token")}
             }).then(res => {
                     setCaseData(res.data);
@@ -29,6 +29,9 @@ const caseEditPage = () => {
                 }).catch(error => {
                     if (error.response.status == 404) {
                         alert("Case is either deleted or does not exist. Redirecting back to home...");
+                        router.push("/");
+                    } else if (error.response.status == 403) {
+                        alert(error.response.data);
                         router.push("/");
                     } else {
                         throw error;

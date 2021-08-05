@@ -25,7 +25,6 @@ mongo = PyMongo(app)
 #### Authentication setup ####
 # Set this as an environment variable (here temporarily for testing)
 TOKEN_EXPIRY = timedelta(days=1)
-
 app.config["JWT_SECRET_KEY"] = os.environ.get("JWT_KEY")
 app.config["JWT_ACCESS_TOKEN_EXPIRES"] = TOKEN_EXPIRY
 jwt = JWTManager(app)
@@ -208,8 +207,6 @@ def edit_sub_topic(caseId, category):
                 "citation" : data["citation"],
                 "lastEdit" : data["lastEdit"]
             }
-            mongo.db.categories.update({"category": tag}, {'$push': {"cases": new_case}}) 
-                    mongo.db.categories.update({"category": tag}, {'$push': {"cases": new_case}})
             mongo.db.categories.update({"category": tag}, {'$push': {"cases": new_case}}) 
 
     # Update last edited time

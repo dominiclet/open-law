@@ -58,7 +58,7 @@ const adminPage = () => {
 					})
 				}
 			}
-			return (<input type="password" onKeyPress={handleVerifyPassword} />);
+			return (<input autoFocus type="password" onKeyPress={handleVerifyPassword} />);
 		}
 
 		return (

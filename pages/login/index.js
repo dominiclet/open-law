@@ -3,7 +3,7 @@ import { apiRoot } from "../../config";
 import { useRouter } from 'next/router';
 import loginStyle from '../../styles/Login.module.css';
 import { useEffect, useState } from "react";
-import { Spinner } from "react-bootstrap";
+import { Modal, Spinner } from "react-bootstrap";
 import Link from 'next/link';
 import Image from 'next/image';
 
@@ -13,6 +13,8 @@ const loginPage = () => {
 
 	// State tracks if login is in loading state
 	const [loading, setLoading] = useState(false);
+	// State controls modal open or close state
+	const [showModal, setShowModal] = useState(false);
 
 	// Check if already logged in
 	useEffect(() => {
@@ -103,8 +105,21 @@ const loginPage = () => {
 				: <button className={loginStyle.submit} onClick={handleSubmit} id="loginButton">LOGIN</button>);
 			})()}
 			<div className={loginStyle.registerContainer}>
-				<Link href="/register">Register</Link>
+				<Link href="/register">Register</Link> <br/>
+				<a href="/login" onClick={(event) => {
+					event.preventDefault();
+					setShowModal(true);
+				}}>
+					Forgot your password?
+				</a>
 			</div>
+			<Modal show={showModal} onHide={() => setShowModal(false)}>
+				<Modal.Body
+					style={{textAlign: "center"}}
+				>
+					Please inform Ivan or Dominic to reset your password.
+				</Modal.Body>
+			</Modal>
 		</div>
 	);
 }

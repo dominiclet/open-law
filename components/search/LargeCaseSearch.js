@@ -20,6 +20,7 @@ const LargeCaseSearch = () => {
 		 </div>
         <input 
           placeholder="Search cases"
+		  autoFocus
 		  id="largeSearchQ"
           className={homeStyle.searchBar} 
           type="text"

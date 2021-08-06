@@ -1,9 +1,11 @@
-import ListGroup from 'react-bootstrap/ListGroup'
-import caseStyle from '../../styles/Case.module.css'
+import relatedCasesStyle from '../../styles/RelatedCases.module.css'
+import RelatedCasesList from './RelatedCasesList'
 import { useRouter } from 'next/router'
 import axios from 'axios';
-import { useEffect, useState } from 'react';
-import {apiRoot} from '../../config'
+import { useEffect, useState } from 'react'
+import { apiRoot } from '../../config'
+import { Spinner } from 'react-bootstrap'
+import Link from 'next/link'
 
 const RelatedCases = () => {
     const router = useRouter();
@@ -27,19 +29,15 @@ const RelatedCases = () => {
     }, [router.isReady]);
 
     if (!dataLoaded) {
-        return (<span>Loading...</span>)
+        return (
+            <Spinner animation="border" className={relatedCasesStyle.loadingSpinner}/>
+        )
     } else {
         return ( 
-            <div>
-                <h1 className={caseStyle.relatedCases}>Related Cases</h1>
-                <ListGroup>
-                    {cases.map( (entry) => (
-                        <ListGroup.Item className={caseStyle.relatedCases} action href={`/case/${entry._id}`}>
-                            {entry.name}
-                        </ListGroup.Item>
-                    ))}
-                </ListGroup>
-            </div>
+            <>
+                <h1 className={relatedCasesStyle.header}>Related Cases</h1>
+                <RelatedCasesList className={relatedCasesStyle.card} cases = {cases}/>
+            </> 
         )
     }
 }

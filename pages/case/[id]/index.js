@@ -23,7 +23,7 @@ const caseDisplayPage = () => {
     useEffect(() => {
         if (router.isReady) {
             const { id } = router.query;
-            axios.get(apiRoot + `/cases/${id}`, {
+            axios.get(apiRoot + `/cases/${id}/read`, {
                 headers: {'Authorization': 'Bearer ' + localStorage.getItem("jwt-token")}
             }).then(res => {
                     setCaseData(res.data);
@@ -60,8 +60,8 @@ const caseDisplayPage = () => {
                             <OuterCase entry={caseData} />
                             <PencilSquare className={caseStyle.editIcon} onClick={handleEditButton} />
                         </Tab.Pane>
-                        <Tab.Pane eventKey="relatedCases">
-                            <RelatedCases entry={caseData}/>
+                        <Tab.Pane eventKey="relatedCases" className={caseStyle.relatedCases}>
+                            <RelatedCases  entry={caseData}/>
                         </Tab.Pane>
                     </Tab.Content>
                 </Tab.Container>

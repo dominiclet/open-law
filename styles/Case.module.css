@@ -61,16 +61,16 @@
 }
 
 .editIcon:hover {
-    cursor: pointer;
-    transition-duration: 0.4s;
-    filter: drop-shadow(0 0 0.1rem black);
+  cursor: pointer;
+  transition-duration: 0.4s;
+  filter: drop-shadow(0 0 0.1rem black);
 }
 
 /* Styling for inner contents of case */
 .innerCaseTitle {
   padding: 10px;
-  margin-bottom: 0 ;
-  background-color:rgb(194, 191, 191);
+  margin-bottom: 0;
+  background-color: rgb(194, 191, 191);
   font-size: 1.25rem;
   font-weight: 500;
   line-height: 1.25;
@@ -103,8 +103,8 @@
 }
 
 .relatedCases {
-  margin-left: auto;
-  margin-right: 0;
+  display: flex;
+  width: 100%;
 }
 
 .body {
@@ -116,7 +116,7 @@
 /* Nav tabs styling */
 .navContainer {
   display: flex;
-  flex-direction: column; 
+  flex-direction: column;
   width: 170px;
   font-size: 1rem;
   margin-right: 10px;

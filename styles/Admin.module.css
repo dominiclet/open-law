@@ -10,3 +10,11 @@
 .secretPasswordInput {
 	display: none;
 }
+
+.buttonContainer {
+	align-self: flex-end;
+}
+
+.button {
+	margin-left: 10px;
+}

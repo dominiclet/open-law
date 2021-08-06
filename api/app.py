@@ -577,40 +577,40 @@ def add_new_case(checked):
 """
 Populates categories collection (should only run once when collection is newly created)
 """
-@app.route("/fill_categories_collection", methods=['GET', 'POST'])
-def add_categories():
-    case_data = mongo.db.case_summaries.find()
-    new_category = {
-        "category" : "Untagged",
-        "cases" : []
-    }
-    mongo.db.categories.insert(new_category)
-
-    for case in case_data:
-        if not case["tag"]:
-            new_case = {
-                "name" : case["name"],
-                "id" : case["_id"],
-                "citation" : case["citation"],
-                "lastEdit" : case["lastEdit"]
-            }
-            mongo.db.categories.update({"category": "Untagged"}, {'$push': {"cases": new_case}})
-            
-        for tag in case["tag"]:
-            if not mongo.db.categories.find_one({"category": tag}):
-                new_category = {
-                    "category" : tag,
-                    "cases" : []
-                }
-                mongo.db.categories.insert(new_category)
-            new_case = {
-                "name" : case["name"],
-                "id" : case["_id"],
-                "citation" : case["citation"],
-                "lastEdit" : case["lastEdit"]
-            }
-            mongo.db.categories.update({"category": tag}, {'$push': {"cases": new_case}})
-    return "Cases updated", 200
+#@app.route("/fill_categories_collection", methods=['GET', 'POST'])
+#def add_categories():
+#    case_data = mongo.db.case_summaries.find()
+#    new_category = {
+#        "category" : "Untagged",
+#        "cases" : []
+#    }
+#    mongo.db.categories.insert(new_category)
+#
+#    for case in case_data:
+#        if not case["tag"]:
+#            new_case = {
+#                "name" : case["name"],
+#                "id" : case["_id"],
+#                "citation" : case["citation"],
+#                "lastEdit" : case["lastEdit"]
+#            }
+#            mongo.db.categories.update({"category": "Untagged"}, {'$push': {"cases": new_case}})
+#            
+#        for tag in case["tag"]:
+#            if not mongo.db.categories.find_one({"category": tag}):
+#                new_category = {
+#                    "category" : tag,
+#                    "cases" : []
+#                }
+#                mongo.db.categories.insert(new_category)
+#            new_case = {
+#                "name" : case["name"],
+#                "id" : case["_id"],
+#                "citation" : case["citation"],
+#                "lastEdit" : case["lastEdit"]
+#            }
+#            mongo.db.categories.update({"category": tag}, {'$push': {"cases": new_case}})
+#    return "Cases updated", 200
 
 """
 Returns list of categories with corresponding number of cases in each category.

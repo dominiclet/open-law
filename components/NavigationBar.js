@@ -1,12 +1,8 @@
 import Navbar from 'react-bootstrap/Navbar';
 import Nav from 'react-bootstrap/Nav';
-import Button from 'react-bootstrap/Button';
 import { useRouter } from 'next/router';
 import navbarStyles from '../styles/Navbar.module.css';
-import CaseSearch from './search/CaseSearch';
-import { NavDropdown } from 'react-bootstrap';
 import { FileEarmarkPlus, PersonCircle } from 'react-bootstrap-icons';
-import Image from 'next/image';
 
 const NavigationBar = (props) => {
     const router = useRouter();

@@ -21,6 +21,8 @@ const Layout = (props) => {
     const [similarCasesData, setSimilarCasesData] = useState();
     // State to store input case data
     const [addCaseData, setAddCaseData] = useState();
+    // State to store whether we are processing an ongoing request
+    const [processingRequest, setProcessingRequest] = useState(false);
 
     const router = useRouter();
 
@@ -43,19 +45,23 @@ const Layout = (props) => {
             const token = localStorage.getItem("jwt-token");
 
             if (token) {
-                axios.post(apiRoot + "/addNewCase/0", data, {
-                    headers: {'Authorization': 'Bearer ' + token}
-                }).then(res => {
+                if (!processingRequest) {
+                    setProcessingRequest(true);
+                    axios.post(apiRoot + "/addNewCase/0", data, {
+                        headers: {'Authorization': 'Bearer ' + token}
+                    }).then(res => {
                         if (res.status == 200) {
                             // Case succcessfully created
                             // Redirect to the newly created case's edit page
                             handleClose();
+                            setProcessingRequest(false);
                             // Need to use this instead of router.push
                             // Push does not work if you are on an edit page already
                             window.location.href = `/case/${res.data}/edit`;
                         } else if (res.status == 202) {
                             // Case not added as there are highly similar cases, need checking
                             handleClose();
+                            setProcessingRequest(false);
                             setAddCaseData(data);
                             setSimilarCasesData(res.data);
                             setShowDuplicateCaseModal(true);
@@ -68,6 +74,9 @@ const Layout = (props) => {
                             throw e;
                         }
                     });
+                } else {
+                    alert("Please don't spam the button! 😤");
+                }
             } else {
                 router.push("/login");
             }
@@ -76,14 +85,20 @@ const Layout = (props) => {
 
     // Handles submitting the case after confirming it is not a duplicate
     const handleConfirmedSubmit = () => {
-        axios.post(apiRoot + "/addNewCase/1", addCaseData, {
-            headers: {'Authorization': 'Bearer ' + localStorage.getItem("jwt-token")}
-        }).then(res => {
-            if (res.status == 200) {
-                setShowDuplicateCaseModal(false);
-                window.location.href = `/case/${res.data}/edit`;
-            }
-        })
+        if (!processingRequest) {
+            setProcessingRequest(true);
+            axios.post(apiRoot + "/addNewCase/1", addCaseData, {
+                headers: {'Authorization': 'Bearer ' + localStorage.getItem("jwt-token")}
+            }).then(res => {
+                if (res.status == 200) {
+                    setShowDuplicateCaseModal(false);
+                    setProcessingRequest(false);
+                    window.location.href = `/case/${res.data}/edit`;
+                }
+            })
+        } else {
+            alert("Please don't spam the button! 😤");
+        }
     }
 
     return (
@@ -139,7 +154,7 @@ const Layout = (props) => {
                 onHide={() => setShowDuplicateCaseModal(false)}
             >
                 <Modal.Header closeButton>
-                    <Modal.Title>Check similar cases</Modal.Title>
+                    <Modal.Title>Adding a case that already exists?</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     { showDuplicateCaseModal ? 

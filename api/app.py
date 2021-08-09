@@ -543,7 +543,7 @@ def add_new_case(checked):
         similar_cases = list(cursor)
         # Only return similar case data with a 202 status if the similarity score is high,
         # otherwise just add the case
-        if similar_cases[0].get("score") >= 1:
+        if len(similar_cases) > 0 and similar_cases[0].get("score") >= 1:
             return JSONEncoder().encode(similar_cases), 202
 
     new_doc = {

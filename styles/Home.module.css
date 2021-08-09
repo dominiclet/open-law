@@ -28,6 +28,10 @@
 	.searchContainer {
 		align-self: center;
 	}
+
+	.discordIcon {
+		display: none;
+	}
 }
 
 /* Recent edits styling */

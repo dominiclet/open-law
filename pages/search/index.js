@@ -31,13 +31,17 @@ const searchPage = () => {
 	} else {
 		return (
 			<div className={searchResultStyle.searchResultContainer}>
-				{searchResults.map(result => {
+				{searchResults.length > 0 ? searchResults.map(result => {
 					return (
 						<SearchResult 
 							resultInfo={result}
 						/>
 					);
-				})}
+				}) : 
+				<h5 style={{textAlign: "center"}}>
+					Could not find the case you are looking for. Consider adding it? 🤗
+				</h5>
+				}
 			</div>
 		);
 	}

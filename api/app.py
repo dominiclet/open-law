@@ -543,7 +543,7 @@ def add_new_case(checked):
         similar_cases = list(cursor)
         # Only return similar case data with a 202 status if the similarity score is high,
         # otherwise just add the case
-        if similar_cases[0].get("score") >= 1:
+        if len(similar_cases) > 0 and similar_cases[0].get("score") >= 1:
             return JSONEncoder().encode(similar_cases), 202
 
     new_doc = {
@@ -571,6 +571,15 @@ def add_new_case(checked):
     user_data = mongo.db.users.find_one_or_404({"username": get_jwt_identity()})
     user_data["stats"]["casesCreated"] += 1
     mongo.db.users.replace_one({"username": get_jwt_identity()}, user_data, True)
+
+    # Update case in categories collection
+    new_case = {
+        "name" : new_doc["name"],
+        "id" : new_doc["_id"],
+        "citation" : new_doc["citation"],
+        "lastEdit" : new_doc["lastEdit"]
+    }
+    mongo.db.categories.update({"category": "Untagged"}, {'$push': {"cases": new_case}}) 
 
     return str(_id), 200
 
@@ -620,8 +629,8 @@ Returns list of categories with corresponding number of cases in each category.
 def getcategories():
     data = mongo.db.categories.find()
     # Populate categories collection if it is empty
-    if not data:
-        add_categories()
+    #if not data:
+        #add_categories()
     categories = []
     for category in data:
         categories.append([category["category"], len(category["cases"])])

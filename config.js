@@ -5,5 +5,9 @@ export const allTags = [
 	"Contract", 
 	"Equity", 
 	"Evidence",
-	"Intellectual Property"
+	"Intellectual Property",
+	"International Arbitration",
+	"Criminal Law",
+	"Arbitration",
+	"Tax"
 ]

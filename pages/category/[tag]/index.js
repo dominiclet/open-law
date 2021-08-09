@@ -19,7 +19,7 @@ const categoryPage = () => {
     // Get case data
     useEffect(() => {
         if (router.isReady) {
-            axios.get(apiRoot + `/casesTag/${tag}/10`, {
+            axios.get(apiRoot + `/casesTag/${tag}/99999999`, {
                 headers: {'Authorization': 'Bearer ' + localStorage.getItem("jwt-token")}
             }).then(res => {
                     setCaseData(res.data);
